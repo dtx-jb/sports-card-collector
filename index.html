@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#0f172a"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-title" content="Sports Cards"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <title>Major Sports Card Collector</title>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div>
+        <h1>Major Sports Card Collector</h1>
+        <div class="subtitle">Collect football, basketball, soccer, and baseball cards. Rip packs, flip cards, build a lineup, and play quick collector matches.</div>
+      </div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </header>
+
+  <main>
+    <nav>
+      <button data-view="home" class="active">🏠 Clubhouse</button>
+      <button data-view="collection">🃏 Collection</button>
+      <button data-view="packs">🎁 Packs</button>
+      <button data-view="lineup">📋 My Lineup</button>
+      <button data-view="match">⚔️ Quick Match</button>
+      <button data-view="earn">🎲 Earn Coins</button>
+      <button data-view="season">🏆 Collector Cup</button>
+      <button data-view="quests">📜 Goals</button>
+      <button data-view="settings">⚙️ Save / Reset</button>
+          <button data-view="admin">🧪 Admin</button>
+    </nav>
+
+    <section class="panel" id="app"></section>
+  </main>
+
+  <div id="inspect-root"></div>
+  <div class="toast" id="toast"></div>
+
+  <script src="js/cards.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

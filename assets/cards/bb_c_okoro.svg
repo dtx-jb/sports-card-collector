@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420">
+  <defs>
+    <linearGradient id="neon" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#d97706"/>
+      <stop offset=".48" stop-color="#111827"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="playerShadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="10" stdDeviation="4" flood-color="#000" flood-opacity=".45"/>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3.5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect x="6" y="6" width="288" height="408" rx="20" fill="#050505" stroke="#f59e0b" stroke-width="6"/>
+  <rect x="20" y="20" width="260" height="290" rx="14" fill="url(#neon)"/>
+  <path d="M35 58 C90 22 132 62 185 32 C230 8 259 38 280 20" stroke="#fff" stroke-opacity=".35" stroke-width="5" fill="none" filter="url(#glow)"/>
+  <path d="M24 250 C70 220 108 278 163 229 C211 184 245 230 280 185 L280 310 L20 310Z" fill="#fff" opacity=".11"/>
+  <text x="37" y="70" font-size="42" font-family="Brush Script MT, cursive" fill="#fff" filter="url(#glow)">Bemi</text>
+  
+      <g transform="translate(151 176) scale(0.94)" filter="url(#playerShadow)">
+        
+          <path d="M-14 18 L-38 84" stroke="#f8fafc" stroke-width="20" stroke-linecap="round"/>
+          <path d="M21 17 L64 68" stroke="#f8fafc" stroke-width="20" stroke-linecap="round"/>
+          <path d="M-39 85 L-70 88" stroke="#bfdbfe" stroke-width="8" stroke-linecap="round"/>
+          <path d="M65 69 L90 64" stroke="#bfdbfe" stroke-width="8" stroke-linecap="round"/>
+        
+        
+          <path d="M-39 -36 L-82 -8" stroke="#f1c27d" stroke-width="17" stroke-linecap="round"/>
+          <path d="M33 -45 L57 -76" stroke="#f1c27d" stroke-width="17" stroke-linecap="round"/>
+        
+        <path d="M-36 -36 Q0 -66 38 -36 L28 24 L-26 24Z" fill="#b91c1c"/>
+        <path d="M-14 -34 H16 L9 24 H-8Z" fill="#bfdbfe" opacity=".2"/>
+        <text x="0" y="-4" text-anchor="middle" font-size="24" font-weight="900" fill="#bfdbfe" opacity=".85">C</text>
+        <circle cx="3" cy="-82" r="26" fill="#f1c27d"/>
+        <path d="M-20 -85 Q-10 -113 5 -112 Q31 -110 34 -82 Q18 -95 2 -96 Q-12 -94 -20 -85Z" fill="#78350f"/>
+        
+        <circle cx="-6" cy="-80" r="3" fill="#111827"/>
+        <circle cx="12" cy="-80" r="3" fill="#111827"/>
+        <path d="M-7 -67 Q4 -60 14 -67" stroke="#7c2d12" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="55" cy="-77" r="18" fill="#f97316" stroke="#fff" stroke-width="2"/><path d="M37 -77 H73 M55 -95 V-59 M43 -89 Q55 -77 43 -65 M67 -89 Q55 -77 67 -65" stroke="#7c2d12" stroke-width="2" fill="none"/>
+      </g>
+    
+  <text x="35" y="336" font-size="29" font-weight="900" fill="#fff">BEMI OKORO</text>
+  <text x="35" y="360" font-size="12" font-weight="800" fill="#d1d5db">HOUSTON ORBIT</text>
+  <text x="35" y="383" font-size="17" font-weight="900" fill="#f59e0b">RARE · OVR 74</text>
+  
+      <g transform="translate(247 360)">
+        <rect x="-27" y="-27" width="54" height="54" rx="10" fill="#d97706" stroke="#fff" stroke-width="3"/>
+        <text x="0" y="7" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">HO</text>
+      </g>
+    
+</svg>

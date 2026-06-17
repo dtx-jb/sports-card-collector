@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 140">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#15803d" stop-opacity=".42"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity=".82"/>
+    </linearGradient>
+  </defs>
+  <rect width="220" height="140" fill="url(#bg)"/>
+  <path d="M0 112 C46 82 78 113 120 84 C155 60 184 77 220 48 L220 140 L0 140Z" fill="#fff" opacity=".25"/>
+  <text x="20" y="34" font-size="26" opacity=".38">⚽</text>
+  <text x="174" y="34" font-size="26" opacity=".38">⚽</text>
+  <path d="M58 140 Q110 82 162 140Z" fill="#16a34a"/>
+  <path d="M75 140 Q110 96 145 140Z" fill="#bbf7d0" opacity=".25"/>
+  <circle cx="110" cy="68" r="31" fill="#e0ac69"/>
+  <path d="M78 64 Q82 34 110 34 Q139 35 144 64 Q129 52 110 51 Q91 51 78 64Z" fill="#92400e"/>
+  <circle cx="98" cy="70" r="3.2" fill="#111827"/>
+  <circle cx="122" cy="70" r="3.2" fill="#111827"/>
+  <path d="M99 83 Q110 90 122 83" stroke="#7c2d12" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <text x="110" y="130" text-anchor="middle" font-size="20" font-weight="900" fill="#bbf7d0">AM</text>
+</svg>

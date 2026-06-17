@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160">
+  <defs>
+    <linearGradient id="premiumBg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#2e1065"/>
+      <stop offset=".52" stop-color="#7c3f1d"/>
+      <stop offset="1" stop-color="#a855f7"/>
+    </linearGradient>
+    <radialGradient id="spot" cx="50%" cy="20%" r="70%">
+      <stop offset="0" stop-color="#fff" stop-opacity=".62"/>
+      <stop offset=".34" stop-color="#fff" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="5" stdDeviation="3" flood-color="#000" flood-opacity=".35"/>
+    </filter>
+  </defs>
+  <rect width="240" height="160" fill="url(#premiumBg)"/>
+  <rect width="240" height="160" fill="url(#spot)"/>
+  <path d="M0 116 C48 84 83 118 129 88 C169 62 196 78 240 48 L240 160 L0 160Z" fill="#020617" opacity=".28"/>
+  <path d="M0 118 L240 118" stroke="#fff" stroke-opacity=".25"/>
+  <path d="M20 118 L64 160 M70 118 L103 160 M120 118 L120 160 M170 118 L142 160 M220 118 L180 160" stroke="#fff" stroke-opacity=".18"/>
+  <circle cx="30" cy="24" r="16" fill="#fff" opacity=".16"/>
+  <circle cx="210" cy="24" r="16" fill="#fff" opacity=".16"/>
+  <circle cx="30" cy="35" r="4" fill="#fff" opacity=".72"/><circle cx="202" cy="55" r="3" fill="#fff" opacity=".65"/>
+  
+  <g filter="url(#shadow)">
+    <path d="M88 80 L62 105" stroke="#e0ac69" stroke-width="10" stroke-linecap="round"/>
+    <path d="M132 73 L170 45" stroke="#e0ac69" stroke-width="10" stroke-linecap="round"/>
+    <path d="M87 72 Q112 54 136 73 L127 112 L96 112Z" fill="#1d4ed8"/>
+    <path d="M98 112 L84 150 M123 112 L142 148" stroke="#1d4ed8" stroke-width="14" stroke-linecap="round"/>
+    <path d="M84 150 L66 151 M142 148 L158 151" stroke="#bfdbfe" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="112" cy="53" r="18" fill="#e0ac69"/>
+    <path d="M94 52 Q99 30 114 32 Q132 33 135 55 Q123 45 111 44 Q101 45 94 52Z" fill="#78350f"/>
+    <circle cx="106" cy="56" r="2.1" fill="#111827"/>
+    <circle cx="119" cy="56" r="2.1" fill="#111827"/>
+    <path d="M106 65 Q113 70 121 65" stroke="#7c2d12" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="178" cy="70" rx="15" ry="9" fill="#7c3f1d" stroke="#fff" stroke-width="1.6" transform="rotate(-18 178 70)"/><path d="M168 70 L188 70 M177 64 L178 76" stroke="#fff" stroke-width="1.5"/>
+  </g>
+  <rect x="8" y="8" width="224" height="144" rx="16" fill="none" stroke="#a855f7" stroke-width="2.4" opacity=".75"/>
+  <text x="16" y="146" font-size="11" font-weight="900" fill="#fff" opacity=".86">EPIC ACTION ART</text>
+  <text x="224" y="146" text-anchor="end" font-size="11" font-weight="900" fill="#fff" opacity=".86">OVR 70</text>
+</svg>

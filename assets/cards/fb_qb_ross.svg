@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fef3c7"/>
+      <stop offset="1" stop-color="#7c3f1d" stop-opacity=".35"/>
+    </linearGradient>
+    <filter id="playerShadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="8" stdDeviation="4" flood-color="#000" flood-opacity=".35"/>
+    </filter>
+  </defs>
+  <rect x="8" y="8" width="284" height="404" rx="18" fill="#fff" stroke="#d1d5db" stroke-width="7"/>
+  <rect x="24" y="24" width="252" height="260" rx="14" fill="url(#bg)"/>
+  <path d="M24 232 C75 190 112 246 162 199 C208 157 237 196 276 153 L276 284 L24 284Z" fill="#111827" opacity=".13"/>
+  <text x="40" y="54" font-size="18" font-weight="900" fill="#7c3f1d">🏈 FOOTBALL</text>
+  
+      <g transform="translate(148 165) scale(0.86)" filter="url(#playerShadow)">
+        
+          <path d="M-15 18 L-46 83" stroke="#065f46" stroke-width="20" stroke-linecap="round"/>
+          <path d="M22 16 L58 77" stroke="#065f46" stroke-width="20" stroke-linecap="round"/>
+          <path d="M-48 84 L-76 90" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+          <path d="M58 78 L82 90" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
+        
+        
+          <path d="M-36 -40 L-80 -18" stroke="#e0ac69" stroke-width="17" stroke-linecap="round"/>
+          <path d="M34 -43 L58 -42" stroke="#e0ac69" stroke-width="17" stroke-linecap="round"/>
+        
+        <path d="M-36 -36 Q0 -66 38 -36 L28 24 L-26 24Z" fill="#047857"/>
+        <path d="M-14 -34 H16 L9 24 H-8Z" fill="#ffffff" opacity=".2"/>
+        <text x="0" y="-4" text-anchor="middle" font-size="24" font-weight="900" fill="#ffffff" opacity=".85">QB</text>
+        <circle cx="3" cy="-82" r="26" fill="#e0ac69"/>
+        <path d="M-20 -85 Q-10 -113 5 -112 Q31 -110 34 -82 Q18 -95 2 -96 Q-12 -94 -20 -85Z" fill="#111827"/>
+        <path d="M-17 -100 Q0 -124 26 -101 L21 -87 Q0 -96 -18 -86Z" fill="#ffffff" opacity=".92"/><path d="M-21 -90 Q2 -99 26 -88" stroke="#111827" stroke-width="3" opacity=".55"/>
+        <circle cx="-6" cy="-80" r="3" fill="#111827"/>
+        <circle cx="12" cy="-80" r="3" fill="#111827"/>
+        <path d="M-7 -67 Q4 -60 14 -67" stroke="#7c2d12" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <ellipse cx="48" cy="-39" rx="18" ry="10" fill="#7c3f1d" stroke="#fff" stroke-width="2" transform="rotate(-18 48 -39)"/><path d="M36 -39 L58 -39 M47 -46 L48 -32" stroke="#fff" stroke-width="1.8"/>
+      </g>
+    
+  <rect x="24" y="296" width="252" height="88" rx="11" fill="#111827"/>
+  <text x="42" y="328" font-size="25" font-weight="900" fill="#fff">MASON ROSS</text>
+  <text x="42" y="353" font-size="13" font-weight="700" fill="#d1d5db">Dallas Outlaws · QB</text>
+  <text x="42" y="374" font-size="13" font-weight="800" fill="#fbbf24">OVR 56</text>
+  
+      <g transform="translate(244 346)">
+        <rect x="-27" y="-27" width="54" height="54" rx="10" fill="#7c3f1d" stroke="#fff" stroke-width="3"/>
+        <text x="0" y="7" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">DO</text>
+      </g>
+    
+</svg>
