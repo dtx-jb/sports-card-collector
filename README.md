@@ -507,3 +507,90 @@ Mobile/iPhone UI:
 - Better touch target sizing.
 - Pack reveal and lineup screens adjusted for narrow screens.
 - Added safe-area padding for iPhone home indicator.
+
+## Card Stat Rebalance v1
+
+Rebalanced card stats while preserving specialist cards.
+
+Design rules:
+- Commons should be playable early, not dead pulls.
+- Lower-rarity specialists can still win single-stat Quick Match phases.
+- Higher rarity now has a better overall floor and better all-around value.
+- Most cards are balanced, but some are Specialists, Two-Way cards, or Boom/Bust specialists.
+- Lower-rarity cards now receive stronger upgrade gains so invested Commons/Uncommons can remain useful longer.
+- Higher-rarity cards are still stronger at base and better across multiple phases.
+
+Before rebalance:
+- Common: 48 cards, OVR 49.5–75.8, avg 61.3
+- Uncommon: 32 cards, OVR 59.8–81.0, avg 68.5
+- Rare: 24 cards, OVR 65.2–88.0, avg 76.3
+- Epic: 8 cards, OVR 70.2–92.5, avg 83.3
+- Legendary: 8 cards, OVR 79.8–98.2, avg 90.2
+
+After rebalance:
+- Common: 48 cards, OVR 58.8–70.5, avg 64.7
+- Uncommon: 32 cards, OVR 66.2–75.5, avg 69.8
+- Rare: 24 cards, OVR 73.0–83.8, avg 77.8
+- Epic: 8 cards, OVR 83.0–91.0, avg 86.7
+- Legendary: 8 cards, OVR 87.8–96.5, avg 93.1
+
+Upgrade scaling:
+- Common cards gain the most per level.
+- Uncommon and Rare cards get strong upgrade value.
+- Epic and Legendary cards gain less per level because their base stats are already high.
+- Foil bonuses are stronger and apply to all stats.
+
+## Upgrade/Admin/Card Art v2
+
+Card art:
+- Removed static OVR and stat numbers from generated SVG card artwork.
+- Card art now shows identity/rarity/archetype only.
+- Live upgraded stats remain in the UI stat panels, where they update correctly as cards level up.
+
+Upgrade economy:
+- Epic and Legendary cards now require coins even at early card levels.
+- Epic and Legendary foil creation also requires coins at Bronze.
+- Epic+ cards require fewer duplicates than lower rarities because they are harder to pull.
+- Common/Rare early upgrades remain mostly TP + duplicate driven.
+
+Admin testing:
+- Added +5 dupes to active lineup.
+- Added +5 dupes to every card.
+- Added +10 dupes to every card.
+- Added +5 dupes to all Epics.
+- Added +5 dupes to all Legendaries.
+
+## Upgrade Dupes Display Fix v3
+
+Bug fix:
+- Upgrade and foil cost labels now display the correct duplicate requirement.
+- Fixed the UI showing "undefined dupes" after the upgrade economy rework.
+
+## Upgrade Cost Logic Fix v4
+
+Bug fix:
+- Upgrade logic now works again after the duplicate-cost field rename.
+- upgradeCost() and foilCost() now return both `dupes` and `copies`.
+- Existing upgrade checks, button enable/disable logic, and cost displays now use the correct duplicate requirements.
+
+## Overcap Scoring v5
+
+Fixed upgrade value at high stats.
+
+Problem:
+- Stats capped at 99.
+- Cards with 99 in a stat stopped gaining value from upgrades/foils.
+- High-end specialists could become bad upgrade investments.
+
+Change:
+- Base card stats still use the normal 25-99 range.
+- Upgrades and foils can now push effective stats beyond 99 up to 125.
+- Match scoring, lineup score, and Cup power use the boosted effective stat.
+- UI displays overcapped stats as 99+X, for example 99+4 instead of silently staying at 99.
+
+## Overcap Whole Value v6
+
+Display change:
+- Overcapped stats now display as their full effective value.
+- Example: a base 99 stat with +4 upgrade value now displays as 103 instead of 99+4.
+- Scoring logic is unchanged.

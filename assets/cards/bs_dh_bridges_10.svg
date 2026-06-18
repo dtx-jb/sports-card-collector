@@ -2,39 +2,38 @@
   <defs>
     <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
       <stop offset="0" stop-color="#e5e7eb"/>
-      <stop offset="1" stop-color="#94a3b8" stop-opacity=".44"/>
+      <stop offset="1" stop-color="#94a3b8" stop-opacity=".48"/>
     </linearGradient>
-    <filter id="playerShadow" x="-60%" y="-60%" width="220%" height="220%">
-      <feDropShadow dx="0" dy="8" stdDeviation="4" flood-color="#000" flood-opacity=".35"/>
+    <filter id="shadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="9" stdDeviation="5" flood-color="#000" flood-opacity=".34"/>
     </filter>
   </defs>
   <rect x="8" y="8" width="284" height="404" rx="18" fill="#fff" stroke="#94a3b8" stroke-width="7"/>
   <rect x="24" y="24" width="252" height="260" rx="14" fill="url(#bg)"/>
-  <path d="M24 232 C75 190 112 246 162 199 C208 157 237 196 276 153 L276 284 L24 284Z" fill="#111827" opacity=".13"/>
-  <text x="40" y="54" font-size="18" font-weight="900" fill="#2563eb">⚾ BASEBALL</text>
-  <g transform="translate(148 165) scale(0.86)" filter="url(#playerShadow)">
-    <path d="M-14 18 L-38 84" stroke="#0f766e" stroke-width="20" stroke-linecap="round"/>
-    <path d="M21 17 L64 68" stroke="#0f766e" stroke-width="20" stroke-linecap="round"/>
-    <path d="M-39 85 L-70 88" stroke="#bfdbfe" stroke-width="8" stroke-linecap="round"/>
-    <path d="M65 69 L90 64" stroke="#bfdbfe" stroke-width="8" stroke-linecap="round"/>
-    <path d="M-39 -36 L-82 -8" stroke="#c68642" stroke-width="17" stroke-linecap="round"/>
-    <path d="M33 -45 L57 -76" stroke="#c68642" stroke-width="17" stroke-linecap="round"/>
-    <path d="M-36 -36 Q0 -66 38 -36 L28 24 L-26 24Z" fill="#ef4444"/>
-    <path d="M-14 -34 H16 L9 24 H-8Z" fill="#dbeafe" opacity=".24"/>
-    <text x="0" y="-4" text-anchor="middle" font-size="24" font-weight="900" fill="#fff" opacity=".9">DH</text>
-    <circle cx="3" cy="-82" r="26" fill="#c68642"/>
-    <path d="M-20 -85 Q-10 -113 5 -112 Q31 -110 34 -82 Q18 -95 2 -96 Q-12 -94 -20 -85Z" fill="#4b2e16"/>
-    <circle cx="-6" cy="-80" r="3" fill="#111827"/>
-    <circle cx="12" cy="-80" r="3" fill="#111827"/>
-    <path d="M-7 -67 Q4 -60 14 -67" stroke="#7c2d12" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <text x="58" y="-70" text-anchor="middle" font-size="24">⚾</text>
+  <circle cx="244" cy="56" r="34" fill="#fff" opacity=".22"/>
+  <text x="244" y="67" text-anchor="middle" font-size="38">⚾</text>
+  <path d="M24 226 C72 185 112 246 160 202 C204 160 238 194 276 148 L276 284 L24 284Z" fill="#111827" opacity=".12"/>
+  <text x="42" y="54" font-size="15" font-weight="900" fill="#2563eb">BASEBALL</text>
+  <text x="42" y="76" font-size="13" font-weight="800" fill="#334155">Specialist</text>
+
+  <g transform="translate(150 170)" filter="url(#shadow)">
+    <path d="M-46 98 Q0 38 46 98Z" fill="#2563eb"/>
+    <path d="M-25 98 Q0 54 25 98Z" fill="#dbeafe" opacity=".32"/>
+    <circle cx="0" cy="4" r="42" fill="#e0ac69"/>
+    <path d="M-38 1 Q-25 -39 2 -42 Q37 -37 42 1 Q19 -15 0 -14 Q-21 -13 -38 1Z" fill="#1f2937"/>
+    <circle cx="-14" cy="9" r="4" fill="#111827"/>
+    <circle cx="15" cy="9" r="4" fill="#111827"/>
+    <path d="M-13 28 Q0 36 14 28" stroke="#7c2d12" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <text x="0" y="92" text-anchor="middle" font-size="26" font-weight="900" fill="#fff">DH</text>
   </g>
-  <rect x="24" y="296" width="252" height="88" rx="11" fill="#111827"/>
-  <text x="42" y="328" font-size="23" font-weight="900" fill="#fff">DORIAN BRIDGES</text>
-  <text x="42" y="353" font-size="13" font-weight="700" fill="#d1d5db">Phoenix Cactus · DH</text>
-  <text x="42" y="374" font-size="13" font-weight="800" fill="#fbbf24">OVR 57</text>
-  <g transform="translate(244 346)">
-    <rect x="-27" y="-27" width="54" height="54" rx="10" fill="#2563eb" stroke="#fff" stroke-width="3"/>
-    <text x="0" y="7" text-anchor="middle" font-size="17" font-weight="900" fill="#fff">PC</text>
+
+  <rect x="24" y="296" width="252" height="88" rx="12" fill="#111827"/>
+  <text x="42" y="326" font-size="21" font-weight="900" fill="#fff">DORIAN BRIDGES</text>
+  <text x="42" y="350" font-size="12" font-weight="700" fill="#d1d5db">Phoenix Cactus · DH</text>
+  <text x="42" y="373" font-size="12" font-weight="900" fill="#fbbf24">COMMON · Specialist</text>
+
+  <g transform="translate(238 346)">
+    <rect x="-29" y="-29" width="58" height="58" rx="12" fill="#2563eb" stroke="#fff" stroke-width="3"/>
+    <text x="0" y="7" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">PC</text>
   </g>
 </svg>

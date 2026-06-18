@@ -1,51 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420">
   <defs>
-    <linearGradient id="graf" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#050505"/>
-      <stop offset=".45" stop-color="#7c3f1d"/>
-      <stop offset="1" stop-color="#f59e0b"/>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fef3c7"/>
+      <stop offset="1" stop-color="#f59e0b" stop-opacity=".48"/>
     </linearGradient>
-    <filter id="playerShadow" x="-60%" y="-60%" width="220%" height="220%">
-      <feDropShadow dx="0" dy="11" stdDeviation="4" flood-color="#000" flood-opacity=".48"/>
+    <filter id="shadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="9" stdDeviation="5" flood-color="#000" flood-opacity=".34"/>
     </filter>
-    <filter id="paint"><feGaussianBlur stdDeviation="1"/></filter>
   </defs>
-  <rect x="6" y="6" width="288" height="408" rx="20" fill="#050505" stroke="#f59e0b" stroke-width="7"/>
-  <rect x="20" y="20" width="260" height="300" rx="14" fill="url(#graf)"/>
-  <text x="34" y="95" font-size="58" font-family="Impact, sans-serif" font-weight="900" fill="#fff" opacity=".22" transform="rotate(-9 34 95)">BOOM!</text>
-  <text x="66" y="157" font-size="61" font-family="Impact, sans-serif" font-weight="900" fill="#f59e0b" opacity=".45" transform="rotate(8 66 157)">HYPE</text>
-  <path d="M38 53 C83 32 101 76 139 52 C180 25 216 75 268 40" stroke="#fff" stroke-width="6" stroke-opacity=".3" fill="none" filter="url(#paint)"/>
-  
-      <g transform="translate(150 177) scale(0.94)" filter="url(#playerShadow)">
-        
-          <path d="M-15 18 L-46 83" stroke="#065f46" stroke-width="20" stroke-linecap="round"/>
-          <path d="M22 16 L58 77" stroke="#065f46" stroke-width="20" stroke-linecap="round"/>
-          <path d="M-48 84 L-76 90" stroke="#fce7f3" stroke-width="8" stroke-linecap="round"/>
-          <path d="M58 78 L82 90" stroke="#fce7f3" stroke-width="8" stroke-linecap="round"/>
-        
-        
-          <path d="M-36 -40 L-80 -18" stroke="#c68642" stroke-width="17" stroke-linecap="round"/>
-          <path d="M34 -43 L58 -42" stroke="#c68642" stroke-width="17" stroke-linecap="round"/>
-        
-        <path d="M-36 -36 Q0 -66 38 -36 L28 24 L-26 24Z" fill="#6d28d9"/>
-        <path d="M-14 -34 H16 L9 24 H-8Z" fill="#fce7f3" opacity=".2"/>
-        <text x="0" y="-4" text-anchor="middle" font-size="24" font-weight="900" fill="#fce7f3" opacity=".85">WR</text>
-        <circle cx="3" cy="-82" r="26" fill="#c68642"/>
-        <path d="M-20 -85 Q-10 -113 5 -112 Q31 -110 34 -82 Q18 -95 2 -96 Q-12 -94 -20 -85Z" fill="#2f1b12"/>
-        <path d="M-17 -100 Q0 -124 26 -101 L21 -87 Q0 -96 -18 -86Z" fill="#fce7f3" opacity=".92"/><path d="M-21 -90 Q2 -99 26 -88" stroke="#111827" stroke-width="3" opacity=".55"/>
-        <circle cx="-6" cy="-80" r="3" fill="#111827"/>
-        <circle cx="12" cy="-80" r="3" fill="#111827"/>
-        <path d="M-7 -67 Q4 -60 14 -67" stroke="#7c2d12" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <ellipse cx="48" cy="-39" rx="18" ry="10" fill="#7c3f1d" stroke="#fff" stroke-width="2" transform="rotate(-18 48 -39)"/><path d="M36 -39 L58 -39 M47 -46 L48 -32" stroke="#fff" stroke-width="1.8"/>
-      </g>
-    
-  <text x="34" y="346" font-size="29" font-weight="900" fill="#fff">KING JEFFERSON</text>
-  <text x="34" y="370" font-size="13" font-weight="900" fill="#d1d5db">ATLANTA FIREBIRDS</text>
-  <text x="34" y="394" font-size="16" font-weight="900" fill="#f59e0b">LEGENDARY INSERT · OVR 80</text>
-  
-      <g transform="translate(247 364)">
-        <rect x="-27" y="-27" width="54" height="54" rx="10" fill="#7c3f1d" stroke="#fff" stroke-width="3"/>
-        <text x="0" y="7" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">AF</text>
-      </g>
-    
+  <rect x="8" y="8" width="284" height="404" rx="18" fill="#fff" stroke="#f59e0b" stroke-width="7"/>
+  <rect x="24" y="24" width="252" height="260" rx="14" fill="url(#bg)"/>
+  <circle cx="244" cy="56" r="34" fill="#fff" opacity=".22"/>
+  <text x="244" y="67" text-anchor="middle" font-size="38">🏈</text>
+  <path d="M24 226 C72 185 112 246 160 202 C204 160 238 194 276 148 L276 284 L24 284Z" fill="#111827" opacity=".12"/>
+  <text x="42" y="54" font-size="15" font-weight="900" fill="#7c3f1d">FOOTBALL</text>
+  <text x="42" y="76" font-size="13" font-weight="800" fill="#334155">Specialist</text>
+
+  <g transform="translate(150 170)" filter="url(#shadow)">
+    <path d="M-46 98 Q0 38 46 98Z" fill="#7c3f1d"/>
+    <path d="M-25 98 Q0 54 25 98Z" fill="#f59e0b" opacity=".32"/>
+    <circle cx="0" cy="4" r="42" fill="#e0ac69"/>
+    <path d="M-38 1 Q-25 -39 2 -42 Q37 -37 42 1 Q19 -15 0 -14 Q-21 -13 -38 1Z" fill="#1f2937"/>
+    <circle cx="-14" cy="9" r="4" fill="#111827"/>
+    <circle cx="15" cy="9" r="4" fill="#111827"/>
+    <path d="M-13 28 Q0 36 14 28" stroke="#7c2d12" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <text x="0" y="92" text-anchor="middle" font-size="26" font-weight="900" fill="#fff">WR</text>
+  </g>
+
+  <rect x="24" y="296" width="252" height="88" rx="12" fill="#111827"/>
+  <text x="42" y="326" font-size="21" font-weight="900" fill="#fff">KING JEFFERSON</text>
+  <text x="42" y="350" font-size="12" font-weight="700" fill="#d1d5db">Atlanta Firebirds · WR</text>
+  <text x="42" y="373" font-size="12" font-weight="900" fill="#fbbf24">LEGENDARY · Specialist</text>
+
+  <g transform="translate(238 346)">
+    <rect x="-29" y="-29" width="58" height="58" rx="12" fill="#7c3f1d" stroke="#fff" stroke-width="3"/>
+    <text x="0" y="7" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">AF</text>
+  </g>
 </svg>

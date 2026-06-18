@@ -1,54 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420">
   <defs>
-    <linearGradient id="chrome" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#ffffff"/>
-      <stop offset=".25" stop-color="#dbeafe"/>
-      <stop offset=".52" stop-color="#ffffff"/>
-      <stop offset=".8" stop-color="#60a5fa" stop-opacity=".55"/>
-      <stop offset="1" stop-color="#ffffff"/>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#dcfce7"/>
+      <stop offset="1" stop-color="#22c55e" stop-opacity=".48"/>
     </linearGradient>
-    <pattern id="rings" width="22" height="22" patternUnits="userSpaceOnUse">
-      <circle cx="11" cy="11" r="8" fill="none" stroke="#2563eb" stroke-opacity=".14" stroke-width="2"/>
-    </pattern>
-    <filter id="playerShadow" x="-60%" y="-60%" width="220%" height="220%">
-      <feDropShadow dx="0" dy="8" stdDeviation="4" flood-color="#000" flood-opacity=".36"/>
+    <filter id="shadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="9" stdDeviation="5" flood-color="#000" flood-opacity=".34"/>
     </filter>
   </defs>
-  <rect x="7" y="7" width="286" height="406" rx="18" fill="url(#chrome)" stroke="#60a5fa" stroke-width="6"/>
-  <rect x="22" y="22" width="256" height="278" rx="14" fill="url(#rings)"/>
-  <rect x="35" y="35" width="230" height="250" rx="12" fill="#fff" opacity=".28"/>
-  <text x="38" y="57" font-size="17" font-weight="900" fill="#2563eb">ARIZONA DUST</text>
-  
-      <g transform="translate(150 174) scale(0.9)" filter="url(#playerShadow)">
-        
-              <path d="M-14 18 L-38 84" stroke="#065f46" stroke-width="20" stroke-linecap="round"/>
-              <path d="M20 17 L62 73" stroke="#065f46" stroke-width="20" stroke-linecap="round"/>
-              <path d="M-39 85 L-69 87" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
-              <path d="M63 74 L87 86" stroke="#ffffff" stroke-width="8" stroke-linecap="round"/>
-            
-        
-              <path d="M-38 -38 L-69 -3" stroke="#8d5524" stroke-width="16" stroke-linecap="round"/>
-              <path d="M33 -40 L58 -77" stroke="#8d5524" stroke-width="16" stroke-linecap="round"/>
-            
-        <path d="M-36 -36 Q0 -66 38 -36 L28 24 L-26 24Z" fill="#6d28d9"/>
-        <path d="M-14 -34 H16 L9 24 H-8Z" fill="#ffffff" opacity=".2"/>
-        <text x="0" y="-4" text-anchor="middle" font-size="24" font-weight="900" fill="#ffffff" opacity=".85">C</text>
-        <circle cx="3" cy="-82" r="26" fill="#8d5524"/>
-        <path d="M-20 -85 Q-10 -113 5 -112 Q31 -110 34 -82 Q18 -95 2 -96 Q-12 -94 -20 -85Z" fill="#78350f"/>
-        <path d="M-18 -101 Q4 -121 27 -101 L21 -89 Q3 -96 -17 -88Z" fill="#ffffff" opacity=".92"/>
-        <circle cx="-6" cy="-80" r="3" fill="#111827"/>
-        <circle cx="12" cy="-80" r="3" fill="#111827"/>
-        <path d="M-7 -67 Q4 -60 14 -67" stroke="#7c2d12" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <path d="M45 -105 L78 -18" stroke="#d6a95d" stroke-width="8" stroke-linecap="round"/><circle cx="83" cy="-56" r="5" fill="#fff"/>
-      </g>
-    
-  <rect x="30" y="303" width="240" height="70" rx="9" fill="#ffffff" opacity=".7" stroke="#ffffff"/>
-  <text x="150" y="333" text-anchor="middle" font-size="24" font-family="Georgia,serif" fill="#374151">Luis Morales</text>
-  <text x="150" y="356" text-anchor="middle" font-size="12" font-weight="900" fill="#2563eb">C · OVR 65</text>
-  
-      <g transform="translate(247 383)">
-        <rect x="-27" y="-27" width="54" height="54" rx="10" fill="#2563eb" stroke="#fff" stroke-width="3"/>
-        <text x="0" y="7" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">AD</text>
-      </g>
-    
+  <rect x="8" y="8" width="284" height="404" rx="18" fill="#fff" stroke="#22c55e" stroke-width="7"/>
+  <rect x="24" y="24" width="252" height="260" rx="14" fill="url(#bg)"/>
+  <circle cx="244" cy="56" r="34" fill="#fff" opacity=".22"/>
+  <text x="244" y="67" text-anchor="middle" font-size="38">⚾</text>
+  <path d="M24 226 C72 185 112 246 160 202 C204 160 238 194 276 148 L276 284 L24 284Z" fill="#111827" opacity=".12"/>
+  <text x="42" y="54" font-size="15" font-weight="900" fill="#2563eb">BASEBALL</text>
+  <text x="42" y="76" font-size="13" font-weight="800" fill="#334155">Specialist</text>
+
+  <g transform="translate(150 170)" filter="url(#shadow)">
+    <path d="M-46 98 Q0 38 46 98Z" fill="#2563eb"/>
+    <path d="M-25 98 Q0 54 25 98Z" fill="#dbeafe" opacity=".32"/>
+    <circle cx="0" cy="4" r="42" fill="#e0ac69"/>
+    <path d="M-38 1 Q-25 -39 2 -42 Q37 -37 42 1 Q19 -15 0 -14 Q-21 -13 -38 1Z" fill="#1f2937"/>
+    <circle cx="-14" cy="9" r="4" fill="#111827"/>
+    <circle cx="15" cy="9" r="4" fill="#111827"/>
+    <path d="M-13 28 Q0 36 14 28" stroke="#7c2d12" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <text x="0" y="92" text-anchor="middle" font-size="26" font-weight="900" fill="#fff">C</text>
+  </g>
+
+  <rect x="24" y="296" width="252" height="88" rx="12" fill="#111827"/>
+  <text x="42" y="326" font-size="21" font-weight="900" fill="#fff">LUIS MORALES</text>
+  <text x="42" y="350" font-size="12" font-weight="700" fill="#d1d5db">Arizona Dust · C</text>
+  <text x="42" y="373" font-size="12" font-weight="900" fill="#fbbf24">UNCOMMON · Specialist</text>
+
+  <g transform="translate(238 346)">
+    <rect x="-29" y="-29" width="58" height="58" rx="12" fill="#2563eb" stroke="#fff" stroke-width="3"/>
+    <text x="0" y="7" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">AD</text>
+  </g>
 </svg>

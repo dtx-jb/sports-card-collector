@@ -1,6 +1,6 @@
 // js/game.js
 
-const SAVE_KEY = "majorSportsCardCollector_card_pool_mobile_v1";
+const SAVE_KEY = "majorSportsCardCollector_overcap_whole_value_v6";
 
 let state = loadGame();
 let currentView = "home";
@@ -267,7 +267,7 @@ function renderInspect(){
                   <div>
                     <span class="stat-sport">${SPORTS[c.sport].emoji} ${c.sport}</span>
                     <h3>${c.name}</h3>
-                    <p>${c.team} · ${c.pos} · Owned ×${owned}</p>
+                    <p>${c.team} · ${c.pos} · ${c.archetype || "Balanced"} · Owned ×${owned}</p>
                   </div>
                   <div class="stat-rarity">${c.rarity}</div>
                 </div>
@@ -297,6 +297,10 @@ function renderInspect(){
                 </div>
 
                 <div class="cardback-identity">
+                  <div>
+                    <span>Archetype</span>
+                    <strong>${c.archetype || "Balanced"}</strong>
+                  </div>
                   <div>
                     <span>Variant</span>
                     <strong>${cardVariant(c)}</strong>
@@ -1213,95 +1217,120 @@ function nextFoilTier(id){
 }
 
 function upgradeCost(c){
-  const level = cardLevel(c.id);
-  const nextLevel = level + 1;
+  const lvl = cardLevel(c.id);
   const rarity = c.rarity;
 
-  const table = {
-    2:{
-      coins:{Common:0,Uncommon:0,Rare:0,Epic:0,Legendary:0},
-      tp:{Common:35,Uncommon:50,Rare:75,Epic:120,Legendary:200},
-      copies:{Common:1,Uncommon:1,Rare:1,Epic:2,Legendary:2}
-    },
-    3:{
-      coins:{Common:0,Uncommon:0,Rare:0,Epic:0,Legendary:0},
-      tp:{Common:70,Uncommon:95,Rare:145,Epic:230,Legendary:360},
-      copies:{Common:1,Uncommon:1,Rare:2,Epic:3,Legendary:4}
-    },
-    4:{
-      coins:{Common:0,Uncommon:0,Rare:45,Epic:120,Legendary:250},
-      tp:{Common:125,Uncommon:165,Rare:250,Epic:400,Legendary:650},
-      copies:{Common:2,Uncommon:2,Rare:3,Epic:5,Legendary:7}
-    },
-    5:{
-      coins:{Common:25,Uncommon:50,Rare:125,Epic:300,Legendary:650},
-      tp:{Common:220,Uncommon:300,Rare:460,Epic:750,Legendary:1200},
-      copies:{Common:3,Uncommon:4,Rare:5,Epic:8,Legendary:12}
-    }
-  };
+  const rarityMult = {
+    Common:1,
+    Uncommon:1.2,
+    Rare:1.55,
+    Epic:2.2,
+    Legendary:3
+  }[rarity] || 1.4;
 
-  if(table[nextLevel]){
-    return {
-      coins:table[nextLevel].coins[rarity],
-      tp:table[nextLevel].tp[rarity],
-      copies:table[nextLevel].copies[rarity]
-    };
+  const baseTp = [0,70,150,285,480][lvl] || 650;
+  const baseDupes = [0,1,2,3,4][lvl] || 5;
+
+  let coins = 0;
+
+  // Common/Rare early levels remain coin-free. Epic+ starts using coins immediately.
+  if(rarity === "Epic"){
+    coins = [0,80,150,260,430][lvl] || 600;
+  }else if(rarity === "Legendary"){
+    coins = [0,150,275,475,800][lvl] || 1000;
+  }else if(lvl >= 3){
+    coins = Math.round(([0,0,0,85,175][lvl] || 250) * rarityMult);
   }
 
-  const rank = rarityRank(rarity);
-  const lateLevel = Math.max(1, nextLevel - 5);
+  // Higher rarities cost fewer duplicates because they are harder to pull.
+  const dupeDiscount = rarity === "Legendary" ? 2 : rarity === "Epic" ? 1 : 0;
+  const dupes = Math.max(1, baseDupes - dupeDiscount);
 
   return {
-    coins: Math.round((60 + lateLevel * 65) * rank),
-    tp: Math.round((350 + lateLevel * 210) * rank),
-    copies: Math.min(20, Math.ceil((4 + lateLevel * 2) * (0.65 + rank * 0.35)))
+    coins,
+    tp:Math.round(baseTp * rarityMult),
+    dupes,
+    copies:dupes
   };
 }
 
 function foilCost(c){
-  const next = nextFoilTier(c.id);
+  const tier = foilRank(foilTier(c.id));
   const rarity = c.rarity;
 
-  const table = {
-    Bronze:{
-      coins:{Common:0,Uncommon:0,Rare:0,Epic:0,Legendary:0},
-      tp:{Common:100,Uncommon:140,Rare:220,Epic:360,Legendary:600},
-      copies:{Common:2,Uncommon:2,Rare:3,Epic:5,Legendary:8}
-    },
-    Silver:{
-      coins:{Common:0,Uncommon:50,Rare:125,Epic:300,Legendary:700},
-      tp:{Common:220,Uncommon:320,Rare:500,Epic:850,Legendary:1400},
-      copies:{Common:4,Uncommon:5,Rare:7,Epic:10,Legendary:15}
-    },
-    Gold:{
-      coins:{Common:100,Uncommon:200,Rare:450,Epic:900,Legendary:1800},
-      tp:{Common:450,Uncommon:650,Rare:1000,Epic:1700,Legendary:2800},
-      copies:{Common:7,Uncommon:9,Rare:12,Epic:18,Legendary:24}
-    },
-    Holo:{
-      coins:{Common:300,Uncommon:600,Rare:1200,Epic:2400,Legendary:4800},
-      tp:{Common:900,Uncommon:1300,Rare:2000,Epic:3400,Legendary:5600},
-      copies:{Common:12,Uncommon:16,Rare:22,Epic:30,Legendary:40}
-    }
-  };
+  const rarityMult = {
+    Common:1,
+    Uncommon:1.25,
+    Rare:1.6,
+    Epic:2.35,
+    Legendary:3.25
+  }[rarity] || 1.5;
 
-  if(!next || !table[next]){
-    return {coins:999999,tp:999999,copies:999999};
-  }
+  const base = [
+    {coins:0,tp:180,dupes:3},
+    {coins:80,tp:350,dupes:5},
+    {coins:250,tp:700,dupes:8},
+    {coins:650,tp:1200,dupes:12}
+  ][tier] || {coins:900,tp:1600,dupes:15};
+
+  let coins = base.coins;
+
+  // Epic+ foil creation should require some coins even at Bronze.
+  if(tier === 0 && rarity === "Epic") coins = 120;
+  if(tier === 0 && rarity === "Legendary") coins = 250;
+
+  const dupeDiscount = rarity === "Legendary" ? 3 : rarity === "Epic" ? 2 : rarity === "Rare" ? 1 : 0;
+
+  const dupes = Math.max(1, base.dupes - dupeDiscount);
 
   return {
-    coins:table[next].coins[rarity],
-    tp:table[next].tp[rarity],
-    copies:table[next].copies[rarity]
+    coins:Math.round(coins * (tier === 0 ? 1 : rarityMult)),
+    tp:Math.round(base.tp * rarityMult),
+    dupes,
+    copies:dupes
   };
 }
 
-function effectiveStat(c, key){
+
+function upgradeGainForRarity(rarity){
+  return {
+    Common:1.9,
+    Uncommon:1.7,
+    Rare:1.5,
+    Epic:1.3,
+    Legendary:1.15
+  }[rarity] || 1.4;
+}
+
+function isCardSpecialistInStat(c, key){
+  const values = [c.off, c.def, c.ath, c.iq];
+  const max = Math.max(...values);
+  const second = values.slice().sort((a,b) => b - a)[1];
+  return c[key] === max && max - second >= 10;
+}
+
+function rawEffectiveStat(c, key){
   const level = cardLevel(c.id);
   const foilBonus = foilRank(foilTier(c.id));
   const levelBonus = Math.max(0, level - 1);
-  const focusBonus = key === "off" || key === "ath" ? Math.ceil(levelBonus / 2) : Math.floor(levelBonus / 2);
-  return Math.min(99, c[key] + levelBonus + foilBonus + focusBonus);
+
+  const rarityGain = upgradeGainForRarity(c.rarity);
+  const levelGain = Math.round(levelBonus * rarityGain);
+  const specialistGain = isCardSpecialistInStat(c, key) ? Math.floor(levelBonus / 2) : 0;
+  const foilGain = foilBonus * 2;
+
+  return c[key] + levelGain + specialistGain + foilGain;
+}
+
+function effectiveStat(c, key){
+  // Overcap Whole Value v6:
+  // Base cards still live on a 25-99 scale, but upgrades/foils can push
+  // effective stats beyond 99 so high-end cards do not waste upgrades.
+  return Math.min(125, rawEffectiveStat(c, key));
+}
+
+function displayStatValue(c, key){
+  return `${effectiveStat(c, key)}`;
 }
 
 function effectiveOverall(c){
@@ -2759,6 +2788,41 @@ function adminClearCupRun(){
   toast("Admin: Cup run cleared");
 }
 
+
+function adminAddDupesToAll(amount = 5){
+  CARDS.forEach(c => {
+    state.collection[c.id] = (state.collection[c.id] || 0) + amount;
+  });
+  saveGame();
+  render();
+  toast(`Admin: +${amount} copies of every card.`);
+}
+
+function adminAddDupesToLineup(amount = 5){
+  if(!state.lineup.length){
+    toast("No active lineup cards.");
+    return;
+  }
+
+  state.lineup.forEach(id => {
+    state.collection[id] = (state.collection[id] || 0) + amount;
+  });
+
+  saveGame();
+  render();
+  toast(`Admin: +${amount} copies of active lineup cards.`);
+}
+
+function adminAddDupesByRarity(rarity, amount = 5){
+  CARDS.filter(c => c.rarity === rarity).forEach(c => {
+    state.collection[c.id] = (state.collection[c.id] || 0) + amount;
+  });
+  saveGame();
+  render();
+  toast(`Admin: +${amount} copies of all ${rarity} cards.`);
+}
+
+
 function viewAdmin(){
   return `
     <div class="section-title">
@@ -2780,6 +2844,11 @@ function viewAdmin(){
       <button onclick="adminBoostEverything()" class="gold">Unlimited test setup</button>
       <button onclick="adminTogglePackUnlocks()">${state.packUnlockOverride ? "Restore pack gates" : "Unlock all packs"}</button>
       <button onclick="adminAddCollectorXP(1000)">+1,000 Collector XP</button>
+      <button onclick="adminAddDupesToLineup(5)">+5 dupes to active lineup</button>
+      <button onclick="adminAddDupesToAll(5)">+5 dupes to every card</button>
+      <button onclick="adminAddDupesToAll(10)">+10 dupes to every card</button>
+      <button onclick="adminAddDupesByRarity('Epic',5)">+5 dupes to all Epics</button>
+      <button onclick="adminAddDupesByRarity('Legendary',5)">+5 dupes to all Legendaries</button>
       <button onclick="adminClearCupRun()">Clear active Cup</button>
     </div>
 
@@ -2868,7 +2937,7 @@ function viewHome(){
   return `
     <div class="section-title">
       <div>
-        <h2>Clubhouse</h2><div class="build-label">Card Pool + Mobile UI v1</div>
+        <h2>Clubhouse</h2><div class="build-label">Overcap Whole Value v6</div>
         <p>Earn coins, open sport packs, complete goals, and build a 5-card lineup.</p>
       </div>
 
@@ -2877,7 +2946,7 @@ function viewHome(){
 
     <div class="sports-row">${sportsSummary}</div>
 
-    <div class="card-pool-note">Expanded test card pool: 120 total cards across Football, Basketball, Soccer, and Baseball. Mobile layout is optimized for iPhone/Safari testing.</div>
+    <div class="card-pool-note">Expanded test card pool: 120 total cards across Football, Basketball, Soccer, and Baseball. Stat rebalance active: most cards are playable, specialists still spike single stats, and lower-rarity upgrades scale harder.</div>
 
     ${collectorProgressHtml()}
 
@@ -3077,7 +3146,7 @@ function viewPacks(){
   return `
     <div class="section-title">
       <div>
-        <h2>Packs</h2><div class="build-label">Card Pool + Mobile UI v1</div>
+        <h2>Packs</h2><div class="build-label">Overcap Whole Value v6</div>
         <p>Rookie → Pro → All-Star → Hall of Fame. Packs opened remain a major gate, but upgrades now use TP and duplicates first.</p>
         <p class="pity-explainer">Every pack has a tiny dream-pull chance. Pity counts dry streaks and resets when you naturally pull the target rarity.</p>
       </div>
@@ -3213,10 +3282,10 @@ function lineupStatCardHtml(c, options = {}){
 
         <div class="upgrade-actions">
           <button onclick="upgradeCard('${c.id}')" ${canUpgrade(c) ? "" : "disabled"}>Upgrade Lv ${cardLevel(c.id)} → ${Math.min(10, cardLevel(c.id) + 1)}</button>
-          <div class="upgrade-cost">Cost: ${upCost.coins} coins · ${upCost.tp} TP · ${upCost.copies} dupes</div>
+          <div class="upgrade-cost">Cost: ${upCost.coins} coins · ${upCost.tp} TP · ${upCost.dupes ?? upCost.copies} dupes</div>
 
           <button onclick="upgradeFoil('${c.id}')" ${canFoil(c) ? "" : "disabled"}>${nextFoil ? "Make " + nextFoil + " Foil" : "Max Foil"}</button>
-          <div class="upgrade-cost">${nextFoil ? `Cost: ${fCost.coins} coins · ${fCost.tp} TP · ${fCost.copies} dupes` : "Foil maxed"}</div>
+          <div class="upgrade-cost">${nextFoil ? `Cost: ${fCost.coins} coins · ${fCost.tp} TP · ${fCost.dupes ?? fCost.copies} dupes` : "Foil maxed"}</div>
 
           <button onclick="quickSellDuplicate('${c.id}')" ${dupes > 0 ? "" : "disabled"}>Quick-sell duplicate</button>
         </div>
@@ -3264,7 +3333,7 @@ function viewLineup(){
     <div class="section-title">
       <div>
         <h2>My Lineup</h2>
-        <p>Sort, filter, upgrade cards, create foil variants, and quick-sell duplicate pulls.</p><div class="upgrade-economy-note">Early upgrades use TP + duplicates first. Coin costs appear more on higher levels, higher rarities, and stronger foil tiers.</div>
+        <p>Sort, filter, upgrade cards, create foil variants, and quick-sell duplicate pulls.</p><div class="upgrade-economy-note">Early upgrades use TP + duplicates first. Coin costs appear more on higher levels, higher rarities, and stronger foil tiers. Overcap scoring is active: upgraded 99 stats keep adding power and display as full effective values.</div>
       </div>
       <span class="pill">📋 Lineup score ${lineupScore()}</span>
     </div>
@@ -3987,7 +4056,7 @@ function viewCup(){
   return `
     <div class="section-title">
       <div>
-        <h2>Collector Cup</h2><div class="build-label">Card Pool + Mobile UI v1</div>
+        <h2>Collector Cup</h2><div class="build-label">Overcap Whole Value v6</div>
         <p>Submit a 5-card lineup snapshot and run a simulated tournament. Cards remain usable in Quick Match.</p>
       </div>
       <span class="pill">🏆 ${state.stats.cupChampionships || 0} <small>titles</small></span>

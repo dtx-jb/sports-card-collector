@@ -1,44 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420">
   <defs>
-    <linearGradient id="sigbg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#fff"/>
-      <stop offset=".45" stop-color="#faf5ff"/>
-      <stop offset="1" stop-color="#fff"/>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#ede9fe"/>
+      <stop offset="1" stop-color="#a855f7" stop-opacity=".48"/>
     </linearGradient>
-    <filter id="playerShadow" x="-60%" y="-60%" width="220%" height="220%">
-      <feDropShadow dx="0" dy="9" stdDeviation="4" flood-color="#000" flood-opacity=".38"/>
+    <filter id="shadow" x="-60%" y="-60%" width="220%" height="220%">
+      <feDropShadow dx="0" dy="9" stdDeviation="5" flood-color="#000" flood-opacity=".34"/>
     </filter>
   </defs>
-  <rect x="7" y="7" width="286" height="406" rx="20" fill="url(#sigbg)" stroke="#a855f7" stroke-width="6"/>
-  <rect x="24" y="24" width="252" height="238" rx="13" fill="#2563eb" opacity=".22"/>
-  <path d="M24 222 C81 171 121 240 180 188 C226 148 248 178 276 144 L276 262 L24 262Z" fill="#111827" opacity=".12"/>
-  
-      <g transform="translate(150 158) scale(0.87)" filter="url(#playerShadow)">
-        
-              <path d="M-14 18 L-38 84" stroke="#111827" stroke-width="20" stroke-linecap="round"/>
-              <path d="M20 17 L62 73" stroke="#111827" stroke-width="20" stroke-linecap="round"/>
-              <path d="M-39 85 L-69 87" stroke="#fde68a" stroke-width="8" stroke-linecap="round"/>
-              <path d="M63 74 L87 86" stroke="#fde68a" stroke-width="8" stroke-linecap="round"/>
-            
-        
-              <path d="M-38 -38 L-69 -3" stroke="#ffdbac" stroke-width="16" stroke-linecap="round"/>
-              <path d="M33 -40 L58 -77" stroke="#ffdbac" stroke-width="16" stroke-linecap="round"/>
-            
-        <path d="M-36 -36 Q0 -66 38 -36 L28 24 L-26 24Z" fill="#1d4ed8"/>
-        <path d="M-14 -34 H16 L9 24 H-8Z" fill="#fde68a" opacity=".2"/>
-        <text x="0" y="-4" text-anchor="middle" font-size="24" font-weight="900" fill="#fde68a" opacity=".85">SS</text>
-        <circle cx="3" cy="-82" r="26" fill="#ffdbac"/>
-        <path d="M-20 -85 Q-10 -113 5 -112 Q31 -110 34 -82 Q18 -95 2 -96 Q-12 -94 -20 -85Z" fill="#2f1b12"/>
-        <path d="M-18 -101 Q4 -121 27 -101 L21 -89 Q3 -96 -17 -88Z" fill="#fde68a" opacity=".92"/>
-        <circle cx="-6" cy="-80" r="3" fill="#111827"/>
-        <circle cx="12" cy="-80" r="3" fill="#111827"/>
-        <path d="M-7 -67 Q4 -60 14 -67" stroke="#7c2d12" stroke-width="3" fill="none" stroke-linecap="round"/>
-        <path d="M45 -105 L78 -18" stroke="#d6a95d" stroke-width="8" stroke-linecap="round"/><circle cx="83" cy="-56" r="5" fill="#fff"/>
-      </g>
-    
-  <rect x="30" y="274" width="240" height="72" rx="10" fill="#fff" stroke="#a855f7" stroke-width="2"/>
-  <path d="M46 318 C77 290 90 344 122 311 C144 288 161 332 194 302 C213 286 226 312 249 292" stroke="#111827" stroke-width="2.2" fill="none"/>
-  <text x="150" y="334" text-anchor="middle" font-size="16" font-family="Brush Script MT, cursive" fill="#111827">R. Torres</text>
-  <text x="42" y="374" font-size="23" font-weight="900" fill="#111827">RAFA TORRES</text>
-  <text x="42" y="394" font-size="12" font-weight="800" fill="#2563eb">San Diego Surf · AUTHENTIC SIGNATURE · OVR 86</text>
+  <rect x="8" y="8" width="284" height="404" rx="18" fill="#fff" stroke="#a855f7" stroke-width="7"/>
+  <rect x="24" y="24" width="252" height="260" rx="14" fill="url(#bg)"/>
+  <circle cx="244" cy="56" r="34" fill="#fff" opacity=".22"/>
+  <text x="244" y="67" text-anchor="middle" font-size="38">⚾</text>
+  <path d="M24 226 C72 185 112 246 160 202 C204 160 238 194 276 148 L276 284 L24 284Z" fill="#111827" opacity=".12"/>
+  <text x="42" y="54" font-size="15" font-weight="900" fill="#2563eb">BASEBALL</text>
+  <text x="42" y="76" font-size="13" font-weight="800" fill="#334155">Two-Way</text>
+
+  <g transform="translate(150 170)" filter="url(#shadow)">
+    <path d="M-46 98 Q0 38 46 98Z" fill="#2563eb"/>
+    <path d="M-25 98 Q0 54 25 98Z" fill="#dbeafe" opacity=".32"/>
+    <circle cx="0" cy="4" r="42" fill="#e0ac69"/>
+    <path d="M-38 1 Q-25 -39 2 -42 Q37 -37 42 1 Q19 -15 0 -14 Q-21 -13 -38 1Z" fill="#1f2937"/>
+    <circle cx="-14" cy="9" r="4" fill="#111827"/>
+    <circle cx="15" cy="9" r="4" fill="#111827"/>
+    <path d="M-13 28 Q0 36 14 28" stroke="#7c2d12" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <text x="0" y="92" text-anchor="middle" font-size="26" font-weight="900" fill="#fff">SS</text>
+  </g>
+
+  <rect x="24" y="296" width="252" height="88" rx="12" fill="#111827"/>
+  <text x="42" y="326" font-size="21" font-weight="900" fill="#fff">RAFA TORRES</text>
+  <text x="42" y="350" font-size="12" font-weight="700" fill="#d1d5db">San Diego Surf · SS</text>
+  <text x="42" y="373" font-size="12" font-weight="900" fill="#fbbf24">EPIC · Two-Way</text>
+
+  <g transform="translate(238 346)">
+    <rect x="-29" y="-29" width="58" height="58" rx="12" fill="#2563eb" stroke="#fff" stroke-width="3"/>
+    <text x="0" y="7" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">SD</text>
+  </g>
 </svg>
