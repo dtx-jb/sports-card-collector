@@ -1,6 +1,6 @@
 // js/game.js
 
-const SAVE_KEY = "majorSportsCardCollector_overcap_whole_value_v6";
+const SAVE_KEY = "majorSportsCardCollector_quick_match_arena_v1";
 
 let state = loadGame();
 let currentView = "home";
@@ -1072,7 +1072,7 @@ function checkQuests(){
 
 
 function overtimePhase(){
-  return {key:"overall", label:"Overtime", short:"OT", icon:"⏱️"};
+  return {key:"overall", stats:["overall"], label:"Overtime Clutch", short:"OT", icon:"⏱️", type:"clutch"};
 }
 
 function enterOvertime(){
@@ -1092,24 +1092,40 @@ function addAnotherOvertimePhase(){
 
 function phasePool(){
   return [
-    {key:"off", label:"Offense", short:"OFF", icon:"🔥"},
-    {key:"def", label:"Defense", short:"DEF", icon:"🛡️"},
-    {key:"ath", label:"Athleticism", short:"ATH", icon:"⚡"},
-    {key:"iq", label:"Game IQ", short:"IQ", icon:"🧠"},
-    {key:"overall", label:"Overall", short:"OVR", icon:"⭐"}
+    {key:"off", stats:["off"], label:"Offense", short:"OFF", icon:"🔥", type:"single"},
+    {key:"def", stats:["def"], label:"Defense", short:"DEF", icon:"🛡️", type:"single"},
+    {key:"ath", stats:["ath"], label:"Athleticism", short:"ATH", icon:"⚡", type:"single"},
+    {key:"iq", stats:["iq"], label:"Game IQ", short:"IQ", icon:"🧠", type:"single"},
+    {key:"off_iq", stats:["off","iq"], label:"Offense + Game IQ", short:"OFF+IQ", icon:"🔥🧠", type:"combo"},
+    {key:"def_ath", stats:["def","ath"], label:"Defense + Athleticism", short:"DEF+ATH", icon:"🛡️⚡", type:"combo"},
+    {key:"off_ath", stats:["off","ath"], label:"Offense + Athleticism", short:"OFF+ATH", icon:"🔥⚡", type:"combo"},
+    {key:"def_iq", stats:["def","iq"], label:"Defense + Game IQ", short:"DEF+IQ", icon:"🛡️🧠", type:"combo"},
+    {key:"overall", stats:["overall"], label:"Overall / Clutch", short:"OVR", icon:"⭐", type:"clutch"}
   ];
 }
 
 function generateMatchPhases(){
   const pool = phasePool();
+  const singles = pool.filter(p => p.type === "single");
+  const combos = pool.filter(p => p.type === "combo");
+  const clutch = pool.find(p => p.key === "overall");
+
+  const pick = arr => arr[Math.floor(Math.random() * arr.length)];
   const phases = [];
-  const guaranteed = ["off","def","ath"];
 
-  guaranteed.forEach(key => phases.push(pool.find(p => p.key === key)));
-
-  while(phases.length < 5){
-    phases.push(pool[Math.floor(Math.random() * pool.length)]);
+  // Structure: two single-stat rounds, two combo rounds, one clutch/overall round.
+  // This keeps specialists useful while making balanced cards matter.
+  while(phases.filter(p => p.type === "single").length < 2){
+    const p = pick(singles);
+    if(!phases.some(x => x.key === p.key)) phases.push(p);
   }
+
+  while(phases.filter(p => p.type === "combo").length < 2){
+    const p = pick(combos);
+    if(!phases.some(x => x.key === p.key)) phases.push(p);
+  }
+
+  phases.push(clutch);
 
   for(let i = phases.length - 1; i > 0; i--){
     const j = Math.floor(Math.random() * (i + 1));
@@ -1119,9 +1135,35 @@ function generateMatchPhases(){
   return phases;
 }
 
+function phaseStatLabel(key){
+  return {off:"OFF",def:"DEF",ath:"ATH",iq:"IQ",overall:"OVR"}[key] || key.toUpperCase();
+}
+
+function phaseScoreBreakdown(c, phase){
+  if(!phase) phase = phasePool()[0];
+
+  if(phase.key === "overall" || (phase.stats || []).includes("overall")){
+    return {
+      total:effectiveOverall(c),
+      parts:[{key:"overall", label:"OVR", value:effectiveOverall(c)}]
+    };
+  }
+
+  const stats = phase.stats || [phase.key];
+  const parts = stats.map(key => ({
+    key,
+    label:phaseStatLabel(key),
+    value:effectiveStat(c, key)
+  }));
+
+  return {
+    total:parts.reduce((sum, part) => sum + part.value, 0),
+    parts
+  };
+}
+
 function phaseValue(c, phase){
-  if(phase.key === "overall") return effectiveOverall(c);
-  return effectiveStat(c, phase.key);
+  return phaseScoreBreakdown(c, phase).total;
 }
 
 function currentMatchPhase(){
@@ -1133,16 +1175,19 @@ function phaseScheduleHtml(){
   if(!matchState || !matchState.phases) return "";
 
   return `
-    <div class="phase-schedule">
+    <div class="arena-phase-strip">
       ${matchState.phases.map((phase, index) => {
         const round = index + 1;
+        const result = (matchState.roundResults || [])[index] || "";
         const status = round < matchState.round ? "complete" : round === matchState.round && !matchState.finished ? "current" : "upcoming";
+        const resultText = result === "win" ? "W" : result === "loss" ? "L" : result === "tie" ? "T" : "";
 
         return `
-          <div class="phase-chip ${status}">
-            <span class="phase-round">R${round}</span>
-            <strong>${phase.icon} ${phase.short}</strong>
-            <small>${phase.label}</small>
+          <div class="arena-phase-banner ${status} ${result}">
+            <span class="arena-phase-round">R${round}</span>
+            <strong>${phase.short}</strong>
+            <small>${phase.type === "combo" ? "Combo" : phase.type === "clutch" ? "Clutch" : "Single"}</small>
+            ${resultText ? `<em>${resultText}</em>` : ""}
           </div>
         `;
       }).join("")}
@@ -1154,6 +1199,54 @@ function phaseHintForCard(c){
   if(!matchState || matchState.finished) return "";
   const phase = currentMatchPhase();
   return phaseValue(c, phase);
+}
+
+function phaseBreakdownText(c, phase){
+  const detail = phaseScoreBreakdown(c, phase);
+  if(detail.parts.length === 1) return `${detail.parts[0].label} ${detail.parts[0].value}`;
+  return detail.parts.map(p => `${p.label} ${p.value}`).join(" + ");
+}
+
+function bestAvailablePhaseScore(){
+  if(!matchState || matchState.finished) return null;
+  const phase = currentMatchPhase();
+  const available = state.lineup
+    .filter(id => !matchState.used.includes(id))
+    .map(id => phaseValue(card(id), phase));
+
+  return available.length ? Math.max(...available) : null;
+}
+
+function matchDockCardHtml(c){
+  const disabled = !matchState || matchState.finished || matchState.used.includes(c.id);
+  const phase = matchState && !matchState.finished ? currentMatchPhase() : null;
+  const phaseScore = phase ? phaseValue(c, phase) : "—";
+  const bestScore = bestAvailablePhaseScore();
+  const isBest = !disabled && bestScore !== null && phaseScore === bestScore;
+  const wasPlayed = matchState && matchState.lastBattle && matchState.lastBattle.playerCardId === c.id;
+  const click = disabled ? "" : `onclick="playRound('${c.id}')"`;
+  const owned = state.collection[c.id] || 0;
+
+  return `
+    <button class="arena-dock-card ${c.rarity} ${disabled ? "used" : ""} ${isBest ? "best" : ""} ${wasPlayed ? "last-played" : ""}" ${click} ${disabled ? "disabled" : ""} style="${sportStyle(c)}">
+      <div class="arena-dock-thumb">
+        <img src="${c.realisticArt}"
+             alt="${c.name} card"
+             onerror="imageFallback(this, '${c.cardArt}')"/>
+        <span>Lv ${cardLevel(c.id)}</span>
+      </div>
+      <div class="arena-dock-name">${c.name}</div>
+      <div class="arena-dock-meta">${c.rarity} · ×${owned}</div>
+      <div class="arena-dock-stats">
+        <div><span>OVR</span><strong>${effectiveOverall(c)}</strong></div>
+        <div><span>OFF</span><strong>${displayStatValue(c,"off")}</strong></div>
+        <div><span>DEF</span><strong>${displayStatValue(c,"def")}</strong></div>
+        <div><span>ATH</span><strong>${displayStatValue(c,"ath")}</strong></div>
+        <div><span>IQ</span><strong>${displayStatValue(c,"iq")}</strong></div>
+        <div class="phase-total"><span>${phase ? phase.short : "PHASE"}</span><strong>${phaseScore}</strong></div>
+      </div>
+    </button>
+  `;
 }
 
 function startNextMatch(cup = false){
@@ -1181,6 +1274,13 @@ function battleCardHtml(c, side, score, outcome, category){
       <div class="battle-score-box">
         <span>${category || "Score"}</span>
         <strong>${scoreText}</strong>
+      </div>
+      <div class="battle-mini-stats">
+        <span>OVR ${effectiveOverall(c)}</span>
+        <span>OFF ${displayStatValue(c,"off")}</span>
+        <span>DEF ${displayStatValue(c,"def")}</span>
+        <span>ATH ${displayStatValue(c,"ath")}</span>
+        <span>IQ ${displayStatValue(c,"iq")}</span>
       </div>
     </div>
   `;
@@ -1323,7 +1423,7 @@ function rawEffectiveStat(c, key){
 }
 
 function effectiveStat(c, key){
-  // Overcap Whole Value v6:
+  // Quick Match Arena v1:
   // Base cards still live on a 25-99 scale, but upgrades/foils can push
   // effective stats beyond 99 so high-end cards do not waste upgrades.
   return Math.min(125, rawEffectiveStat(c, key));
@@ -1572,6 +1672,7 @@ function startMatch(cup = false){
     finished:false,
     lastBattle:null,
     result:null,
+    roundResults:[],
     phases:generateMatchPhases(),
     overtime:false
   };
@@ -1632,11 +1733,15 @@ function playRound(id){
     playerCardId: pc.id,
     opponentCardId: oc.id,
     category: cat.label,
+    breakdown:phaseBreakdownText(pc, cat),
     playerScore: pScore,
     opponentScore: oScore,
     playerWon,
     tied
   };
+
+  matchState.roundResults = matchState.roundResults || [];
+  matchState.roundResults[matchState.round - 1] = tied ? "tie" : playerWon ? "win" : "loss";
 
   matchState.history.push(line);
 
@@ -2067,6 +2172,8 @@ function render(){
   });
 
   const app = document.getElementById("app");
+
+  document.body.classList.toggle("match-arena-active", currentView === "match" && !!matchState);
 
   if(currentView === "home") app.innerHTML = viewHome();
   if(currentView === "collection") app.innerHTML = viewCollection();
@@ -2937,7 +3044,7 @@ function viewHome(){
   return `
     <div class="section-title">
       <div>
-        <h2>Clubhouse</h2><div class="build-label">Overcap Whole Value v6</div>
+        <h2>Clubhouse</h2><div class="build-label">Quick Match Arena v1</div>
         <p>Earn coins, open sport packs, complete goals, and build a 5-card lineup.</p>
       </div>
 
@@ -3146,7 +3253,7 @@ function viewPacks(){
   return `
     <div class="section-title">
       <div>
-        <h2>Packs</h2><div class="build-label">Overcap Whole Value v6</div>
+        <h2>Packs</h2><div class="build-label">Quick Match Arena v1</div>
         <p>Rookie → Pro → All-Star → Hall of Fame. Packs opened remain a major gate, but upgrades now use TP and duplicates first.</p>
         <p class="pity-explainer">Every pack has a tiny dream-pull chance. Pity counts dry streaks and resets when you naturally pull the target rarity.</p>
       </div>
@@ -3428,8 +3535,9 @@ function viewLineup(){
 
 function viewMatch(){
   if(matchState){
-    const playable = state.lineup
-      .map(id => cardHtml(card(id), {mode:"match", selected:matchState.used.includes(id)}))
+    const phase = !matchState.finished ? currentMatchPhase() : null;
+    const dock = state.lineup
+      .map(id => matchDockCardHtml(card(id)))
       .join("");
 
     const log = matchState.history.slice().reverse().map(x => `<div class="log-entry">${x}</div>`).join("");
@@ -3439,77 +3547,89 @@ function viewMatch(){
     const finishedClass = matchState.finished ? (matchState.result === "win" ? "match-win" : "match-loss") : "";
 
     return `
-      <div class="section-title">
-        <div>
-          <h2>${matchState.cup ? "Collector Cup Game" : "Quick Match"}</h2>
-          <p>Win 3 rounds before the other collector does. Quick Match record: <strong>${matchRecordText()}</strong></p>
-        </div>
-
-        <div class="row">
-          ${matchState.finished ? `<button onclick="startNextMatch(${matchState.cup ? "true" : "false"})" class="green" ${state.stamina < 1 ? "disabled" : ""}>Play again</button>` : ""}
-          <button onclick="endMatch()" class="${matchState.finished ? "gold" : "danger"}">${matchState.finished ? "Leave match" : "Forfeit / leave"}</button>
-        </div>
-      </div>
-
-      <div class="current-phase-callout">
-        ${!matchState.finished ? `
-          <span>Current phase</span>
-          <strong>${currentMatchPhase().icon} ${currentMatchPhase().label}</strong>
-          <small>${matchState.overtime ? 'Sudden death: tied overtime rounds continue until someone wins.' : 'Pick the unused card with the best ' + currentMatchPhase().label + ' score.'}</small>
-        ` : `
-          <span>Match complete</span>
-          <strong>${matchState.result === "win" ? "Victory" : "Defeat"}</strong>
-          <small>Start another match to get a new phase schedule.</small>
-        `}
-      </div>
-
-      ${phaseScheduleHtml()}
-
-      <div class="match-score-strip ${finishedClass}">
-        <div>
-          <span>Your rounds</span>
-          <strong>${matchState.you}</strong>
-        </div>
-        <div class="match-round-center">
-          <span>${matchState.finished ? (matchState.result === "win" ? "MATCH WON" : "MATCH LOST") : "ROUND " + matchState.round}</span>
-          <strong>VS</strong>
-        </div>
-        <div>
-          <span>${matchState.opp.name}</span>
-          <strong>${matchState.them}</strong>
-        </div>
-      </div>
-
-      <div class="battle-stage ${last ? "has-battle" : "waiting-battle"} ${finishedClass}">
-        <div class="court-lines"></div>
-
-        ${last ? `
-          ${battleCardHtml(playerCard, "player", last.playerScore, last.tied ? "tie" : last.playerWon ? "win" : "loss", last.category)}
-          <div class="battle-vs-core">
-            <div class="category-pill">${last.category}</div>
-            <div class="vs-burst">${last.tied ? "DRAW" : "VS"}</div>
-            <div class="round-result">${last.tied ? "Phase draw — no point" : last.playerWon ? "You won the round" : "Opponent won the round"}</div>
+      <div class="quick-arena ${finishedClass}">
+        <div class="arena-topbar">
+          <button onclick="endMatch()" class="${matchState.finished ? "gold" : "danger"}">${matchState.finished ? "Leave" : "Forfeit"}</button>
+          <div class="arena-title">
+            <span>${matchState.cup ? "Collector Cup Game" : "Quick Match Arena"}</span>
+            <strong>${matchState.finished ? (matchState.result === "win" ? "Victory" : "Defeat") : "Round " + matchState.round}</strong>
           </div>
-          ${battleCardHtml(opponentCard, "opponent", last.opponentScore, last.tied ? "tie" : last.playerWon ? "loss" : "win", last.category)}
-        ` : `
-          <div class="battle-empty-state">
-            <div class="floating-card-back one"></div>
-            <div class="floating-card-back two"></div>
-            <h3>Choose a card to start the battle</h3>
-            <p>Your selected card will slide onto the court against the opponent card.</p>
+          ${matchState.finished ? `<button onclick="startNextMatch(${matchState.cup ? "true" : "false"})" class="green" ${state.stamina < 1 ? "disabled" : ""}>Play again</button>` : `<span class="arena-record">${matchState.you}-${matchState.them}</span>`}
+        </div>
+
+        ${phaseScheduleHtml()}
+
+        <div class="arena-phase-callout">
+          ${!matchState.finished ? `
+            <div>
+              <span>Current phase</span>
+              <strong>${phase.icon} ${phase.label}</strong>
+              <small>${phase.type === "combo" ? "Combo round: phase score is the two listed stats added together." : phase.type === "clutch" ? "Clutch round: uses effective overall." : "Single-stat round: specialists can steal these phases."}</small>
+            </div>
+            <div class="arena-phase-formula">
+              ${phase.stats.map(s => `<b>${phaseStatLabel(s)}</b>`).join("<em>+</em>")}
+            </div>
+          ` : `
+            <div>
+              <span>Match complete</span>
+              <strong>${matchState.result === "win" ? "Victory" : "Defeat"}</strong>
+              <small>Review the last battle or start another match.</small>
+            </div>
+          `}
+        </div>
+
+        <div class="match-score-strip arena-score-strip ${finishedClass}">
+          <div>
+            <span>Your rounds</span>
+            <strong>${matchState.you}</strong>
           </div>
-        `}
+          <div class="match-round-center">
+            <span>${matchState.finished ? (matchState.result === "win" ? "MATCH WON" : "MATCH LOST") : (phase ? phase.short : "ROUND")}</span>
+            <strong>VS</strong>
+          </div>
+          <div>
+            <span>${matchState.opp.name}</span>
+            <strong>${matchState.them}</strong>
+          </div>
+        </div>
+
+        <div class="battle-stage arena-battle-stage ${last ? "has-battle" : "waiting-battle"} ${finishedClass}">
+          <div class="court-lines"></div>
+
+          ${last ? `
+            ${battleCardHtml(playerCard, "player", last.playerScore, last.tied ? "tie" : last.playerWon ? "win" : "loss", last.category)}
+            <div class="battle-vs-core">
+              <div class="category-pill">${last.category}</div>
+              <div class="vs-burst">${last.tied ? "DRAW" : "VS"}</div>
+              <div class="round-result">${last.tied ? "Phase draw — no point" : last.playerWon ? "You won the round" : "Opponent won the round"}</div>
+              ${last.breakdown ? `<div class="battle-breakdown">Your calc: ${last.breakdown}</div>` : ""}
+            </div>
+            ${battleCardHtml(opponentCard, "opponent", last.opponentScore, last.tied ? "tie" : last.playerWon ? "loss" : "win", last.category)}
+          ` : `
+            <div class="battle-empty-state">
+              <div class="floating-card-back one"></div>
+              <div class="floating-card-back two"></div>
+              <h3>Choose from your lineup dock</h3>
+              <p>Bottom cards show OVR, all four stats, and the current phase score.</p>
+            </div>
+          `}
+        </div>
+
+        <div class="arena-bottom-dock-wrap">
+          <div class="arena-dock-header">
+            <span>Your lineup</span>
+            <strong>${phase ? "Current: " + phase.short : "Match complete"}</strong>
+          </div>
+          <div class="arena-bottom-dock">
+            ${dock}
+          </div>
+        </div>
+
+        <details class="arena-log">
+          <summary>Match log</summary>
+          <div class="log">${log || `<div class="log-entry">The other collector shuffles their lineup.</div>`}</div>
+        </details>
       </div>
-
-      <div class="message">
-        Each round has a visible phase schedule. Pick the best unused card for the current phase. Same-sport matchups give your card a small bonus.
-      </div>
-
-      <h3>Choose a card</h3>
-      <div class="quick-hand-grid">${playable}</div>
-
-      <h3>Match log</h3>
-      <div class="log">${log || `<div class="log-entry">The other collector shuffles their lineup.</div>`}</div>
     `;
   }
 
@@ -3517,16 +3637,17 @@ function viewMatch(){
     <div class="section-title">
       <div>
         <h2>Quick Match</h2>
-        <p>Best-of-five card matchup. Costs 1 stamina and rewards coins.</p>
+        <p>Best-of-five card battle. Costs 1 stamina and rewards coins + training points.</p>
       </div>
       <span class="pill">⚔️ ${matchRecordText()} <small>record</small></span>
     </div>
 
-    <div class="match-start-panel">
+    <div class="match-start-panel arena-start-panel">
       <div class="match-start-copy">
-        <h3>Start quick match</h3>
+        <h3>Start Quick Match Arena</h3>
         <p>Your lineup has ${state.lineup.length}/5 cards. You need at least 3.</p>
-        <p>Each match now shows the 5-round phase schedule before you pick cards.</p>
+        <p>Matches now use a phone-first arena layout: top phase banners, middle battle, bottom lineup dock.</p>
+        <p>Phase schedule includes single-stat rounds, two-stat combo rounds, and an overall clutch round.</p>
         <button onclick="startMatch(false)" class="green" ${state.lineup.length < 3 || state.stamina < 1 ? "disabled" : ""}>Start quick match -1 stamina</button>
       </div>
       <div class="match-start-preview">
@@ -4056,7 +4177,7 @@ function viewCup(){
   return `
     <div class="section-title">
       <div>
-        <h2>Collector Cup</h2><div class="build-label">Overcap Whole Value v6</div>
+        <h2>Collector Cup</h2><div class="build-label">Quick Match Arena v1</div>
         <p>Submit a 5-card lineup snapshot and run a simulated tournament. Cards remain usable in Quick Match.</p>
       </div>
       <span class="pill">🏆 ${state.stats.cupChampionships || 0} <small>titles</small></span>

@@ -594,3 +594,21 @@ Display change:
 - Overcapped stats now display as their full effective value.
 - Example: a base 99 stat with +4 upgrade value now displays as 103 instead of 99+4.
 - Scoring logic is unchanged.
+
+## Quick Match Arena v1
+
+Rebuilt Quick Match into a phone-first battle layout.
+
+Added:
+- Top phase banner strip.
+- Center battle stage.
+- Bottom sticky lineup dock.
+- Each lineup card shows thumbnail, OVR, OFF, DEF, ATH, IQ, and current phase score.
+- Best current option gets a gold highlight.
+- New phase schedule structure:
+  - 2 single-stat rounds.
+  - 2 two-stat combo rounds.
+  - 1 overall/clutch round.
+- Combo phases include OFF+IQ, DEF+ATH, OFF+ATH, and DEF+IQ.
+- Phase results now show W/L/T on the top banners.
+- Active Quick Match hides the normal header/sidebar on phone to fit the arena on screen.
