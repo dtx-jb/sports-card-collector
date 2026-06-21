@@ -612,3 +612,473 @@ Added:
 - Combo phases include OFF+IQ, DEF+ATH, OFF+ATH, and DEF+IQ.
 - Phase results now show W/L/T on the top banners.
 - Active Quick Match hides the normal header/sidebar on phone to fit the arena on screen.
+
+## Six Players + Match Rewards v1
+
+Added 6 new custom player cards from the player creation package:
+- Kaden Vail
+- Jalen Arden
+- Jace Hampton
+- Chase Baylor
+- Rafael Costa
+- Avery Cole
+
+Card art handling:
+- The provided realistic JPGs were copied into `assets/realistic/`.
+- Matching fallback SVGs were generated into `assets/cards/`.
+- Each new card now has both `realisticArt` and `cardArt` covered.
+
+Quick Match change:
+- Match Complete now shows Victory/Defeat plus rewards.
+- Removed the review sentence from the match-complete callout.
+- Rewards display includes coins, Training Points, and Collector XP.
+
+Card pool:
+- Total cards increased from 120 to 126.
+
+## Match Rewards Display Fix v2
+
+Bug fix:
+- The active Quick Match Arena template now removes the old review sentence.
+- Match Complete now displays Victory/Defeat plus a visible Rewards row.
+- Added a secondary rewards strip under the score as a fallback so rewards cannot be missed.
+
+## Bug Fix Counts + Goals v1
+
+Bug fixes:
+- Clubhouse sport counts now use live card-pool totals instead of the old `/8` denominator.
+- Sport totals now read from the actual card pool:
+  - Football: 32
+  - Basketball: 32
+  - Soccer: 31
+  - Baseball: 31
+- Unique card count now uses owned card IDs that exist in the current card pool.
+- Collect 50 unique cards and Collect 100 unique cards goals now use `uniqueOwnedCount()`.
+- Top/card-pool text now supports the current 126-card pool.
+
+## Goal Logic Hard Fix v2
+
+Bug fix:
+- Goal completion now uses one ID-driven function: `goalCompleted(goal)`.
+- This bypasses the prior mismatch between `complete`, `check`, and rendered button logic.
+- Collect 50 unique cards and Collect 100 unique cards now evaluate directly from `uniqueOwnedCount()`.
+- Current card pool totals:
+  - Total: 126
+  - Football: 32
+  - Basketball: 32
+  - Soccer: 31
+  - Baseball: 31
+
+## Goal Actual ID Fix v3
+
+Bug fix:
+- The actual goal IDs in `cards.js` are `fifty_unique` and `hundred_unique`.
+- Previous fix targeted `unique_50` and `unique_100`, so the visible goal cards stayed incomplete.
+- `questDone(id)` now supports the real IDs:
+  - `fifty_unique` => `uniqueOwnedCount() >= 50`
+  - `hundred_unique` => `uniqueOwnedCount() >= 100`
+- Save key was not changed so current test progress can carry over.
+
+## Draft Mode Economy v1
+
+New system:
+- Quick Match no longer costs stamina.
+- Quick Match win gives 3 Draft clears.
+- Quick Match loss gives 1 Draft clear.
+- Direct Quick Match coins/TP were removed for non-Cup Quick Matches.
+- A 5x5 Draft Board was added.
+- Each board has one jackpot.
+- Jackpot has a 50/50 chance to be:
+  - Pack Jackpot
+  - Rare+ Card Jackpot
+
+Pack Jackpot:
+- Can award any pack, including locked packs.
+- Better packs are rarer.
+- Unlocking better pack tiers improves their Draft odds.
+
+Rare+ Jackpot:
+- Rare is most common.
+- Epic is uncommon.
+- Legendary is rare.
+
+Other board spaces:
+- Coins
+- Training Points
+- Stamina
+- Bonus Draft clear
+- Blanks
+
+Save key:
+- Not changed, so current testing progress should carry over.
+
+## Draft Post-Match Flow v2
+
+Tweaks:
+- Draft now happens immediately after Quick Match.
+- After a non-Cup Quick Match ends, the current view switches to Draft Board.
+- Players cannot start another Quick Match while they have unused Draft clears.
+- This prevents banking clears by playing match after match.
+- When the jackpot is uncovered, the board resets automatically.
+- A message shows the jackpot reward and explains that the board reset so remaining rewards on that board cannot be cleared.
+
+## Draft Board Fix v3
+
+Bug/tuning fixes:
+- Hidden jackpot tiles no longer show "Jackpot?".
+- Hidden jackpot tiles no longer get the jackpot CSS class until revealed.
+- Removed the player-facing Manual New Board button.
+- Board now resets only when the jackpot is found.
+- Jackpot type still targets 50/50 Pack/Rare+, but short-streak protection prevents repeated Pack or Rare+ runs during testing.
+
+## Draft Jackpot Reveal + Card Art Updates v1
+
+Card art updates:
+- Updated existing card data/images for: bs_star_hammer, bb_star_prime, sc_star_soleil, fb_qb_ross, bs_3b_cannon_16.
+- Copied 5 realistic JPG assets from the fixed five-card package.
+- Generated 0 fallback SVG assets where needed.
+- No new card IDs were added; total card count is unchanged.
+
+Draft jackpot reveal:
+- Rare+ Draft jackpot now opens a face-down card reveal overlay.
+- Player taps the card to flip it.
+- After reveal, player can inspect the card.
+- The card is still awarded immediately, but the reveal gives the reward a pack-opening style moment.
+
+## Draft Reveal Interaction Fix v2
+
+Bug fixes:
+- Draft Rare+ reveal card no longer flips backward on hover.
+- Reveal now flips only on click/tap.
+- Close button now stops propagation and closes the overlay.
+- Inspect button now stops propagation and opens card inspect.
+- Reveal card shell no longer uses a nested button structure, which was causing unreliable click behavior.
+
+## Draft Buttons + Admin Clears Fix v3
+
+Bug fixes:
+- Draft reveal Close/Inspect now use delegated data-action click handling.
+- Buttons no longer depend on inline onclick behavior inside the overlay.
+- Card shell click/tap is separated from button click/tap.
+- Added pointer-event hardening for the reveal overlay.
+
+Admin:
+- Added +3 Draft clears.
+- Added +10 Draft clears.
+- Added Reset Draft board.
+
+## Draft Reveal Auto Collection v4
+
+Changed Rare+ Draft jackpot reveal:
+- Removed fragile Inspect/Close overlay behavior.
+- Player taps the face-down card to flip it.
+- After reveal, the overlay automatically closes.
+- The game jumps to Collection and opens that exact card for inspection.
+- Added a Skip to card button as a backup path.
+
+## Draft Reward Claim Fix v5
+
+Draft Rare+ reveal:
+- Reveal no longer automatically navigates to Collection.
+- After flip, player chooses:
+  - Back to Draft Board
+  - View in Collection
+- View in Collection jumps to Collection and attempts to open that exact card.
+
+Draft pack jackpot bug:
+- Pack jackpots are no longer lost if a previous pack reveal is still open.
+- If a pack reveal is active, the jackpot pack is saved into Pending Draft Packs.
+- Draft Board now shows pending Draft pack jackpots with an Open Pack button.
+- Player must finish the current pack reveal before opening pending Draft packs.
+
+## Pack Auto Complete + Collection Focus v6
+
+Collection focus:
+- Draft Rare+ View in Collection stores the pulled card ID.
+- Collection attempts to highlight, scroll to, and inspect that exact card.
+
+Pack reveal:
+- Removed the need for Done.
+- Pack reveal auto-completes once all cards are flipped.
+- If a Draft pack jackpot is earned while a previous pack is fully revealed, the old reveal clears and the Draft pack opens.
+- If a Draft pack jackpot is earned while a previous pack is mid-reveal, it is safely saved as a pending Draft pack.
+
+## Draft Pack Reset + Simple Reveal v7
+
+Fixes:
+- Removed the broken View in Collection flow.
+- Rare+ jackpot reveal now only offers Back to Draft Board after reveal.
+- Pack jackpot now always resets the board after being selected.
+- Pack jackpot now either opens immediately or is saved as a Pending Draft Pack if another pack reveal is mid-reveal.
+- Fixed board getting stuck at 25/25 cleared after a pack jackpot.
+
+## Art Batches 1-3 v1
+
+Applied existing-card art updates from 3 player-creation batches.
+
+Updated existing card IDs:
+- bs_c_archer_03
+- bb_pg_ford_06
+- fb_rb_knox
+- sc_st_hayes_01
+- bb_c_hale_15
+- bs_cf_reed_08
+- bb_pg_carter
+- fb_qb_frost_01
+- sc_am_page_06
+- bb_sf_banks
+- bs_2b_wells
+- bb_pf_cannon_04
+- fb_te_price_04
+- sc_st_mills_09
+- bs_sp_fox_11
+
+Assets copied:
+- assets/realistic/bs_c_archer_03.jpg
+- assets/realistic/bb_pg_ford_06.jpg
+- assets/realistic/fb_rb_knox.jpg
+- assets/realistic/sc_st_hayes_01.jpg
+- assets/realistic/bb_c_hale_15.jpg
+- assets/realistic/bs_cf_reed_08.jpg
+- assets/realistic/bb_pg_carter.jpg
+- assets/realistic/fb_qb_frost_01.jpg
+- assets/realistic/sc_am_page_06.jpg
+- assets/realistic/bb_sf_banks.jpg
+- assets/realistic/bs_2b_wells.jpg
+- assets/realistic/bb_pf_cannon_04.jpg
+- assets/realistic/fb_te_price_04.jpg
+- assets/realistic/sc_st_mills_09.jpg
+- assets/realistic/bs_sp_fox_11.jpg
+
+Validation:
+- Total updates applied: 15
+- Total game cards unchanged: 126
+- Missing IDs: none
+- Duplicate update IDs: none
+- Image files copied from batch packages and validated with PIL.
+- Source update files:
+  - batch_1/batch_1_card_updates.json
+  - batch_2/batch_2_card_updates.json
+  - batch_3/batch_3_card_updates.json
+
+## Draft Pack Jackpot Force Fix v8
+
+Bug fix:
+- Any Draft tile with type `pack` or `rareplus` is now forcibly treated as the jackpot.
+- This fixes boards where a Rookie Pack appeared as a revealed reward without resetting the board.
+- Pack jackpot now always either:
+  - opens immediately and sends player to Packs, or
+  - saves as a Pending Draft Pack if another pack reveal is mid-reveal.
+- Added a repair function for old/stale board states that had a revealed pack or Rare+ tile without board reset.
+
+## Art Batches 4-7 v1
+
+Applied existing-card art updates from player-creation batches 4 through 7.
+
+Updated existing card IDs:
+- bs_3b_bishop_06
+- bb_sf_mercer_08
+- fb_lb_pierce_05
+- sc_cm_maddox_10
+- bs_c_santiago_13
+- bs_dh_bridges_10
+- bb_sg_bishop_02
+- fb_wr_fox_03
+- sc_cm_hunt_02
+- bb_sf_sutton_13
+- bs_sp_bishop_01
+- bb_sg_reyes_07
+- fb_cb_holloway_06
+- sc_cdm_bishop_07
+- bs_c_morales
+- bs_ss_holloway_07
+- bb_sg_miles
+- fb_edge_rhodes_08
+- sc_fb_valdez_08
+- bs_cp_frost_12
+
+Assets copied:
+- assets/realistic/bs_3b_bishop_06.jpg
+- assets/realistic/bb_sf_mercer_08.jpg
+- assets/realistic/fb_lb_pierce_05.jpg
+- assets/realistic/sc_cm_maddox_10.jpg
+- assets/realistic/bs_c_santiago_13.jpg
+- assets/realistic/bs_dh_bridges_10.jpg
+- assets/realistic/bb_sg_bishop_02.jpg
+- assets/realistic/fb_wr_fox_03.jpg
+- assets/realistic/sc_cm_hunt_02.jpg
+- assets/realistic/bb_sf_sutton_13.jpg
+- assets/realistic/bs_sp_bishop_01.jpg
+- assets/realistic/bb_sg_reyes_07.jpg
+- assets/realistic/fb_cb_holloway_06.jpg
+- assets/realistic/sc_cdm_bishop_07.jpg
+- assets/realistic/bs_c_morales.jpg
+- assets/realistic/bs_ss_holloway_07.jpg
+- assets/realistic/bb_sg_miles.jpg
+- assets/realistic/fb_edge_rhodes_08.jpg
+- assets/realistic/sc_fb_valdez_08.jpg
+- assets/realistic/bs_cp_frost_12.jpg
+
+Validation:
+- Total updates applied: 20
+- Total game cards unchanged: 126
+- Missing IDs: none
+- Duplicate update IDs: none
+- All images validated as 900 × 1260 RGB JPEGs.
+- Source update files:
+  - batch_4/batch_4_card_updates.json
+  - batch_5/batch_5_card_updates.json
+  - batch_6/batch_6_card_updates.json
+  - batch_7/cardgame_art_batch_7_package/batch_7_card_updates.json
+
+## Art Corrections 3 Cards v1
+
+Applied corrected existing-card art files.
+
+Updated existing card IDs:
+- bb_sf_mercer_08
+- sc_am_page_06
+- bb_sf_sutton_13
+
+Assets copied:
+- assets/realistic/bb_sf_mercer_08.jpg
+- assets/realistic/sc_am_page_06.jpg
+- assets/realistic/bb_sf_sutton_13.jpg
+
+Validation:
+- Total corrections applied: 3
+- Total game cards unchanged: 126
+- Missing IDs: none
+- Duplicate correction IDs: none
+- All images validated as 900 × 1260 RGB JPEGs.
+- Source update files:
+  - cardgame_art_correction_cam_mercer_package/corrected_card_updates.json
+  - cardgame_art_correction_orion_makai_package/corrected_card_updates.json
+
+## Art Batches 8-10 v1
+
+Applied existing-card art updates from player-creation batches 8 through 10.
+
+Updated existing card IDs:
+- bs_cp_page_02
+- bb_pg_cross_01
+- fb_k_mason_10
+- sc_gk_barrett_05
+- bs_1b_valdez_14
+- bs_2b_mills_05
+- bb_c_bridges_10
+- fb_dt_page_09
+- sc_w_cross_03
+- bs_cf_reed
+- bs_of_hayes_09
+- bb_pf_mills_09
+- fb_s_bennett_07
+- sc_st_holt
+- bb_pg_hayes_11
+
+Assets copied:
+- assets/realistic/bs_cp_page_02.jpg
+- assets/realistic/bb_pg_cross_01.jpg
+- assets/realistic/fb_k_mason_10.jpg
+- assets/realistic/sc_gk_barrett_05.jpg
+- assets/realistic/bs_1b_valdez_14.jpg
+- assets/realistic/bs_2b_mills_05.jpg
+- assets/realistic/bb_c_bridges_10.jpg
+- assets/realistic/fb_dt_page_09.jpg
+- assets/realistic/sc_w_cross_03.jpg
+- assets/realistic/bs_cf_reed.jpg
+- assets/realistic/bs_of_hayes_09.jpg
+- assets/realistic/bb_pf_mills_09.jpg
+- assets/realistic/fb_s_bennett_07.jpg
+- assets/realistic/sc_st_holt.jpg
+- assets/realistic/bb_pg_hayes_11.jpg
+
+Validation:
+- Total updates applied: 15
+- Total game cards unchanged: 126
+- Missing IDs: none
+- Duplicate update IDs: none
+- All images validated as 900 × 1260 RGB JPEGs.
+- Source update files:
+  - batch_8/batch_8_card_updates.json
+  - batch_9/batch_9_card_updates.json
+  - batch_10/batch_10_card_updates.json
+
+## Art Batch 11 Common Completion v1
+
+Applied final common-card art updates from player-creation batch 11.
+
+Updated existing card IDs:
+- bs_1b_rhodes_04
+- bs_sp_miller
+- bb_c_valdez_05
+- bb_sf_rhodes_03
+- fb_rb_morrow_02
+- sc_cm_santos
+- sc_cb_sutton_04
+
+Assets copied:
+- assets/realistic/bs_1b_rhodes_04.jpg
+- assets/realistic/bs_sp_miller.jpg
+- assets/realistic/bb_c_valdez_05.jpg
+- assets/realistic/bb_sf_rhodes_03.jpg
+- assets/realistic/fb_rb_morrow_02.jpg
+- assets/realistic/sc_cm_santos.jpg
+- assets/realistic/sc_cb_sutton_04.jpg
+
+Validation:
+- Total updates applied: 7
+- Total game cards unchanged: 126
+- Missing IDs: none
+- Duplicate update IDs: none
+- All images validated as 900 × 1260 RGB JPEGs.
+- Source update file: batch_11_card_updates.json
+
+## Pack Continue Flow Fix v2
+
+Pack reveal fix:
+- Reverted the broken auto-complete behavior.
+- Reveal All no longer closes the pack immediately.
+- One-by-one reveals no longer trap the player.
+- After all cards are flipped, the player gets a clear transition button:
+  - Open next pack, when queued packs remain
+  - Continue, when this is the final pack
+- Pack rewards are still granted immediately; the button only advances the visual reveal flow.
+- Buying another pack from the reveal hub now requires the current pack to be fully flipped first.
+
+## Buy 5 Pack Start Fix v3
+
+Bug fix:
+- Multi-pack purchase now explicitly switches to Packs and starts the first reveal immediately.
+- `openPack()` now renders immediately and again on the next animation frame.
+- This fixes the issue where Buy 5 created the queue but appeared to do nothing until page refresh.
+- Added explicit `buyFivePacks(key)` / `buyOnePack(key)` helpers to avoid inline quantity parsing issues.
+- Existing queued-pack reveal flow remains player-controlled through Open next pack / Continue.
+
+## Pack Reveal State Persist Fix v4
+
+Bug fix:
+- Active pack reveal and pack queue are now synced into the save state.
+- After Buy 5, the game starts the first reveal, saves that reveal state, and forces the Packs screen to re-render.
+- Added a safety fallback: if the reveal was created but the screen did not visibly update, the page reloads once and restores the active reveal.
+- Buy 1 / Buy 3 / Buy 5 now all use the same explicit `handlePackBuy(event, key, quantity)` path.
+
+## Pack State Queue Fix v5
+
+Bug fix:
+- Pack purchases now use a state-backed queue (`state.activePackQueue`) instead of relying only on runtime variables.
+- Buy 5 stores the queue in save state first, starts the first reveal from that state, then renders.
+- Refresh no longer needs to be the only way to see the reveal; if the UI still fails to show it, the fallback restores from state.
+- `startNextPackFromQueue()` now delegates to the state-backed queue.
+- This addresses the bug where coins were spent, cards/queue existed, but the reveal did not appear until refresh.
+
+## Core Stability Test v1
+
+Included:
+- Batch 12 existing-card art updates: bs_2b_winters_15, bb_pf_rios, fb_te_mercer_14, sc_gk_holloway_13, bb_sg_mercer_12
+- Fresh build save key: majorSportsCardCollector_core_stability_test_v1
+- Auto-save still works inside this build.
+- Fresh game starts at 100/100 stamina for stamina testing.
+- Clubhouse, Packs, My Lineup, Quick Match, Draft Board, Earn Coins, and Collector Cup UI cleanup.
+- Packs now show Buy 1 / Buy 5 / Buy 10.
+- Admin includes Stability test setup and Clear active pack state.

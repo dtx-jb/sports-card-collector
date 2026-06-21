@@ -1,6 +1,6 @@
 // js/game.js
 
-const SAVE_KEY = "majorSportsCardCollector_quick_match_arena_v1";
+const SAVE_KEY = "majorSportsCardCollector_core_stability_test_v1";
 
 let state = loadGame();
 let currentView = "home";
@@ -75,9 +75,17 @@ function normalizeState(){
     coinsReturned:0,
     tpWon:0
   };
+
+  state.draft = state.draft || {clears:0, board:null, history:[]};
+  if(typeof state.draft.clears !== "number") state.draft.clears = 0;
+  state.draft.history = state.draft.history || [];
+  state.draft.pendingPacks = state.draft.pendingPacks || [];
+  repairDraftBoardState();
 }
 
 normalizeState();
+restorePackRuntimeFromState();
+hydratePackRuntimeFromStateQueue();
 
 function freshState(){
   return {
@@ -87,8 +95,8 @@ function freshState(){
     collectorXP:0,
     packUnlockOverride:false,
     daily:{bonus:false,sponsor:false,drill:false,shop:false},
-    stamina:10,
-    maxStamina:10,
+    stamina:100,
+    maxStamina:100,
     day:1,
     collection:{
       fb_qb_ross:1,
@@ -104,6 +112,7 @@ function freshState(){
     upgrades:{},
     foil:{},
     stats:{packsOpened:0,matchesWon:0,matchesLost:0,cupGames:0,cupWins:0,cupLosses:0,cupTournaments:0,cupChampionships:0,cupRunnerUps:0,cupPrizeCards:0,totalCards:4,dailyClaims:0,sponsorClaims:0,doublesSold:0,upgradesMade:0},
+    draft:{clears:0,board:null,history:[],pendingPacks:[]},
     log:["You opened a fresh binder and started with one card from each major sport."]
   };
 }
@@ -118,7 +127,191 @@ function loadGame(){
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function ownedCardIds(){
+  return Object.keys(state.collection || {}).filter(id => (state.collection[id] || 0) > 0 && card(id));
+}
+
+function uniqueOwnedCount(){
+  return ownedCardIds().length;
+}
+
+function totalCardCount(){
+  return CARDS.length;
+}
+
+function sportOwnedCount(sport){
+  return CARDS.filter(c => c.sport === sport && (state.collection[c.id] || 0) > 0).length;
+}
+
+function sportTotalCount(sport){
+  return CARDS.filter(c => c.sport === sport).length;
+}
+
+function rarityOrBetterOwned(rarities){
+  return CARDS.some(c => rarities.includes(c.rarity) && (state.collection[c.id] || 0) > 0);
+}
+
+
+
+function syncPackRuntimeToState(){
+  state.runtimePackOpening = packOpening || null;
+  state.runtimePackQueue = Array.isArray(packQueue) ? packQueue : [];
+  state.runtimeLastPackIds = Array.isArray(lastPack) ? lastPack.map(c => typeof c === "string" ? c : c.id).filter(Boolean) : [];
+  state.runtimeCurrentView = currentView;
+}
+
+function restorePackRuntimeFromState(){
+  if(state.runtimePackOpening){
+    packOpening = state.runtimePackOpening;
+    packQueue = Array.isArray(state.runtimePackQueue) ? state.runtimePackQueue : [];
+    lastPack = (state.runtimeLastPackIds && state.runtimeLastPackIds.length ? state.runtimeLastPackIds : (packOpening.cards || []))
+      .map(id => card(id))
+      .filter(Boolean);
+    currentView = "packs";
+    return;
+  }
+
+  if(state.runtimeCurrentView && ["home","collection","packs","lineup","match","draft","earn","admin","season","quests","settings"].includes(state.runtimeCurrentView)){
+    currentView = state.runtimeCurrentView;
+  }
+}
+
+function clearPackRuntimeState(){
+  state.runtimePackOpening = null;
+  state.runtimePackQueue = [];
+  state.runtimeLastPackIds = [];
+}
+
+function ensurePackRevealVisible(){
+  setTimeout(() => {
+    if(currentView !== "packs" || !packOpening) return;
+    const app = document.getElementById("app");
+    const hasPackStage = !!document.querySelector(".pack-stage");
+    if(app && !hasPackStage){
+      syncPackRuntimeToState();
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+      window.location.reload();
+    }
+  }, 250);
+}
+
+function handlePackBuy(event, key, quantity = 1){
+  if(event){
+    event.preventDefault();
+    event.stopPropagation();
+  }
+  openPack(key, quantity);
+}
+
+
+
+function hydratePackRuntimeFromStateQueue(){
+  state.activePackQueue = state.activePackQueue || [];
+  state.activePackOpening = state.activePackOpening || null;
+
+  if(state.activePackOpening){
+    packOpening = state.activePackOpening;
+    packQueue = state.activePackQueue || [];
+    lastPack = (packOpening.cards || []).map(id => card(id)).filter(Boolean);
+    currentView = "packs";
+    return true;
+  }
+
+  if(!packOpening && (state.activePackQueue || []).length){
+    startNextPackFromStateQueue();
+    currentView = "packs";
+    return true;
+  }
+
+  return false;
+}
+
+function persistPackRuntime(){
+  state.activePackOpening = packOpening || null;
+  state.activePackQueue = Array.isArray(packQueue) ? packQueue : [];
+}
+
+function clearActivePackState(){
+  state.activePackOpening = null;
+  state.activePackQueue = [];
+  state.runtimePackOpening = null;
+  state.runtimePackQueue = [];
+  state.runtimeLastPackIds = [];
+}
+
+function startNextPackFromStateQueue(){
+  state.activePackQueue = state.activePackQueue || [];
+  packQueue = state.activePackQueue;
+
+  const next = packQueue.shift();
+  if(!next){
+    packOpening = null;
+    state.activePackOpening = null;
+    state.activePackQueue = [];
+    return false;
+  }
+
+  lastPack = next.cards.map(id => card(id)).filter(Boolean);
+
+  const heatIndexes = heatCardIndexesInPack(next.cards);
+  const heatIndex = heatIndexes.length ? heatIndexes[0] : bestCardIndexInPack(next.cards);
+
+  packOpening = {
+    key:next.key,
+    cards:next.cards,
+    newFlags:next.newFlags || [],
+    ripped:false,
+    flipped:[],
+    heatIndex,
+    heatIndexes,
+    bigPullReady:false,
+    guaranteeApplied:next.guaranteeApplied || null
+  };
+
+  state.activePackOpening = packOpening;
+  state.activePackQueue = packQueue;
+  return true;
+}
+
+function saveAndRenderPackReveal(){
+  persistPackRuntime();
+  state.runtimeCurrentView = "packs";
+  currentView = "packs";
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  render();
+
+  setTimeout(() => {
+    const hasStage = !!document.querySelector(".pack-stage");
+    if(currentView === "packs" && packOpening && !hasStage){
+      localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+      window.location.reload();
+    }
+  }, 100);
+}
+
+
 function saveGame(){
+  persistPackRuntime();
+  if(typeof syncPackRuntimeToState === "function") syncPackRuntimeToState();
   localStorage.setItem(SAVE_KEY, JSON.stringify(state));
 }
 
@@ -129,6 +322,9 @@ function resetGame(){
     currentView = "home";
     lastPack = [];
     packOpening = null;
+    packQueue = [];
+    clearPackRuntimeState();
+    clearActivePackState();
     matchState = null;
     render();
     toast("Collection reset.");
@@ -739,13 +935,30 @@ function randomCard(packKey){
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+
+function buyFivePacks(key){
+  openPack(key, 5);
+}
+
+
+function buyThreePacks(key){
+  handlePackBuy(null, key, 3);
+}
+
+function buyOnePack(key){
+  openPack(key, 1);
+}
+
+
 function openPack(key, quantity = 1){
   const pack = PACKS[key];
+  if(!pack) return;
 
   if(!isPackUnlocked(key)){
     toast(`${pack.name} is locked. Check the unlock requirements.`);
     return;
   }
+
   quantity = Math.max(1, Math.min(10, Number(quantity) || 1));
   const totalCost = pack.cost * quantity;
 
@@ -754,21 +967,28 @@ function openPack(key, quantity = 1){
     return;
   }
 
-  if(packOpening || packQueue.length){
-    toast("Finish the current pack queue first.");
+  hydratePackRuntimeFromStateQueue();
+
+  if(packOpening && typeof allPackCardsFlipped === "function" && allPackCardsFlipped()){
+    finishPackReveal(false);
+  }
+
+  if(packOpening || packQueue.length || (state.activePackQueue || []).length || state.activePackOpening){
+    toast("Finish the current pack reveal first.");
+    saveAndRenderPackReveal();
     return;
   }
 
   state.coins -= totalCost;
-  packQueue = [];
+
+  const newQueue = [];
 
   for(let q = 0; q < quantity; q++){
     const pulled = [];
     const guarantees = pityGuaranteesForPack(key);
 
     for(let i = 0; i < pack.count; i++){
-      const c = randomCard(key);
-      pulled.push(c.id);
+      pulled.push(randomCard(key).id);
     }
 
     const guaranteedResult = applyPackGuarantee(key, pulled, guarantees);
@@ -789,11 +1009,10 @@ function openPack(key, quantity = 1){
     updatePackPityAfterOpen(key, finalPulled);
     recordPackHistory(key, finalPulled, guaranteedResult.applied);
 
-    const tpEarned = packTPReward(key, finalPulled);
-    state.trainingPoints += tpEarned;
+    state.trainingPoints += packTPReward(key, finalPulled);
     addCollectorXP(packXPReward(key, finalPulled), `${pack.name} opening`);
 
-    packQueue.push({
+    newQueue.push({
       key,
       cards:finalPulled,
       newFlags,
@@ -803,49 +1022,33 @@ function openPack(key, quantity = 1){
     state.stats.packsOpened++;
   }
 
-  startNextPackFromQueue();
+  state.activePackQueue = newQueue;
+  state.activePackOpening = null;
+  packQueue = state.activePackQueue;
+  packOpening = null;
+
+  startNextPackFromStateQueue();
   checkQuests();
-  saveGame();
-  render();
-  toast(quantity > 1 ? `${quantity} packs queued.` : "Pack ready.");
+  saveAndRenderPackReveal();
+
+  toast(quantity > 1 ? `${quantity} ${pack.name}s ready. Rip the first pack.` : `${pack.name} ready. Rip it open.`);
 }
 
 function startNextPackFromQueue(){
-  if(!packQueue.length){
-    packOpening = null;
-    return;
-  }
-
-  const next = packQueue.shift();
-  const pack = PACKS[next.key];
-  lastPack = next.cards.map(id => card(id));
-  const heatIndex = bestCardIndexInPack(next.cards);
-  const heatIndexes = heatCardIndexesInPack(next.cards);
-
-  packOpening = {
-    key: next.key,
-    ripped:false,
-    cards: next.cards,
-    newFlags:next.newFlags || next.cards.map(() => false),
-    flipped:[],
-    heatIndex,
-    heatIndexes,
-    bigPullReady:false,
-    guaranteeApplied:next.guaranteeApplied || null
-  };
-
-  addLog(`Bought ${pack.name}. Rip it open to reveal ${lastPack.length} cards.`);
+  return startNextPackFromStateQueue();
 }
 
-function openSamePackAgain(){
-  if(!lastPack.length && !packOpening) return;
-  const key = packOpening ? packOpening.key : (lastOpenedPackKey || "rookie");
-  openPack(key, 1);
+function allPackCardsFlipped(){
+  if(!packOpening) return false;
+  const total = (packOpening.cards || []).length;
+  const flipped = (packOpening.flipped || []).length;
+  return total > 0 && flipped >= total;
 }
 
-let lastOpenedPackKey = "rookie";
-
-
+function finishPackRevealIfComplete(renderAfter = false){
+  if(!packOpening || !allPackCardsFlipped()) return false;
+  return finishPackReveal(renderAfter);
+}
 
 
 function ripPack(){
@@ -924,19 +1127,32 @@ function revealAll(){
   toast("All cards revealed.");
 }
 
-function finishPackReveal(){
-  if(!packOpening) return;
+function finishPackReveal(renderAfter = true){
+  hydratePackRuntimeFromStateQueue();
+
+  if(!packOpening) return false;
+
+  if(!allPackCardsFlipped()){
+    toast("Flip all cards first.");
+    if(renderAfter) render();
+    return false;
+  }
+
   lastOpenedPackKey = packOpening.key;
   addLog(`Finished revealing ${PACKS[packOpening.key].name}.`);
 
-  if(packQueue.length){
-    startNextPackFromQueue();
+  if((packQueue || []).length || (state.activePackQueue || []).length){
+    state.activePackQueue = packQueue || state.activePackQueue || [];
+    startNextPackFromStateQueue();
   }else{
     packOpening = null;
+    packQueue = [];
+    clearActivePackState();
   }
 
   saveGame();
-  render();
+  if(renderAfter) render();
+  return true;
 }
 
 function addToLineup(id){
@@ -1044,17 +1260,25 @@ function claimQuest(id){
 
 
 function questDone(id){
-  if(id === "first_pack") return state.stats.packsOpened >= 1;
+  if(id === "first_pack") return (state.stats?.packsOpened || 0) >= 1;
 
   if(id === "one_each"){
-    return Object.keys(SPORTS).every(s => ownedCards().some(c => c.sport === s));
+    return Object.keys(SPORTS).every(s => sportOwnedCount(s) >= 1);
   }
 
-  if(id === "five_lineup") return state.lineup.length >= 5;
-  if(id === "first_win") return state.stats.matchesWon >= 1;
-  if(id === "rare_pull") return ownedCards().some(c => rarityRank(c.rarity) >= 3);
-  if(id === "ten_unique") return ownedCards().length >= 10;
-  if(id === "cup_game") return (state.stats.cupGames || 0) >= 1 || (state.stats.cupTournaments || 0) >= 1;
+  if(id === "five_lineup") return (state.lineup || []).length >= 5;
+  if(id === "first_win") return (state.stats?.matchesWon || 0) >= 1;
+  if(id === "rare_pull") return rarityOrBetterOwned(["Rare","Epic","Legendary"]);
+  if(id === "ten_unique") return uniqueOwnedCount() >= 10;
+  if(id === "cup_game") return (state.stats?.cupGames || 0) >= 1 || (state.stats?.cupTournaments || 0) >= 1 || !!state.cup?.active || (state.cup?.history || []).length > 0;
+
+  // Actual current QUESTS ids from cards.js:
+  if(id === "fifty_unique") return uniqueOwnedCount() >= 50;
+  if(id === "hundred_unique") return uniqueOwnedCount() >= 100;
+
+  // Backward compatibility with the IDs used in earlier attempted fixes.
+  if(id === "unique_50") return uniqueOwnedCount() >= 50;
+  if(id === "unique_100") return uniqueOwnedCount() >= 100;
 
   return false;
 }
@@ -1423,7 +1647,7 @@ function rawEffectiveStat(c, key){
 }
 
 function effectiveStat(c, key){
-  // Quick Match Arena v1:
+  // Core Stability Test v1:
   // Base cards still live on a 25-99 scale, but upgrades/foils can push
   // effective stats beyond 99 so high-end cards do not waste upgrades.
   return Math.min(125, rawEffectiveStat(c, key));
@@ -1653,12 +1877,23 @@ function startMatch(cup = false){
     return;
   }
 
-  if(state.stamina < 1){
+  // Core Stability Test v1:
+  // Free Quick Match should not let players bank clears indefinitely.
+  // If clears are waiting, send the player to the Draft Board first.
+  if(!cup && state.draft && (state.draft.clears || 0) > 0){
+    currentView = "draft";
+    render();
+    toast("Use your Draft clears before starting another Quick Match.");
+    return;
+  }
+
+  // Quick Match is free. Stamina is reserved for economy-risk modes and Cup entries.
+  if(cup && state.stamina < 1){
     toast("Not enough stamina.");
     return;
   }
 
-  state.stamina -= 1;
+  if(cup) state.stamina -= 1;
 
   const opp = OPPONENTS[Math.floor(Math.random() * OPPONENTS.length)];
   matchState = {
@@ -1774,14 +2009,28 @@ function playRound(id){
 
 function finishMatch(){
   const won = matchState.you > matchState.them;
-  const reward = won ? 70 + matchState.opp.level * 14 : 25 + matchState.you * 10;
-  const tpReward = matchState.cup
-    ? (won ? 120 + matchState.opp.level * 18 : 35 + matchState.you * 5)
-    : (won ? 28 + matchState.opp.level * 6 : 10 + matchState.you * 2);
 
-  state.coins += reward;
-  state.trainingPoints += tpReward;
-  addCollectorXP(won ? 35 : 12, won ? "match win" : "match attempt");
+  let reward = 0;
+  let tpReward = 0;
+  let xpReward = won ? 20 : 8;
+  let draftClears = 0;
+
+  if(matchState.cup){
+    reward = won ? 70 + matchState.opp.level * 14 : 25 + matchState.you * 10;
+    tpReward = won ? 120 + matchState.opp.level * 18 : 35 + matchState.you * 5;
+    xpReward = won ? 35 : 12;
+
+    state.coins += reward;
+    state.trainingPoints += tpReward;
+  }else{
+    // Core Stability Test v1:
+    // Quick Match is always playable. The real reward is controlled by Draft clears.
+    draftClears = won ? 3 : 1;
+    state.draft = state.draft || {clears:0, board:null, history:[]};
+    state.draft.clears += draftClears;
+  }
+
+  addCollectorXP(xpReward, won ? "match win" : "match attempt");
 
   if(won){
     state.stats.matchesWon++;
@@ -1793,12 +2042,24 @@ function finishMatch(){
 
   matchState.result = won ? "win" : "loss";
   matchState.finished = true;
-  matchState.history.push(won ? `Match won. Reward: ${reward} coins and ${tpReward} TP.` : `Match lost. Consolation reward: ${reward} coins and ${tpReward} TP.`);
+  matchState.rewards = {
+    coins:reward,
+    tp:tpReward,
+    xp:xpReward,
+    draftClears
+  };
 
-  addLog(`${matchState.cup ? "Collector Cup" : "Quick Match"}: ${won ? "won" : "lost"} against ${matchState.opp.name}. +${reward} coins, +${tpReward} TP.`);
+  if(matchState.cup){
+    matchState.history.push(won ? `Cup match won. Reward: ${reward} coins and ${tpReward} TP.` : `Cup match lost. Consolation reward: ${reward} coins and ${tpReward} TP.`);
+    addLog(`Collector Cup: ${won ? "won" : "lost"} against ${matchState.opp.name}. +${reward} coins, +${tpReward} TP.`);
+  }else{
+    matchState.history.push(won ? `Quick Match won. Draft reward: +${draftClears} clears.` : `Quick Match lost. Draft consolation: +${draftClears} clear.`);
+    addLog(`Quick Match: ${won ? "won" : "lost"} against ${matchState.opp.name}. +${draftClears} Draft clear${draftClears === 1 ? "" : "s"}.`);
+    currentView = "draft";
+  }
+
   checkQuests();
 }
-
 
 function endMatch(){
   matchState = null;
@@ -1902,7 +2163,7 @@ function statsHtml(){
     <span class="pill">⚡ ${state.stamina}/${state.maxStamina} <small>stamina</small></span>
     <span class="pill">📅 Day ${state.day}</span>\n    <span class="pill">🏆 Lv ${collectorLevel()} <small>collector</small></span>
     <span class="pill">🃏 ${unique}/${CARDS.length} <small>unique</small></span>
-    <span class="pill">📋 ${lineupScore()} <small>lineup score</small></span>\n    <span class="pill">⚔️ ${matchRecordText()} <small>quick match</small></span>
+    <span class="pill">📋 ${lineupScore()} <small>lineup score</small></span>\n    <span class="pill">⚔️ ${matchRecordText()} <small>quick match</small></span>\n    <span class="pill">🎯 ${state.draft?.clears || 0} <small>draft clears</small></span>
   `;
 }
 
@@ -1947,9 +2208,10 @@ function cardHtml(c, options = {}){
 
   const disabledClass = mode === "match" && (matchState.used.includes(c.id) || matchState.finished) ? "disabled-click" : "";
   const clickAttr = cardClick ? `onclick="event.stopPropagation(); ${cardClick}"` : "";
+  const showCardBadges = mode !== "lineup" && mode !== "lineup-add";
 
   return `
-    <div class="card real-card ${c.rarity} ${selected} ${disabledClass}" style="${sportStyle(c)}">
+    <div data-card-id="${c.id}" class="card ${state.collectionFocusId === c.id ? "" : ""} real-card ${c.rarity} ${selected} ${disabledClass}" style="${sportStyle(c)}">
       <button class="inspect-hitbox card-primary-hitbox ${mode}" ${clickAttr} aria-label="${cardLabel}">
         <div class="full-card-art">
           <img src="${c.realisticArt}"
@@ -1958,8 +2220,8 @@ function cardHtml(c, options = {}){
           <div class="mini-holo ${c.rarity}"></div>
         </div>
       </button>
-      ${owned > 1 ? `<div class="owned">×${owned}</div>` : ""}
-      <div class="card-level-badge">Lv ${cardLevel(c.id)} · ${foilTier(c.id)}</div>
+      ${showCardBadges && owned > 1 ? `<div class="owned">×${owned}</div>` : ""}
+      ${showCardBadges ? `<div class="card-level-badge">Lv ${cardLevel(c.id)} · ${foilTier(c.id)}</div>` : ""}
       <div class="card-actions">${action}</div>
     </div>
   `;
@@ -1967,7 +2229,7 @@ function cardHtml(c, options = {}){
 
 function lockedCardHtml(c){
   return `
-    <div class="card real-card ${c.rarity}" style="${sportStyle(c)};filter:grayscale(.75);opacity:.58">
+    <div data-card-id="${c.id}" class="card ${state.collectionFocusId === c.id ? "" : ""} real-card ${c.rarity}" style="${sportStyle(c)};filter:grayscale(.75);opacity:.58">
       <div class="full-card-locked">?</div>
     </div>
   `;
@@ -1976,7 +2238,7 @@ function lockedCardHtml(c){
 
 function packCardHtml(c){
   return `
-    <div class="card real-card ${c.rarity}" style="${sportStyle(c)}">
+    <div data-card-id="${c.id}" class="card ${state.collectionFocusId === c.id ? "" : ""} real-card ${c.rarity}" style="${sportStyle(c)}">
       <div class="full-card-art">
         <img src="${c.realisticArt}"
              alt="${c.name} card art"
@@ -1992,12 +2254,19 @@ function packCardHtml(c){
 
 function buyPackFromReveal(key, quantity = 1){
   if(packOpening){
-    lastOpenedPackKey = packOpening.key;
-    addLog(`Finished revealing ${PACKS[packOpening.key].name}.`);
-    packOpening = null;
+    if(allPackCardsFlipped()){
+      finishPackReveal(false);
+    }else{
+      toast("Flip all cards first.");
+      currentView = "packs";
+      render();
+      ensurePackRevealVisible();
+      return;
+    }
   }
 
   packQueue = [];
+  currentView = "packs";
   openPack(key, quantity);
 }
 
@@ -2027,8 +2296,8 @@ function packRevealHubHtml(currentKey){
               <div class="mini-pack-pity-force">${nextPityText(key, "rare") ? "Rare+ dry " + nextPityText(key, "rare").dry + "/" + nextPityText(key, "rare").threshold : ""}</div>
               <div class="mini-pack-buttons-force">
                 <button onclick="buyPackFromReveal('${key}',1)" ${!isPackUnlocked(key) || state.coins < p.cost ? "disabled" : ""}>Buy 1</button>
-                <button onclick="buyPackFromReveal('${key}',3)" ${!isPackUnlocked(key) || state.coins < p.cost * 3 ? "disabled" : ""}>Buy 3</button>
                 <button onclick="buyPackFromReveal('${key}',5)" ${!isPackUnlocked(key) || state.coins < p.cost * 5 ? "disabled" : ""}>Buy 5</button>
+                <button onclick="buyPackFromReveal('${key}',10)" ${!isPackUnlocked(key) || state.coins < p.cost * 10 ? "disabled" : ""}>Buy 10</button>
               </div>
             </div>
           `;
@@ -2092,12 +2361,12 @@ function packOpeningHtml(){
       <div class="section-title" style="margin-bottom:8px">
         <div>
           <h3>${pack.name} Reveal</h3>
-          <p class="tiny">Higher-rarity cards get stronger visual effects. ${packQueue.length ? "Queued packs left: " + packQueue.length : ""}</p>
+          <p class="tiny">${packQueue.length ? "Queued packs left: " + packQueue.length : ""}</p>
         </div>
 
         <div class="row">
           <button onclick="revealAll()" class="gold" ${allFlipped ? "disabled" : ""}>${bigPullReady ? (hiddenHeatIndexes.length > 1 ? "Reveal Big Pulls" : "Reveal Big Pull") : hasHeat ? "Flip normal cards" : "Flip all"}</button>
-          <button onclick="finishPackReveal()" ${allFlipped ? "" : "disabled"}>${packQueue.length ? "Next pack" : "Done"}</button>
+          ${allFlipped ? `<button onclick="finishPackReveal()" class="green">${packQueue.length ? "Open next pack" : "Continue"}</button>` : ""}
         </div>
       </div>
 
@@ -2152,7 +2421,7 @@ function packOpeningHtml(){
         </div>
 
         <div class="pack-after-actions">
-          ${packQueue.length ? `<button onclick="finishPackReveal()" class="green">Open next queued pack (${packQueue.length} left)</button>` : `<button onclick="finishPackReveal()">Done / return to pack list</button>`}
+          <button onclick="finishPackReveal()" class="green">${packQueue.length ? "Open next pack" : "Continue"}</button>
           ${!packQueue.length ? `<button onclick="finishAndOpenSamePack()" class="gold" ${state.coins < pack.cost ? "disabled" : ""}>Open another ${pack.name}</button>` : ""}
         </div>
 
@@ -2180,6 +2449,7 @@ function render(){
   if(currentView === "packs") app.innerHTML = viewPacks();
   if(currentView === "lineup") app.innerHTML = viewLineup();
   if(currentView === "match") app.innerHTML = viewMatch();
+  if(currentView === "draft") app.innerHTML = viewDraft();
   if(currentView === "earn") app.innerHTML = viewEarnCoins();
   if(currentView === "admin") app.innerHTML = viewAdmin();
   if(currentView === "season") app.innerHTML = viewCup();
@@ -2750,6 +3020,7 @@ function blackjackStatsHtml(){
 }
 
 
+
 function blackjackPanelHtml(){
   const canPlay = ownedCards().length >= 2;
   const game = blackjackGame;
@@ -2762,10 +3033,6 @@ function blackjackPanelHtml(){
         <p>Uses a balanced virtual 52-card deck. Sports-card art previews any card in the catalog, owned or unowned.</p>
       </div>
 
-      <div class="blackjack-balance-note">
-        Virtual Deck v3 uses real blackjack value distribution. Your collection does not skew the math; card art previews the full catalog.
-      </div>
-
       <div class="blackjack-rules">
         <div><strong>2–9</strong><span>face value</span></div>
         <div><strong>10/J/Q/K</strong><span>10</span></div>
@@ -2775,8 +3042,6 @@ function blackjackPanelHtml(){
       </div>
 
       ${!game ? `
-        <div class="blackjack-balance-note">Blackjack math is now independent from your collection. Winning hands may preview unowned cards to make you want to pull them later.</div>
-
         <div class="mini-rules">
           <strong>Cost:</strong> 1 stamina + table stake<br>
           <strong>Win:</strong> 2x stake · <strong>Blackjack:</strong> 2.5x · <strong>Push:</strong> stake returned<br>
@@ -2823,6 +3088,7 @@ function blackjackPanelHtml(){
   `;
 }
 
+
 function adminAddCoins(amount){
   state.coins += amount;
   saveGame();
@@ -2838,7 +3104,7 @@ function adminAddTP(amount){
 }
 
 function adminMaxStamina(){
-  state.maxStamina = Math.max(state.maxStamina || 10, 99);
+  state.maxStamina = Math.max(state.maxStamina || 100, 100);
   state.stamina = state.maxStamina;
   saveGame();
   render();
@@ -2930,6 +3196,54 @@ function adminAddDupesByRarity(rarity, amount = 5){
 }
 
 
+
+function adminAddDraftClears(amount = 5){
+  state.draft = state.draft || {clears:0, board:null, history:[]};
+  state.draft.clears = (state.draft.clears || 0) + amount;
+  saveGame();
+  render();
+  toast(`Admin: +${amount} Draft clears.`);
+}
+
+function adminResetDraftBoard(){
+  state.draft = state.draft || {clears:0, board:null, history:[]};
+  createDraftBoard();
+  state.draft.lastReward = null;
+  state.draft.reveal = null;
+  saveGame();
+  render();
+  toast("Admin: Draft board reset.");
+}
+
+
+
+function adminStabilityTestSetup(){
+  clearActivePackState();
+  packOpening = null;
+  packQueue = [];
+  lastPack = [];
+  state.coins = Math.max(state.coins, 2500);
+  state.trainingPoints = Math.max(state.trainingPoints, 1000);
+  state.maxStamina = 100;
+  state.stamina = 100;
+  state.packUnlockOverride = true;
+  state.draft = state.draft || {clears:0, board:null, history:[], pendingPacks:[]};
+  state.draft.clears = Math.max(state.draft.clears || 0, 10);
+  adminResetDraftBoard();
+  toast("Admin: stability test setup ready.");
+}
+
+function adminClearActivePackState(){
+  clearActivePackState();
+  packOpening = null;
+  packQueue = [];
+  lastPack = [];
+  saveGame();
+  render();
+  toast("Admin: active pack reveal cleared.");
+}
+
+
 function viewAdmin(){
   return `
     <div class="section-title">
@@ -2941,6 +3255,8 @@ function viewAdmin(){
     </div>
 
     <div class="admin-grid">
+      <button onclick="adminStabilityTestSetup()" class="gold">Stability test setup</button>
+      <button onclick="adminClearActivePackState()">Clear active pack state</button>
       <button onclick="adminAddCoins(1000)">+1,000 coins</button>
       <button onclick="adminAddCoins(10000)">+10,000 coins</button>
       <button onclick="adminAddTP(500)">+500 TP</button>
@@ -2951,6 +3267,9 @@ function viewAdmin(){
       <button onclick="adminBoostEverything()" class="gold">Unlimited test setup</button>
       <button onclick="adminTogglePackUnlocks()">${state.packUnlockOverride ? "Restore pack gates" : "Unlock all packs"}</button>
       <button onclick="adminAddCollectorXP(1000)">+1,000 Collector XP</button>
+      <button onclick="adminAddDraftClears(3)">+3 Draft clears</button>
+      <button onclick="adminAddDraftClears(10)">+10 Draft clears</button>
+      <button onclick="adminResetDraftBoard()">Reset Draft board</button>
       <button onclick="adminAddDupesToLineup(5)">+5 dupes to active lineup</button>
       <button onclick="adminAddDupesToAll(5)">+5 dupes to every card</button>
       <button onclick="adminAddDupesToAll(10)">+10 dupes to every card</button>
@@ -2965,6 +3284,7 @@ function viewAdmin(){
   `;
 }
 
+
 function viewEarnCoins(){
   const dupes = duplicateCards();
 
@@ -2972,9 +3292,7 @@ function viewEarnCoins(){
     <div class="section-title">
       <div>
         <h2>Earn Coins</h2>
-        <p>Risk/reward games for in-game coins and Training Points.</p>
       </div>
-      <span class="pill">⚡ ${state.stamina}/${state.maxStamina} <small>stamina</small></span>
     </div>
 
     <div class="earn-casino-layout">
@@ -3025,6 +3343,7 @@ function viewEarnCoins(){
   `;
 }
 
+
 function viewHome(){
   const pct = Math.round((state.stamina / state.maxStamina) * 100);
 
@@ -3034,7 +3353,7 @@ function viewHome(){
     return `
       <div class="sport-summary" style="background:${info.color}">
         <h3>${info.emoji} ${sport}</h3>
-        <p>${count}/8 unique cards owned</p>
+        <p>${count}/${sportTotalCount(sport)} unique cards owned</p>
       </div>
     `;
   }).join("");
@@ -3044,7 +3363,7 @@ function viewHome(){
   return `
     <div class="section-title">
       <div>
-        <h2>Clubhouse</h2><div class="build-label">Quick Match Arena v1</div>
+        <h2>Clubhouse</h2><div class="build-label">Core Stability Test v1</div>
         <p>Earn coins, open sport packs, complete goals, and build a 5-card lineup.</p>
       </div>
 
@@ -3053,41 +3372,26 @@ function viewHome(){
 
     <div class="sports-row">${sportsSummary}</div>
 
-    <div class="card-pool-note">Expanded test card pool: 120 total cards across Football, Basketball, Soccer, and Baseball. Stat rebalance active: most cards are playable, specialists still spike single stats, and lower-rarity upgrades scale harder.</div>
-
     ${collectorProgressHtml()}
 
     <div class="two-col">
       <div class="box">
         <h3>Today’s stamina</h3>
-        <p>Stamina is used for quick actions and matches.</p>
-
         <div class="meter"><div style="width:${pct}%"></div></div>
         <p class="tiny">${state.stamina}/${state.maxStamina} stamina available</p>
-
-        <div class="row">
-          <button onclick="sortBinder()">📚 Sort binder -1</button>
-          <button onclick="tradeDoubles()">🔁 Trade duplicate -2</button>
-        </div>
       </div>
 
       <div class="box">
         <h3>Suggested next move</h3>
-        <p>${suggestion()}</p>
-
         <div class="row">
           <button onclick="go('packs')" class="gold">Open packs</button>
           <button onclick="go('lineup')">Edit lineup</button>
           <button onclick="go('match')" class="green">Play match</button>
+          <button onclick="go('draft')" class="gold">Go to Draft Board</button>
         </div>
       </div>
     </div>
 
-    <div class="message">
-      <strong>Inspection added:</strong> click any owned card to inspect it, tilt the card for holographic shine, and flip it over to view stats. Realistic image slots are now supported in assets/realistic/.
-    </div>
-
-    
     <div class="economy-panel">
       <div class="section-title compact">
         <div>
@@ -3103,11 +3407,11 @@ function viewHome(){
       </div>
     </div>
 
-
     <h3>Recent activity</h3>
     <div class="log">${recent}</div>
   `;
 }
+
 
 function suggestion(){
   if(!isPackUnlocked("pro")) return "Open Rookie Packs, build duplicates, and use TP upgrades while working toward the Pro Pack gate.";
@@ -3206,7 +3510,10 @@ function viewCollection(){
   `;
 }
 
+
 function viewPacks(){
+  const packBusy = !!packOpening || !!(packQueue && packQueue.length) || !!state.activePackOpening || !!((state.activePackQueue || []).length);
+
   const packCards = Object.entries(PACKS).map(([key,p]) => {
     const icons = {rookie:"🌱",pro:"💼",star:"⭐",hof:"🏛️"};
     const icon = icons[key] || "🎁";
@@ -3238,9 +3545,9 @@ function viewPacks(){
         </div>
 
         <div class="pack-buy-row">
-          <button onclick="openPack('${key}', 1)" ${!unlocked || state.coins < p.cost || packOpening || packQueue.length ? "disabled" : ""}>Buy 1</button>
-          <button onclick="openPack('${key}', 3)" ${!unlocked || state.coins < p.cost * 3 || packOpening || packQueue.length ? "disabled" : ""}>Buy 3</button>
-          <button onclick="openPack('${key}', 5)" ${!unlocked || state.coins < p.cost * 5 || packOpening || packQueue.length ? "disabled" : ""}>Buy 5</button>
+          <button onclick="handlePackBuy(event, '${key}', 1)" ${!unlocked || state.coins < p.cost || packBusy ? "disabled" : ""}>Buy 1</button>
+          <button onclick="handlePackBuy(event, '${key}', 5)" ${!unlocked || state.coins < p.cost * 5 || packBusy ? "disabled" : ""}>Buy 5</button>
+          <button onclick="handlePackBuy(event, '${key}', 10)" ${!unlocked || state.coins < p.cost * 10 || packBusy ? "disabled" : ""}>Buy 10</button>
         </div>
       </div>
     `;
@@ -3248,14 +3555,12 @@ function viewPacks(){
 
   const results = lastPack.length && !packOpening
     ? `<h3>Latest pack</h3><div class="grid">${lastPack.map(c => cardHtml(c)).join("")}</div>`
-    : `<div class="message">Buy a pack to start the animated reveal.</div>`;
+    : "";
 
   return `
     <div class="section-title">
       <div>
-        <h2>Packs</h2><div class="build-label">Quick Match Arena v1</div>
-        <p>Rookie → Pro → All-Star → Hall of Fame. Packs opened remain a major gate, but upgrades now use TP and duplicates first.</p>
-        <p class="pity-explainer">Every pack has a tiny dream-pull chance. Pity counts dry streaks and resets when you naturally pull the target rarity.</p>
+        <h2>Packs</h2><div class="build-label">Core Stability Test v1</div>
       </div>
     </div>
 
@@ -3269,7 +3574,7 @@ function viewPacks(){
       ${packHistoryHtml()}
     </div>
 
-    <div style="margin-top:16px">${results}</div>
+    ${results ? `<div style="margin-top:16px">${results}</div>` : ""}
   `;
 }
 
@@ -3363,10 +3668,11 @@ function lineupStatCardHtml(c, options = {}){
     <div class="lineup-card-shell ${inLineup ? "in-lineup" : ""}">
       ${cardHtml(c, options)}
       <div class="lineup-stat-panel">
-        <div class="lineup-stat-top">
+        <div class="lineup-stat-top compact-meta">
+          <span>Lv ${cardLevel(c.id)} · ${foilTier(c.id)}</span>
           <span>${SPORTS[c.sport].emoji} ${c.sport}</span>
           <span>${c.rarity}</span>
-          <span>×${owned} · Dups ${dupes}</span>
+          <span>Dupes x${dupes}</span>
         </div>
 
         <div class="lineup-ovr-row">
@@ -3440,9 +3746,7 @@ function viewLineup(){
     <div class="section-title">
       <div>
         <h2>My Lineup</h2>
-        <p>Sort, filter, upgrade cards, create foil variants, and quick-sell duplicate pulls.</p><div class="upgrade-economy-note">Early upgrades use TP + duplicates first. Coin costs appear more on higher levels, higher rarities, and stronger foil tiers. Overcap scoring is active: upgraded 99 stats keep adding power and display as full effective values.</div>
       </div>
-      <span class="pill">📋 Lineup score ${lineupScore()}</span>
     </div>
 
     <div class="lineup-dashboard">
@@ -3533,6 +3837,657 @@ function viewLineup(){
   `;
 }
 
+
+function matchRewardsHtml(){
+  if(!matchState || !matchState.finished) return "";
+  const fallbackWin = matchState.result === "win";
+  const r = matchState.rewards || {
+    coins:fallbackWin ? 0 : 0,
+    tp:fallbackWin ? 0 : 0,
+    xp:fallbackWin ? 20 : 8,
+    draftClears:fallbackWin ? 3 : 1
+  };
+
+  const parts = [];
+
+  if(r.draftClears){
+    parts.push(`+${r.draftClears} Draft clear${r.draftClears === 1 ? "" : "s"}`);
+  }
+
+  if(r.coins) parts.push(`+${r.coins} coins`);
+  if(r.tp) parts.push(`+${r.tp} TP`);
+  if(r.xp) parts.push(`+${r.xp} XP`);
+
+  return `
+    <div class="arena-rewards-panel">
+      <span>Rewards</span>
+      <strong>${parts.join(" · ")}</strong>
+    </div>
+  `;
+}
+
+
+function draftRandomId(){
+  return `draft_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+}
+
+function draftWeightedPick(entries){
+  const total = entries.reduce((sum, item) => sum + item.weight, 0);
+  let roll = Math.random() * total;
+
+  for(const item of entries){
+    roll -= item.weight;
+    if(roll <= 0) return item.value;
+  }
+
+  return entries[0].value;
+}
+
+function draftPackWeights(){
+  const hof = isPackUnlocked("hof");
+  const star = isPackUnlocked("star");
+  const pro = isPackUnlocked("pro");
+
+  if(hof){
+    return [
+      {value:"rookie", weight:42},
+      {value:"pro", weight:25},
+      {value:"star", weight:21},
+      {value:"hof", weight:12}
+    ];
+  }
+
+  if(star){
+    return [
+      {value:"rookie", weight:48},
+      {value:"pro", weight:27},
+      {value:"star", weight:20},
+      {value:"hof", weight:5}
+    ];
+  }
+
+  if(pro){
+    return [
+      {value:"rookie", weight:55},
+      {value:"pro", weight:32},
+      {value:"star", weight:10},
+      {value:"hof", weight:3}
+    ];
+  }
+
+  return [
+    {value:"rookie", weight:65},
+    {value:"pro", weight:23},
+    {value:"star", weight:9},
+    {value:"hof", weight:3}
+  ];
+}
+
+function draftRarePlusCard(){
+  const rarity = draftWeightedPick([
+    {value:"Rare", weight:82},
+    {value:"Epic", weight:15},
+    {value:"Legendary", weight:3}
+  ]);
+
+  let pool = CARDS.filter(c => c.rarity === rarity);
+  if(!pool.length) pool = CARDS.filter(c => rarityRank(c.rarity) >= 3);
+
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function shuffleDraftTiles(tiles){
+  for(let i = tiles.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [tiles[i], tiles[j]] = [tiles[j], tiles[i]];
+  }
+
+  return tiles;
+}
+
+
+function chooseDraftJackpotType(){
+  state.draft = state.draft || {clears:0, board:null, history:[]};
+  state.draft.jackpotTypeHistory = state.draft.jackpotTypeHistory || [];
+
+  const history = state.draft.jackpotTypeHistory.slice(-2);
+
+  // Still targets 50/50 over time, but prevents repeated short-run streaks
+  // like Rare+ four boards in a row during testing.
+  if(history.length >= 2 && history.every(type => type === "rareplus")) return "pack";
+  if(history.length >= 2 && history.every(type => type === "pack")) return "rareplus";
+
+  return Math.random() < 0.5 ? "pack" : "rareplus";
+}
+
+function recordDraftJackpotType(type){
+  state.draft = state.draft || {clears:0, board:null, history:[]};
+  state.draft.jackpotTypeHistory = state.draft.jackpotTypeHistory || [];
+  state.draft.jackpotTypeHistory.push(type);
+  state.draft.jackpotTypeHistory = state.draft.jackpotTypeHistory.slice(-8);
+}
+
+
+function repairDraftBoardState(){
+  if(!state.draft) return;
+  state.draft.pendingPacks = state.draft.pendingPacks || [];
+
+  const board = state.draft.board;
+  if(!board || !Array.isArray(board.tiles)) return;
+
+  const revealedPack = board.tiles.find(t => t.revealed && t.type === "pack");
+  const revealedRarePlus = board.tiles.find(t => t.revealed && t.type === "rareplus");
+
+  // Defensive repair for older boards/builds: pack and rare+ tiles are jackpot tiles.
+  // If one is already revealed but the board did not reset, reset it now so it cannot get stuck.
+  if(revealedPack || revealedRarePlus){
+    state.draft.lastReward = state.draft.lastReward || {
+      result: revealedPack ? `${PACKS[revealedPack.packKey]?.name || "Pack"} already claimed` : "Rare+ card already claimed",
+      jackpot:true,
+      type: revealedPack ? "pack" : "rareplus",
+      autoReset:true
+    };
+    createDraftBoard();
+  }
+}
+
+
+function createDraftBoard(){
+  state.draft = state.draft || {clears:0, board:null, history:[]};
+
+  const jackpotType = chooseDraftJackpotType();
+  const tiles = [];
+
+  if(jackpotType === "pack"){
+    const packKey = draftWeightedPick(draftPackWeights());
+    tiles.push({
+      type:"pack",
+      jackpot:true,
+      label:PACKS[packKey].name,
+      packKey,
+      revealed:false
+    });
+  }else{
+    const c = draftRarePlusCard();
+    tiles.push({
+      type:"rareplus",
+      jackpot:true,
+      label:`${c.rarity} ${c.name}`,
+      cardId:c.id,
+      revealed:false
+    });
+  }
+
+  for(let i = 0; i < 4; i++){
+    const amount = 25 + Math.floor(Math.random() * 46);
+    tiles.push({type:"coins", label:`${amount} coins`, amount, revealed:false});
+  }
+
+  for(let i = 0; i < 4; i++){
+    const amount = 25 + Math.floor(Math.random() * 61);
+    tiles.push({type:"tp", label:`${amount} TP`, amount, revealed:false});
+  }
+
+  for(let i = 0; i < 2; i++){
+    const amount = 1 + Math.floor(Math.random() * 2);
+    tiles.push({type:"stamina", label:`${amount} stamina`, amount, revealed:false});
+  }
+
+  tiles.push({type:"bonus_clear", label:"+1 clear", amount:1, revealed:false});
+
+  while(tiles.length < 25){
+    tiles.push({type:"blank", label:"Blank", revealed:false});
+  }
+
+  shuffleDraftTiles(tiles).forEach((tile, index) => tile.id = `tile_${index}`);
+
+  state.draft.board = {
+    id:draftRandomId(),
+    createdDay:state.day,
+    jackpotType,
+    jackpotFound:false,
+    revealedCount:0,
+    tiles
+  };
+
+  recordDraftJackpotType(jackpotType);
+}
+
+function ensureDraftBoard(){
+  state.draft = state.draft || {clears:0, board:null, history:[]};
+  if(typeof state.draft.clears !== "number") state.draft.clears = 0;
+  state.draft.history = state.draft.history || [];
+  if(!state.draft.board) createDraftBoard();
+}
+
+function resetDraftBoard(){
+  createDraftBoard();
+  state.draft.lastReward = null;
+  saveGame();
+  render();
+  toast("New Draft board created.");
+}
+
+function draftTileIcon(tile){
+  if(!tile.revealed) return "?";
+  if(tile.type === "pack") return "🎁";
+  if(tile.type === "rareplus") return "🃏";
+  if(tile.type === "coins") return "🪙";
+  if(tile.type === "tp") return "⭐";
+  if(tile.type === "stamina") return "⚡";
+  if(tile.type === "bonus_clear") return "🎯";
+  return "—";
+}
+
+
+function addPendingDraftPack(packKey){
+  state.draft = state.draft || {clears:0, board:null, history:[], pendingPacks:[]};
+  state.draft.pendingPacks = state.draft.pendingPacks || [];
+  state.draft.pendingPacks.push({
+    id:`pending_pack_${Date.now()}_${Math.floor(Math.random() * 100000)}`,
+    packKey,
+    day:state.day
+  });
+}
+
+function openDraftPackNow(packKey){
+  const pack = PACKS[packKey];
+  const pulled = [];
+  const guarantees = pityGuaranteesForPack(packKey);
+
+  for(let i = 0; i < pack.count; i++){
+    pulled.push(randomCard(packKey).id);
+  }
+
+  const guaranteedResult = applyPackGuarantee(packKey, pulled, guarantees);
+  const finalPulled = guaranteedResult.cards;
+
+  const seenForNewFlags = {...state.collection};
+  const newFlags = finalPulled.map(id => {
+    const isNew = !seenForNewFlags[id];
+    seenForNewFlags[id] = (seenForNewFlags[id] || 0) + 1;
+    return isNew;
+  });
+
+  finalPulled.forEach(id => {
+    state.collection[id] = (state.collection[id] || 0) + 1;
+    state.stats.totalCards++;
+  });
+
+  updatePackPityAfterOpen(packKey, finalPulled);
+  recordPackHistory(packKey, finalPulled, guaranteedResult.applied);
+  state.trainingPoints += packTPReward(packKey, finalPulled);
+  addCollectorXP(packXPReward(packKey, finalPulled), `${pack.name} Draft reward`);
+  state.stats.packsOpened++;
+
+  state.activePackQueue = [{
+    key:packKey,
+    cards:finalPulled,
+    newFlags,
+    guaranteeApplied:guaranteedResult.applied
+  }];
+  state.activePackOpening = null;
+  packQueue = state.activePackQueue;
+  packOpening = null;
+  startNextPackFromStateQueue();
+  currentView = "packs";
+  saveAndRenderPackReveal();
+}
+
+function claimDraftPendingPack(index){
+  state.draft = state.draft || {clears:0, board:null, history:[], pendingPacks:[]};
+  state.draft.pendingPacks = state.draft.pendingPacks || [];
+  const pending = state.draft.pendingPacks[index];
+
+  if(!pending){
+    toast("No pending Draft pack there.");
+    return;
+  }
+
+  if(packOpening && allPackCardsFlipped()){
+    finishPackReveal(false);
+  }
+
+  if(packOpening || packQueue.length){
+    toast("Finish flipping the current pack first.");
+    currentView = "packs";
+    render();
+    return;
+  }
+
+  state.draft.pendingPacks.splice(index, 1);
+  openDraftPackNow(pending.packKey);
+  saveGame();
+  render();
+}
+
+
+function grantDraftPack(packKey){
+  const pack = PACKS[packKey];
+
+  if(packOpening && typeof allPackCardsFlipped === "function" && allPackCardsFlipped()){
+    finishPackReveal(false);
+  }
+
+  // If a previous pack reveal is mid-reveal, save this jackpot explicitly.
+  if(packOpening || packQueue.length){
+    addPendingDraftPack(packKey);
+    return `${pack.name} saved`;
+  }
+
+  openDraftPackNow(packKey);
+  currentView = "packs";
+  return `${pack.name} opened`;
+}
+
+function grantDraftReward(tile){
+  if(tile.type === "blank"){
+    return "Blank";
+  }
+
+  if(tile.type === "coins"){
+    state.coins += tile.amount;
+    return `+${tile.amount} coins`;
+  }
+
+  if(tile.type === "tp"){
+    state.trainingPoints += tile.amount;
+    return `+${tile.amount} TP`;
+  }
+
+  if(tile.type === "stamina"){
+    state.stamina = Math.min(state.maxStamina, state.stamina + tile.amount);
+    return `+${tile.amount} stamina`;
+  }
+
+  if(tile.type === "bonus_clear"){
+    state.draft.clears += tile.amount;
+    return `+${tile.amount} Draft clear`;
+  }
+
+  if(tile.type === "rareplus"){
+    const c = card(tile.cardId);
+    const isNew = !state.collection[c.id];
+    state.collection[c.id] = (state.collection[c.id] || 0) + 1;
+    state.stats.totalCards++;
+    addCollectorXP(rarityRank(c.rarity) * 25, "Draft jackpot");
+    startDraftCardReveal(c.id, isNew);
+    return `${isNew ? "New " : "Duplicate "}${c.rarity} ${c.name}`;
+  }
+
+  if(tile.type === "pack"){
+    return grantDraftPack(tile.packKey);
+  }
+
+  return "Reward";
+}
+
+
+function resetDraftBoardAfterJackpot(result, type){
+  state.draft = state.draft || {clears:0, board:null, history:[]};
+  state.draft.lastReward = {
+    result,
+    jackpot:true,
+    type,
+    autoReset:true
+  };
+  createDraftBoard();
+}
+
+
+function revealDraftTile(index){
+  ensureDraftBoard();
+
+  const board = state.draft.board;
+  const tile = board.tiles[index];
+
+  if(!tile) return;
+  if(tile.revealed){
+    toast("That space is already cleared.");
+    return;
+  }
+
+  if((state.draft.clears || 0) < 1){
+    toast("No Draft clears available. Play Quick Match to earn clears.");
+    return;
+  }
+
+  state.draft.clears -= 1;
+  tile.revealed = true;
+  board.revealedCount = board.tiles.filter(t => t.revealed).length;
+
+  // Defensive rule: in Draft Mode, Pack and Rare+ rewards are always jackpot rewards.
+  // This prevents older/stale board states from showing a pack reward without resetting.
+  const forcedJackpot = !!tile.jackpot || tile.type === "pack" || tile.type === "rareplus";
+  tile.jackpot = forcedJackpot;
+
+  const result = grantDraftReward(tile);
+  const viewAfterGrant = currentView;
+
+  state.draft.history = state.draft.history || [];
+  state.draft.history.unshift({
+    day:state.day,
+    result,
+    type:tile.type,
+    jackpot:forcedJackpot
+  });
+  state.draft.history = state.draft.history.slice(0, 10);
+
+  addLog(`Draft Board: ${result}${forcedJackpot ? " jackpot" : ""}.`);
+
+  if(forcedJackpot){
+    board.jackpotFound = true;
+    resetDraftBoardAfterJackpot(result, tile.type);
+    // If a pack opened immediately, stay on Packs after the board reset.
+    if(viewAfterGrant === "packs") currentView = "packs";
+  }else{
+    state.draft.lastReward = {
+      result,
+      jackpot:false,
+      type:tile.type
+    };
+  }
+
+  checkQuests();
+  saveGame();
+  render();
+  toast(forcedJackpot ? `${result} jackpot. New board ready.` : result);
+}
+
+function draftRewardName(tile){
+  if(!tile.revealed) return "Hidden";
+  return tile.label || "Blank";
+}
+
+function draftTileHtml(tile, index){
+  const cls = tile.revealed ? `revealed ${tile.type}` : "hidden";
+  const jackpot = tile.revealed && (tile.jackpot || tile.type === "pack" || tile.type === "rareplus") ? "jackpot" : "";
+
+  return `
+    <button class="draft-tile ${cls} ${jackpot}" onclick="revealDraftTile(${index})" ${tile.revealed ? "disabled" : ""}>
+      <span>${draftTileIcon(tile)}</span>
+      <strong>${draftRewardName(tile)}</strong>
+    </button>
+  `;
+}
+
+
+function startDraftCardReveal(cardId, wasNew){
+  state.draft = state.draft || {clears:0, board:null, history:[]};
+  state.draft.reveal = {
+    cardId,
+    wasNew:!!wasNew,
+    flipped:false
+  };
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function flipDraftCardReveal(){
+  if(!state.draft?.reveal) return;
+  state.draft.reveal.flipped = true;
+  saveGame();
+  render();
+}
+
+function closeDraftRevealToBoard(){
+  if(!state.draft?.reveal) return;
+  state.draft.reveal = null;
+  currentView = "draft";
+  saveGame();
+  render();
+}
+
+function draftCardRevealOverlayHtml(){
+  const reveal = state.draft?.reveal;
+  if(!reveal) return "";
+
+  const c = card(reveal.cardId);
+  if(!c) return "";
+  const flipped = reveal.flipped ? "flipped" : "";
+  const panelRarity = rarityClassValue(c.rarity);
+
+  return `
+    <div class="draft-reveal-overlay">
+      <div class="draft-reveal-panel ${panelRarity}">
+        <div class="draft-reveal-header">
+          <span>${reveal.wasNew ? "New card jackpot" : "Duplicate card jackpot"}</span>
+          <button type="button" onclick="closeDraftRevealToBoard()">Back to Draft</button>
+        </div>
+
+        <div class="draft-reveal-stage ${flipped}">
+          <div class="draft-reveal-card-shell ${flipped}" onclick="${reveal.flipped ? `` : `flipDraftCardReveal()`}">
+            <div class="draft-reveal-card draft-card-back">
+              <div class="big-card-back">
+                <div class="back-orbit">🏈 🏀 ⚽ ⚾</div>
+                <strong>MAJOR SPORTS</strong>
+                <span>CARD COLLECTOR</span>
+              </div>
+            </div>
+            <div class="draft-reveal-card draft-card-front">
+              <img src="${c.realisticArt}" alt="${c.name}" onerror="imageFallback(this, '${c.cardArt}')"/>
+            </div>
+          </div>
+        </div>
+
+        <div class="draft-reveal-copy">
+          ${reveal.flipped ? `
+            <h3>${c.name}</h3>
+            <p>${c.rarity} · ${c.sport} · ${c.pos} · ${c.team}</p>
+            <div class="draft-reveal-actions">
+              <button type="button" onclick="closeDraftRevealToBoard()" class="gold">Back to Draft Board</button>
+            </div>
+          ` : `
+            <h3>Rare+ Jackpot</h3>
+            <p>Tap the card to flip and reveal your reward.</p>
+          `}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+
+function draftPendingPacksHtml(){
+  const pending = state.draft?.pendingPacks || [];
+  if(!pending.length) return "";
+
+  return `
+    <div class="draft-pending-packs">
+      <h3>Pending Draft Packs</h3>
+      <p>Claim saved Draft pack jackpots here.</p>
+      <div class="draft-pending-list">
+        ${pending.map((p, index) => `
+          <div class="draft-pending-pack">
+            <span>${PACKS[p.packKey]?.name || "Pack"} · Day ${p.day}</span>
+            <button onclick="claimDraftPendingPack(${index})">Open pack</button>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+
+
+function viewDraft(){
+  ensureDraftBoard();
+
+  const board = state.draft.board;
+  const clears = state.draft.clears || 0;
+  const allCleared = board.revealedCount >= board.tiles.length;
+  const history = (state.draft.history || []).map(h => `
+    <div class="draft-history-item ${h.jackpot ? "jackpot" : ""}">
+      <span>Day ${h.day}</span>
+      <strong>${h.result}</strong>
+    </div>
+  `).join("");
+
+  const lastReward = state.draft.lastReward;
+  const lastRewardHtml = lastReward ? `
+    <div class="draft-last-reward ${lastReward.jackpot ? "jackpot" : ""}">
+      <span>${lastReward.jackpot ? "Jackpot found" : "Last clear"}</span>
+      <strong>${lastReward.result}</strong>
+      ${lastReward.autoReset ? `<small>The board reset automatically so the rest of that board cannot be cleared.</small>` : ""}
+    </div>
+  ` : "";
+
+  return `
+    <div class="section-title">
+      <div>
+        <h2>Draft Board</h2>
+      </div>
+    </div>
+
+    ${lastRewardHtml}
+
+    <div class="draft-overview">
+      <div class="draft-info-card">
+        <h3>How it works</h3>
+        <p>Quick Match costs 0 stamina. A win gives 3 clears. A loss gives 1 clear.</p>
+        <p>Use all available clears before starting another Quick Match.</p>
+        <p>When the jackpot is revealed, the board resets immediately. There is no manual reset.</p>
+        <div class="row">
+          <button onclick="go('match')" class="green" ${clears > 0 ? "disabled" : ""}>${clears > 0 ? "Use clears first" : "Play Quick Match"}</button>
+        </div>
+      </div>
+
+      <div class="draft-info-card">
+        <h3>Current board</h3>
+        <p><strong>Status:</strong> ${board.jackpotFound ? "Jackpot found" : allCleared ? "Board cleared" : "Jackpot hidden"}</p>
+        <p><strong>Spaces cleared:</strong> ${board.revealedCount}/25</p>
+        <p><strong>Available clears:</strong> ${clears}</p>
+      </div>
+    </div>
+
+    ${draftPendingPacksHtml()}
+
+    <div class="draft-board">
+      ${board.tiles.map((tile, index) => draftTileHtml(tile, index)).join("")}
+    </div>
+
+    <div class="pack-history-section">
+      <h3>Draft History</h3>
+      ${history || `<div class="message">No Draft spaces cleared yet.</div>`}
+    </div>
+
+    ${draftCardRevealOverlayHtml()}
+  `;
+}
+
+
 function viewMatch(){
   if(matchState){
     const phase = !matchState.finished ? currentMatchPhase() : null;
@@ -3554,7 +4509,7 @@ function viewMatch(){
             <span>${matchState.cup ? "Collector Cup Game" : "Quick Match Arena"}</span>
             <strong>${matchState.finished ? (matchState.result === "win" ? "Victory" : "Defeat") : "Round " + matchState.round}</strong>
           </div>
-          ${matchState.finished ? `<button onclick="startNextMatch(${matchState.cup ? "true" : "false"})" class="green" ${state.stamina < 1 ? "disabled" : ""}>Play again</button>` : `<span class="arena-record">${matchState.you}-${matchState.them}</span>`}
+          ${matchState.finished ? `<button onclick="startNextMatch(${matchState.cup ? "true" : "false"})" class="green" ${matchState.cup && state.stamina < 1 ? "disabled" : ""}>Play again</button>` : `<span class="arena-record">${matchState.you}-${matchState.them}</span>`}
         </div>
 
         ${phaseScheduleHtml()}
@@ -3573,7 +4528,7 @@ function viewMatch(){
             <div>
               <span>Match complete</span>
               <strong>${matchState.result === "win" ? "Victory" : "Defeat"}</strong>
-              <small>Review the last battle or start another match.</small>
+              ${matchRewardsHtml()}
             </div>
           `}
         </div>
@@ -3592,6 +4547,8 @@ function viewMatch(){
             <strong>${matchState.them}</strong>
           </div>
         </div>
+
+        ${matchState.finished ? `<div class="arena-complete-rewards-under-score">${matchRewardsHtml()}</div>` : ""}
 
         <div class="battle-stage arena-battle-stage ${last ? "has-battle" : "waiting-battle"} ${finishedClass}">
           <div class="court-lines"></div>
@@ -3637,18 +4594,16 @@ function viewMatch(){
     <div class="section-title">
       <div>
         <h2>Quick Match</h2>
-        <p>Best-of-five card battle. Costs 1 stamina and rewards coins + training points.</p>
       </div>
-      <span class="pill">⚔️ ${matchRecordText()} <small>record</small></span>
     </div>
 
     <div class="match-start-panel arena-start-panel">
       <div class="match-start-copy">
         <h3>Start Quick Match Arena</h3>
         <p>Your lineup has ${state.lineup.length}/5 cards. You need at least 3.</p>
-        <p>Matches now use a phone-first arena layout: top phase banners, middle battle, bottom lineup dock.</p>
+        <p>Best-of-five card battle. Costs 0 stamina and earns Draft clears.</p>
         <p>Phase schedule includes single-stat rounds, two-stat combo rounds, and an overall clutch round.</p>
-        <button onclick="startMatch(false)" class="green" ${state.lineup.length < 3 || state.stamina < 1 ? "disabled" : ""}>Start quick match -1 stamina</button>
+        <button onclick="startMatch(false)" class="green" ${state.lineup.length < 3 ? "disabled" : ""}>Start free quick match</button>
       </div>
       <div class="match-start-preview">
         <div class="floating-card-back one"></div>
@@ -4149,6 +5104,7 @@ function cupHistoryHtml(){
   }).join("")}</div>`;
 }
 
+
 function viewCup(){
   const active = state.cupSeason;
   const tierKeys = ["rookie","pro","star","hof"];
@@ -4163,7 +5119,6 @@ function viewCup(){
           <h3>${cfg.icon} ${cfg.name}</h3>
           <span>${cfg.stamina} stamina${priorTitles ? " · " + priorTitles + " title" + (priorTitles === 1 ? "" : "s") : ""}</span>
         </div>
-        <p>Snapshot lineup tournament. No card-by-card Quick Match play.</p>
         <div class="cup-reward-preview">
           <strong>Champion reward</strong>
           <span>+${championReward.coins} coins · +${championReward.tp} TP · ${championReward.cards} prize cards</span>
@@ -4177,14 +5132,9 @@ function viewCup(){
   return `
     <div class="section-title">
       <div>
-        <h2>Collector Cup</h2><div class="build-label">Quick Match Arena v1</div>
-        <p>Submit a 5-card lineup snapshot and run a simulated tournament. Cards remain usable in Quick Match.</p>
+        <h2>Collector Cup</h2><div class="build-label">Core Stability Test v1</div>
       </div>
       <span class="pill">🏆 ${state.stats.cupChampionships || 0} <small>titles</small></span>
-    </div>
-
-    <div class="cup-mode-note">
-      <strong>Snapshot lock:</strong> the Cup saves card stats, levels, and foils at entry. Later upgrades do not affect the active Cup run, but those cards stay usable everywhere else.
     </div>
 
     ${active ? `
@@ -4213,6 +5163,7 @@ function viewCup(){
     </div>
   `;
 }
+
 
 function viewQuests(){
   const qhtml = QUESTS.map(q => {
@@ -4276,5 +5227,8 @@ document.querySelectorAll("nav button").forEach(btn => {
     render();
   });
 });
+
+
+
 
 render();

@@ -613,7 +613,7 @@ const CARDS = [
     "desc": "Depth QB who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/fb_qb_frost_01.svg",
     "cardArt": "assets/cards/fb_qb_frost_01.svg",
-    "realisticArt": "assets/cards/fb_qb_frost_01.svg",
+    "realisticArt": "assets/realistic/fb_qb_frost_01.jpg",
     "archetype": "Balanced"
   },
   {
@@ -631,7 +631,7 @@ const CARDS = [
     "desc": "Depth RB who helps complete the binder. Specialist build: strongest in OFF phases.",
     "art": "assets/players/fb_rb_morrow_02.svg",
     "cardArt": "assets/cards/fb_rb_morrow_02.svg",
-    "realisticArt": "assets/cards/fb_rb_morrow_02.svg",
+    "realisticArt": "assets/realistic/fb_rb_morrow_02.jpg",
     "archetype": "Specialist"
   },
   {
@@ -649,7 +649,7 @@ const CARDS = [
     "desc": "Depth WR who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/fb_wr_fox_03.svg",
     "cardArt": "assets/cards/fb_wr_fox_03.svg",
-    "realisticArt": "assets/cards/fb_wr_fox_03.svg",
+    "realisticArt": "assets/realistic/fb_wr_fox_03.jpg",
     "archetype": "Balanced"
   },
   {
@@ -667,7 +667,7 @@ const CARDS = [
     "desc": "Depth TE who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/fb_te_price_04.svg",
     "cardArt": "assets/cards/fb_te_price_04.svg",
-    "realisticArt": "assets/cards/fb_te_price_04.svg",
+    "realisticArt": "assets/realistic/fb_te_price_04.jpg",
     "archetype": "Balanced"
   },
   {
@@ -685,7 +685,7 @@ const CARDS = [
     "desc": "Depth LB who helps complete the binder. Two-stat build: strongest in DEF and ATH.",
     "art": "assets/players/fb_lb_pierce_05.svg",
     "cardArt": "assets/cards/fb_lb_pierce_05.svg",
-    "realisticArt": "assets/cards/fb_lb_pierce_05.svg",
+    "realisticArt": "assets/realistic/fb_lb_pierce_05.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -703,7 +703,7 @@ const CARDS = [
     "desc": "Depth CB who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/fb_cb_holloway_06.svg",
     "cardArt": "assets/cards/fb_cb_holloway_06.svg",
-    "realisticArt": "assets/cards/fb_cb_holloway_06.svg",
+    "realisticArt": "assets/realistic/fb_cb_holloway_06.jpg",
     "archetype": "Balanced"
   },
   {
@@ -721,7 +721,7 @@ const CARDS = [
     "desc": "Depth S who helps complete the binder. Specialist build: strongest in DEF phases.",
     "art": "assets/players/fb_s_bennett_07.svg",
     "cardArt": "assets/cards/fb_s_bennett_07.svg",
-    "realisticArt": "assets/cards/fb_s_bennett_07.svg",
+    "realisticArt": "assets/realistic/fb_s_bennett_07.jpg",
     "archetype": "Specialist"
   },
   {
@@ -739,7 +739,7 @@ const CARDS = [
     "desc": "Depth EDGE who helps complete the binder. Specialist build: strongest in DEF phases.",
     "art": "assets/players/fb_edge_rhodes_08.svg",
     "cardArt": "assets/cards/fb_edge_rhodes_08.svg",
-    "realisticArt": "assets/cards/fb_edge_rhodes_08.svg",
+    "realisticArt": "assets/realistic/fb_edge_rhodes_08.jpg",
     "archetype": "Specialist"
   },
   {
@@ -757,7 +757,7 @@ const CARDS = [
     "desc": "Depth DT who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/fb_dt_page_09.svg",
     "cardArt": "assets/cards/fb_dt_page_09.svg",
-    "realisticArt": "assets/cards/fb_dt_page_09.svg",
+    "realisticArt": "assets/realistic/fb_dt_page_09.jpg",
     "archetype": "Balanced"
   },
   {
@@ -775,7 +775,7 @@ const CARDS = [
     "desc": "Depth K who helps complete the binder. Specialist build: strongest in OFF phases.",
     "art": "assets/players/fb_k_mason_10.svg",
     "cardArt": "assets/cards/fb_k_mason_10.svg",
-    "realisticArt": "assets/cards/fb_k_mason_10.svg",
+    "realisticArt": "assets/realistic/fb_k_mason_10.jpg",
     "archetype": "Specialist"
   },
   {
@@ -847,7 +847,7 @@ const CARDS = [
     "desc": "Useful rotation TE with upgrade potential. Two-stat build: strongest in OFF and ATH.",
     "art": "assets/players/fb_te_mercer_14.svg",
     "cardArt": "assets/cards/fb_te_mercer_14.svg",
-    "realisticArt": "assets/cards/fb_te_mercer_14.svg",
+    "realisticArt": "assets/realistic/fb_te_mercer_14.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1009,7 +1009,7 @@ const CARDS = [
     "desc": "Depth PG who helps complete the binder. Specialist build: strongest in IQ phases.",
     "art": "assets/players/bb_pg_cross_01.svg",
     "cardArt": "assets/cards/bb_pg_cross_01.svg",
-    "realisticArt": "assets/cards/bb_pg_cross_01.svg",
+    "realisticArt": "assets/realistic/bb_pg_cross_01.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1027,7 +1027,7 @@ const CARDS = [
     "desc": "Depth SG who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/bb_sg_bishop_02.svg",
     "cardArt": "assets/cards/bb_sg_bishop_02.svg",
-    "realisticArt": "assets/cards/bb_sg_bishop_02.svg",
+    "realisticArt": "assets/realistic/bb_sg_bishop_02.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1045,7 +1045,7 @@ const CARDS = [
     "desc": "Depth SF who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/bb_sf_rhodes_03.svg",
     "cardArt": "assets/cards/bb_sf_rhodes_03.svg",
-    "realisticArt": "assets/cards/bb_sf_rhodes_03.svg",
+    "realisticArt": "assets/realistic/bb_sf_rhodes_03.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1063,7 +1063,7 @@ const CARDS = [
     "desc": "Depth PF who helps complete the binder. Two-stat build: strongest in DEF and IQ.",
     "art": "assets/players/bb_pf_cannon_04.svg",
     "cardArt": "assets/cards/bb_pf_cannon_04.svg",
-    "realisticArt": "assets/cards/bb_pf_cannon_04.svg",
+    "realisticArt": "assets/realistic/bb_pf_cannon_04.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1081,7 +1081,7 @@ const CARDS = [
     "desc": "Depth C who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/bb_c_valdez_05.svg",
     "cardArt": "assets/cards/bb_c_valdez_05.svg",
-    "realisticArt": "assets/cards/bb_c_valdez_05.svg",
+    "realisticArt": "assets/realistic/bb_c_valdez_05.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1099,7 +1099,7 @@ const CARDS = [
     "desc": "Depth PG who helps complete the binder. Two-stat build: strongest in IQ and OFF.",
     "art": "assets/players/bb_pg_ford_06.svg",
     "cardArt": "assets/cards/bb_pg_ford_06.svg",
-    "realisticArt": "assets/cards/bb_pg_ford_06.svg",
+    "realisticArt": "assets/realistic/bb_pg_ford_06.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1117,7 +1117,7 @@ const CARDS = [
     "desc": "Depth SG who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/bb_sg_reyes_07.svg",
     "cardArt": "assets/cards/bb_sg_reyes_07.svg",
-    "realisticArt": "assets/cards/bb_sg_reyes_07.svg",
+    "realisticArt": "assets/realistic/bb_sg_reyes_07.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1135,7 +1135,7 @@ const CARDS = [
     "desc": "Depth SF who helps complete the binder. Specialist build: strongest in OFF phases.",
     "art": "assets/players/bb_sf_mercer_08.svg",
     "cardArt": "assets/cards/bb_sf_mercer_08.svg",
-    "realisticArt": "assets/cards/bb_sf_mercer_08.svg",
+    "realisticArt": "assets/realistic/bb_sf_mercer_08.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1153,7 +1153,7 @@ const CARDS = [
     "desc": "Depth PF who helps complete the binder. Specialist build: strongest in DEF phases.",
     "art": "assets/players/bb_pf_mills_09.svg",
     "cardArt": "assets/cards/bb_pf_mills_09.svg",
-    "realisticArt": "assets/cards/bb_pf_mills_09.svg",
+    "realisticArt": "assets/realistic/bb_pf_mills_09.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1171,7 +1171,7 @@ const CARDS = [
     "desc": "Depth C who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/bb_c_bridges_10.svg",
     "cardArt": "assets/cards/bb_c_bridges_10.svg",
-    "realisticArt": "assets/cards/bb_c_bridges_10.svg",
+    "realisticArt": "assets/realistic/bb_c_bridges_10.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1189,7 +1189,7 @@ const CARDS = [
     "desc": "Useful rotation PG with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/bb_pg_hayes_11.svg",
     "cardArt": "assets/cards/bb_pg_hayes_11.svg",
-    "realisticArt": "assets/cards/bb_pg_hayes_11.svg",
+    "realisticArt": "assets/realistic/bb_pg_hayes_11.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1207,7 +1207,7 @@ const CARDS = [
     "desc": "Useful rotation SG with upgrade potential. Specialist build: strongest in OFF phases.",
     "art": "assets/players/bb_sg_mercer_12.svg",
     "cardArt": "assets/cards/bb_sg_mercer_12.svg",
-    "realisticArt": "assets/cards/bb_sg_mercer_12.svg",
+    "realisticArt": "assets/realistic/bb_sg_mercer_12.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1225,7 +1225,7 @@ const CARDS = [
     "desc": "Useful rotation SF with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/bb_sf_sutton_13.svg",
     "cardArt": "assets/cards/bb_sf_sutton_13.svg",
-    "realisticArt": "assets/cards/bb_sf_sutton_13.svg",
+    "realisticArt": "assets/realistic/bb_sf_sutton_13.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1261,7 +1261,7 @@ const CARDS = [
     "desc": "Useful rotation C with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/bb_c_hale_15.svg",
     "cardArt": "assets/cards/bb_c_hale_15.svg",
-    "realisticArt": "assets/cards/bb_c_hale_15.svg",
+    "realisticArt": "assets/realistic/bb_c_hale_15.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1405,7 +1405,7 @@ const CARDS = [
     "desc": "Depth ST who helps complete the binder. Two-stat build: strongest in OFF and ATH.",
     "art": "assets/players/sc_st_hayes_01.svg",
     "cardArt": "assets/cards/sc_st_hayes_01.svg",
-    "realisticArt": "assets/cards/sc_st_hayes_01.svg",
+    "realisticArt": "assets/realistic/sc_st_hayes_01.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1423,7 +1423,7 @@ const CARDS = [
     "desc": "Depth CM who helps complete the binder. Specialist build: strongest in IQ phases.",
     "art": "assets/players/sc_cm_hunt_02.svg",
     "cardArt": "assets/cards/sc_cm_hunt_02.svg",
-    "realisticArt": "assets/cards/sc_cm_hunt_02.svg",
+    "realisticArt": "assets/realistic/sc_cm_hunt_02.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1441,7 +1441,7 @@ const CARDS = [
     "desc": "Depth W who helps complete the binder. Specialist build: strongest in OFF phases.",
     "art": "assets/players/sc_w_cross_03.svg",
     "cardArt": "assets/cards/sc_w_cross_03.svg",
-    "realisticArt": "assets/cards/sc_w_cross_03.svg",
+    "realisticArt": "assets/realistic/sc_w_cross_03.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1459,7 +1459,7 @@ const CARDS = [
     "desc": "Depth CB who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/sc_cb_sutton_04.svg",
     "cardArt": "assets/cards/sc_cb_sutton_04.svg",
-    "realisticArt": "assets/cards/sc_cb_sutton_04.svg",
+    "realisticArt": "assets/realistic/sc_cb_sutton_04.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1477,7 +1477,7 @@ const CARDS = [
     "desc": "Depth GK who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/sc_gk_barrett_05.svg",
     "cardArt": "assets/cards/sc_gk_barrett_05.svg",
-    "realisticArt": "assets/cards/sc_gk_barrett_05.svg",
+    "realisticArt": "assets/realistic/sc_gk_barrett_05.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1495,7 +1495,7 @@ const CARDS = [
     "desc": "Depth AM who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/sc_am_page_06.svg",
     "cardArt": "assets/cards/sc_am_page_06.svg",
-    "realisticArt": "assets/cards/sc_am_page_06.svg",
+    "realisticArt": "assets/realistic/sc_am_page_06.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1513,7 +1513,7 @@ const CARDS = [
     "desc": "Depth CDM who helps complete the binder. Specialist build: strongest in IQ phases.",
     "art": "assets/players/sc_cdm_bishop_07.svg",
     "cardArt": "assets/cards/sc_cdm_bishop_07.svg",
-    "realisticArt": "assets/cards/sc_cdm_bishop_07.svg",
+    "realisticArt": "assets/realistic/sc_cdm_bishop_07.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1531,7 +1531,7 @@ const CARDS = [
     "desc": "Depth FB who helps complete the binder. Specialist build: strongest in DEF phases.",
     "art": "assets/players/sc_fb_valdez_08.svg",
     "cardArt": "assets/cards/sc_fb_valdez_08.svg",
-    "realisticArt": "assets/cards/sc_fb_valdez_08.svg",
+    "realisticArt": "assets/realistic/sc_fb_valdez_08.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1549,7 +1549,7 @@ const CARDS = [
     "desc": "Depth ST who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/sc_st_mills_09.svg",
     "cardArt": "assets/cards/sc_st_mills_09.svg",
-    "realisticArt": "assets/cards/sc_st_mills_09.svg",
+    "realisticArt": "assets/realistic/sc_st_mills_09.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1567,7 +1567,7 @@ const CARDS = [
     "desc": "Depth CM who helps complete the binder. Boom/bust specialist: elite IQ with real tradeoffs.",
     "art": "assets/players/sc_cm_maddox_10.svg",
     "cardArt": "assets/cards/sc_cm_maddox_10.svg",
-    "realisticArt": "assets/cards/sc_cm_maddox_10.svg",
+    "realisticArt": "assets/realistic/sc_cm_maddox_10.jpg",
     "archetype": "Boom/Bust"
   },
   {
@@ -1621,7 +1621,7 @@ const CARDS = [
     "desc": "Useful rotation GK with upgrade potential. Two-stat build: strongest in DEF and IQ.",
     "art": "assets/players/sc_gk_holloway_13.svg",
     "cardArt": "assets/cards/sc_gk_holloway_13.svg",
-    "realisticArt": "assets/cards/sc_gk_holloway_13.svg",
+    "realisticArt": "assets/realistic/sc_gk_holloway_13.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1801,7 +1801,7 @@ const CARDS = [
     "desc": "Depth SP who helps complete the binder. Specialist build: strongest in DEF phases.",
     "art": "assets/players/bs_sp_bishop_01.svg",
     "cardArt": "assets/cards/bs_sp_bishop_01.svg",
-    "realisticArt": "assets/cards/bs_sp_bishop_01.svg",
+    "realisticArt": "assets/realistic/bs_sp_bishop_01.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1819,7 +1819,7 @@ const CARDS = [
     "desc": "Depth CP who helps complete the binder. Specialist build: strongest in DEF phases.",
     "art": "assets/players/bs_cp_page_02.svg",
     "cardArt": "assets/cards/bs_cp_page_02.svg",
-    "realisticArt": "assets/cards/bs_cp_page_02.svg",
+    "realisticArt": "assets/realistic/bs_cp_page_02.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1837,7 +1837,7 @@ const CARDS = [
     "desc": "Depth C who helps complete the binder. Two-stat build: strongest in DEF and IQ.",
     "art": "assets/players/bs_c_archer_03.svg",
     "cardArt": "assets/cards/bs_c_archer_03.svg",
-    "realisticArt": "assets/cards/bs_c_archer_03.svg",
+    "realisticArt": "assets/realistic/bs_c_archer_03.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1855,7 +1855,7 @@ const CARDS = [
     "desc": "Depth 1B who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/bs_1b_rhodes_04.svg",
     "cardArt": "assets/cards/bs_1b_rhodes_04.svg",
-    "realisticArt": "assets/cards/bs_1b_rhodes_04.svg",
+    "realisticArt": "assets/realistic/bs_1b_rhodes_04.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1873,7 +1873,7 @@ const CARDS = [
     "desc": "Depth 2B who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/bs_2b_mills_05.svg",
     "cardArt": "assets/cards/bs_2b_mills_05.svg",
-    "realisticArt": "assets/cards/bs_2b_mills_05.svg",
+    "realisticArt": "assets/realistic/bs_2b_mills_05.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1891,7 +1891,7 @@ const CARDS = [
     "desc": "Depth 3B who helps complete the binder. Specialist build: strongest in OFF phases.",
     "art": "assets/players/bs_3b_bishop_06.svg",
     "cardArt": "assets/cards/bs_3b_bishop_06.svg",
-    "realisticArt": "assets/cards/bs_3b_bishop_06.svg",
+    "realisticArt": "assets/realistic/bs_3b_bishop_06.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1909,7 +1909,7 @@ const CARDS = [
     "desc": "Depth SS who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/bs_ss_holloway_07.svg",
     "cardArt": "assets/cards/bs_ss_holloway_07.svg",
-    "realisticArt": "assets/cards/bs_ss_holloway_07.svg",
+    "realisticArt": "assets/realistic/bs_ss_holloway_07.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1927,7 +1927,7 @@ const CARDS = [
     "desc": "Depth CF who helps complete the binder. Balanced profile with no major hole.",
     "art": "assets/players/bs_cf_reed_08.svg",
     "cardArt": "assets/cards/bs_cf_reed_08.svg",
-    "realisticArt": "assets/cards/bs_cf_reed_08.svg",
+    "realisticArt": "assets/realistic/bs_cf_reed_08.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1945,7 +1945,7 @@ const CARDS = [
     "desc": "Depth OF who helps complete the binder. Specialist build: strongest in OFF phases.",
     "art": "assets/players/bs_of_hayes_09.svg",
     "cardArt": "assets/cards/bs_of_hayes_09.svg",
-    "realisticArt": "assets/cards/bs_of_hayes_09.svg",
+    "realisticArt": "assets/realistic/bs_of_hayes_09.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1963,7 +1963,7 @@ const CARDS = [
     "desc": "Depth DH who helps complete the binder. Specialist build: strongest in OFF phases.",
     "art": "assets/players/bs_dh_bridges_10.svg",
     "cardArt": "assets/cards/bs_dh_bridges_10.svg",
-    "realisticArt": "assets/cards/bs_dh_bridges_10.svg",
+    "realisticArt": "assets/realistic/bs_dh_bridges_10.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1981,7 +1981,7 @@ const CARDS = [
     "desc": "Useful rotation SP with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/bs_sp_fox_11.svg",
     "cardArt": "assets/cards/bs_sp_fox_11.svg",
-    "realisticArt": "assets/cards/bs_sp_fox_11.svg",
+    "realisticArt": "assets/realistic/bs_sp_fox_11.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1999,7 +1999,7 @@ const CARDS = [
     "desc": "Useful rotation CP with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/bs_cp_frost_12.svg",
     "cardArt": "assets/cards/bs_cp_frost_12.svg",
-    "realisticArt": "assets/cards/bs_cp_frost_12.svg",
+    "realisticArt": "assets/realistic/bs_cp_frost_12.jpg",
     "archetype": "Balanced"
   },
   {
@@ -2017,7 +2017,7 @@ const CARDS = [
     "desc": "Useful rotation C with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/bs_c_santiago_13.svg",
     "cardArt": "assets/cards/bs_c_santiago_13.svg",
-    "realisticArt": "assets/cards/bs_c_santiago_13.svg",
+    "realisticArt": "assets/realistic/bs_c_santiago_13.jpg",
     "archetype": "Balanced"
   },
   {
@@ -2035,7 +2035,7 @@ const CARDS = [
     "desc": "Useful rotation 1B with upgrade potential. Specialist build: strongest in OFF phases.",
     "art": "assets/players/bs_1b_valdez_14.svg",
     "cardArt": "assets/cards/bs_1b_valdez_14.svg",
-    "realisticArt": "assets/cards/bs_1b_valdez_14.svg",
+    "realisticArt": "assets/realistic/bs_1b_valdez_14.jpg",
     "archetype": "Specialist"
   },
   {
@@ -2053,7 +2053,7 @@ const CARDS = [
     "desc": "Useful rotation 2B with upgrade potential. Specialist build: strongest in ATH phases.",
     "art": "assets/players/bs_2b_winters_15.svg",
     "cardArt": "assets/cards/bs_2b_winters_15.svg",
-    "realisticArt": "assets/cards/bs_2b_winters_15.svg",
+    "realisticArt": "assets/realistic/bs_2b_winters_15.jpg",
     "archetype": "Specialist"
   },
   {
@@ -2071,7 +2071,7 @@ const CARDS = [
     "desc": "Useful rotation 3B with upgrade potential. Two-stat build: strongest in OFF and IQ.",
     "art": "assets/players/bs_3b_cannon_16.svg",
     "cardArt": "assets/cards/bs_3b_cannon_16.svg",
-    "realisticArt": "assets/cards/bs_3b_cannon_16.svg",
+    "realisticArt": "assets/realistic/bs_3b_cannon_16.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -2181,6 +2181,102 @@ const CARDS = [
     "cardArt": "assets/cards/bs_cp_pierce_22.svg",
     "realisticArt": "assets/cards/bs_cp_pierce_22.svg",
     "archetype": "Specialist"
+  },
+  {
+    "id": "bb_sg_kaden_vail",
+    "name": "Kaden Vail",
+    "sport": "Basketball",
+    "pos": "SG",
+    "team": "LA Palms",
+    "rarity": "Legendary",
+    "archetype": "Balanced",
+    "off": 98,
+    "def": 96,
+    "ath": 94,
+    "iq": 96,
+    "desc": "A ruthless late-game scorer with elite footwork, defensive pride, and a championship-level competitive edge.",
+    "cardArt": "assets/cards/bb_sg_kaden_vail.svg",
+    "realisticArt": "assets/realistic/bb_sg_kaden_vail.jpg"
+  },
+  {
+    "id": "fb_qb_jalen_arden",
+    "name": "Jalen Arden",
+    "sport": "Football",
+    "pos": "QB",
+    "team": "Philly Liberty",
+    "rarity": "Epic",
+    "archetype": "Two-Way",
+    "off": 94,
+    "def": 60,
+    "ath": 94,
+    "iq": 90,
+    "desc": "A poised dual-threat quarterback who wins with toughness, leadership, mobility, and complete team buy-in.",
+    "cardArt": "assets/cards/fb_qb_jalen_arden.svg",
+    "realisticArt": "assets/realistic/fb_qb_jalen_arden.jpg"
+  },
+  {
+    "id": "bs_of_jace_hampton",
+    "name": "Jace Hampton",
+    "sport": "Baseball",
+    "pos": "OF",
+    "team": "Texas Lone Stars",
+    "rarity": "Rare",
+    "archetype": "Specialist",
+    "off": 95,
+    "def": 69,
+    "ath": 73,
+    "iq": 72,
+    "desc": "A lefty power bat with game-breaking offensive upside. Specialist build: elite offense with real defensive tradeoffs.",
+    "cardArt": "assets/cards/bs_of_jace_hampton.svg",
+    "realisticArt": "assets/realistic/bs_of_jace_hampton.jpg"
+  },
+  {
+    "id": "fb_cb_chase_baylor",
+    "name": "Chase Baylor",
+    "sport": "Football",
+    "pos": "CB",
+    "team": "Denver Peaks",
+    "rarity": "Legendary",
+    "archetype": "Specialist",
+    "off": 68,
+    "def": 99,
+    "ath": 96,
+    "iq": 93,
+    "desc": "A shutdown corner with rare burst, elite instincts, and the confidence to erase an entire side of the field.",
+    "cardArt": "assets/cards/fb_cb_chase_baylor.svg",
+    "realisticArt": "assets/realistic/fb_cb_chase_baylor.jpg"
+  },
+  {
+    "id": "sc_fb_rafael_costa",
+    "name": "Rafael Costa",
+    "sport": "Soccer",
+    "pos": "FB",
+    "team": "Rio Verde",
+    "rarity": "Epic",
+    "archetype": "Two-Way",
+    "off": 97,
+    "def": 87,
+    "ath": 98,
+    "iq": 80,
+    "desc": "An explosive two-way fullback with absurd shot power, relentless pace, and highlight goals from impossible distance.",
+    "cardArt": "assets/cards/sc_fb_rafael_costa.svg",
+    "realisticArt": "assets/realistic/sc_fb_rafael_costa.jpg"
+  },
+  {
+    "id": "bb_pg_avery_cole",
+    "name": "Avery Cole",
+    "sport": "Basketball",
+    "pos": "PG",
+    "team": "Seattle Signals",
+    "rarity": "Uncommon",
+    "archetype": "Balanced",
+    "off": 75,
+    "def": 66,
+    "ath": 76,
+    "iq": 79,
+    "desc": "A poised floor general with quick burst, sharp vision, and a smooth pull-up game.",
+    "cardArt": "assets/cards/bb_pg_avery_cole.svg",
+    "realisticArt": "assets/realistic/bb_pg_avery_cole.jpg"
   }
 ];
 
