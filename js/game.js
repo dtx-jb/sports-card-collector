@@ -1,6 +1,6 @@
 // js/game.js
 
-const SAVE_KEY = "majorSportsCardCollector_core_stability_test_v1";
+const SAVE_KEY = "majorSportsCardCollector_core_stability_test_v2";
 
 let state = loadGame();
 let currentView = "home";
@@ -316,19 +316,20 @@ function saveGame(){
 }
 
 function resetGame(){
-  if(confirm("Reset your sports card collection and start over?")){
-    localStorage.removeItem(SAVE_KEY);
-    state = freshState();
-    currentView = "home";
-    lastPack = [];
-    packOpening = null;
-    packQueue = [];
-    clearPackRuntimeState();
-    clearActivePackState();
-    matchState = null;
-    render();
-    toast("Collection reset.");
-  }
+  localStorage.removeItem(SAVE_KEY);
+  state = freshState();
+  currentView = "home";
+  lastPack = [];
+  packOpening = null;
+  packQueue = [];
+  matchState = null;
+
+  if(typeof clearActivePackState === "function") clearActivePackState();
+  if(typeof clearPackRuntimeState === "function") clearPackRuntimeState();
+
+  saveGame();
+  render();
+  toast("Fresh game started.");
 }
 
 function card(id){ return CARDS.find(c => c.id === id); }
@@ -1647,7 +1648,7 @@ function rawEffectiveStat(c, key){
 }
 
 function effectiveStat(c, key){
-  // Core Stability Test v1:
+  // Core Stability Test v2:
   // Base cards still live on a 25-99 scale, but upgrades/foils can push
   // effective stats beyond 99 so high-end cards do not waste upgrades.
   return Math.min(125, rawEffectiveStat(c, key));
@@ -1877,7 +1878,7 @@ function startMatch(cup = false){
     return;
   }
 
-  // Core Stability Test v1:
+  // Core Stability Test v2:
   // Free Quick Match should not let players bank clears indefinitely.
   // If clears are waiting, send the player to the Draft Board first.
   if(!cup && state.draft && (state.draft.clears || 0) > 0){
@@ -2023,7 +2024,7 @@ function finishMatch(){
     state.coins += reward;
     state.trainingPoints += tpReward;
   }else{
-    // Core Stability Test v1:
+    // Core Stability Test v2:
     // Quick Match is always playable. The real reward is controlled by Draft clears.
     draftClears = won ? 3 : 1;
     state.draft = state.draft || {clears:0, board:null, history:[]};
@@ -3363,7 +3364,7 @@ function viewHome(){
   return `
     <div class="section-title">
       <div>
-        <h2>Clubhouse</h2><div class="build-label">Core Stability Test v1</div>
+        <h2>Clubhouse</h2><div class="build-label">Core Stability Test v2</div>
         <p>Earn coins, open sport packs, complete goals, and build a 5-card lineup.</p>
       </div>
 
@@ -3560,7 +3561,7 @@ function viewPacks(){
   return `
     <div class="section-title">
       <div>
-        <h2>Packs</h2><div class="build-label">Core Stability Test v1</div>
+        <h2>Packs</h2><div class="build-label">Core Stability Test v2</div>
       </div>
     </div>
 
@@ -5132,7 +5133,7 @@ function viewCup(){
   return `
     <div class="section-title">
       <div>
-        <h2>Collector Cup</h2><div class="build-label">Core Stability Test v1</div>
+        <h2>Collector Cup</h2><div class="build-label">Core Stability Test v2</div>
       </div>
       <span class="pill">🏆 ${state.stats.cupChampionships || 0} <small>titles</small></span>
     </div>

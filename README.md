@@ -1082,3 +1082,10 @@ Included:
 - Clubhouse, Packs, My Lineup, Quick Match, Draft Board, Earn Coins, and Collector Cup UI cleanup.
 - Packs now show Buy 1 / Buy 5 / Buy 10.
 - Admin includes Stability test setup and Clear active pack state.
+
+## Core Stability Test v2
+
+Change:
+- Removed the browser confirm dialog from Reset Game.
+- Reset now immediately clears the current build save and starts a fresh game.
+- Fresh build save key: majorSportsCardCollector_core_stability_test_v2
