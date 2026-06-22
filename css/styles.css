@@ -6573,3 +6573,47 @@ button[data-view="admin"]{
     grid-template-columns:1fr;
   }
 }
+
+
+/* Core Stability Test v3 */
+button.busy{
+  opacity:.65;
+  pointer-events:none;
+}
+
+
+/* Core Stability Test v6 - Collection cleanup */
+.collection-meta-footer{
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  align-items:center;
+  flex-wrap:wrap;
+  font-size:11px;
+  font-weight:900;
+  color:#dbeafe;
+}
+
+.collection-meta-footer span{
+  background:rgba(15,23,42,.58);
+  border:1px solid rgba(148,163,184,.2);
+  border-radius:999px;
+  padding:4px 7px;
+}
+
+.binder-pocket .card-level-badge,
+.binder-pocket .owned{
+  display:none!important;
+}
+
+@media (pointer: coarse){
+  .inspect-card-shell,
+  .inspect-single-card,
+  .inspect-panel{
+    touch-action:pan-y!important;
+  }
+
+  .inspect-card-shell{
+    transform:none!important;
+  }
+}

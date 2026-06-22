@@ -1089,3 +1089,116 @@ Change:
 - Removed the browser confirm dialog from Reset Game.
 - Reset now immediately clears the current build save and starts a fresh game.
 - Fresh build save key: majorSportsCardCollector_core_stability_test_v2
+
+## Core Stability Test v3
+
+Included:
+- Batches 13-15 remaining common-card art updates.
+- Fresh build save key: majorSportsCardCollector_core_stability_test_v3
+- Buy 10 patch:
+  - Buy 5 and Buy 10 now save the active reveal and automatically reload into the reveal screen.
+  - This replaces the manual-refresh workaround.
+  - Buy 1 still attempts immediate render.
+
+## Core Stability Test v4
+
+Change:
+- Re-applied corrected Batch 13 art package.
+- Updated existing Batch 13 card IDs: bb_pf_barrett_14, bb_pg_cross_16, fb_lb_crowe, fb_wr_blaze, sc_cb_ward
+- Fresh build save key: majorSportsCardCollector_core_stability_test_v4
+- Normalized corrected art files to 900x1260 where needed: none
+
+## Core Stability Test v5
+
+Change:
+- Replaced `bb_pf_barrett_14` art with the user-provided corrected Reid Barrett image.
+- Source image normalized from (1054, 1492) RGBA to 900x1260 RGB JPEG.
+- Fresh build save key: majorSportsCardCollector_core_stability_test_v5
+
+## Core Stability Test v6
+
+Collection cleanup:
+- Removed Collection tab top owned counter.
+- Removed level/foil and card-count overlays from Collection thumbnails.
+- Moved level/foil/count info below the lineup action button in the binder pocket footer.
+- Disabled inspect-card tilt handlers on touch/coarse-pointer devices so mobile scrolling works normally.
+- Fresh build save key: majorSportsCardCollector_core_stability_test_v6
+
+## Core Stability Test v7
+
+Collection cleanup:
+- Removed the redundant Owned / In lineup status pill from Collection binder cards.
+- Binder card metadata now only shows level/foil and owned count.
+- Fresh build save key: majorSportsCardCollector_core_stability_test_v7
+
+## Core Stability Test v8
+
+Rare-card art update applied for batches 16-19 plus Marco Price update.
+Fresh save key: majorSportsCardCollector_core_stability_test_v8
+Card count remained 126.
+Updated IDs by package:
+{
+  "cardgame_art_batch_16_package": [
+    "bs_dh_price_20",
+    "bb_pg_lynch",
+    "fb_edge_sterling_18",
+    "sc_st_mason_17",
+    "bs_cf_sterling_18",
+    "bb_sg_santiago_17"
+  ],
+  "cardgame_art_batch_17_package_corrected": [
+    "bs_1b_bishop",
+    "bs_cp_frost",
+    "bs_ss_hawkins_17",
+    "bs_of_hayes_19",
+    "bb_pf_santiago_19",
+    "bb_sf_ellis_18"
+  ],
+  "cardgame_art_batch_18_package": [
+    "bb_c_reed_20",
+    "bb_c_okoro",
+    "fb_qb_stone",
+    "fb_s_hayes",
+    "fb_dt_cross_19",
+    "fb_k_west_20"
+  ],
+  "cardgame_art_batch_19_package": [
+    "fb_s_price_17",
+    "sc_w_barrett_19",
+    "sc_am_silva",
+    "sc_cb_winters_20",
+    "sc_gk_ito"
+  ],
+  "cardgame_art_marco_price_update_package": [
+    "sc_cm_price_18"
+  ]
+}
+Normalized files:
+[]
+
+## Core Stability Test v9
+
+Epic-card art update applied for batches 20-23.
+Fresh save key: majorSportsCardCollector_core_stability_test_v9
+Card count remained 126.
+Updated IDs by package:
+{
+  "cardgame_art_batch_20_package": [
+    "bs_ss_torres",
+    "bs_sp_frost_21"
+  ],
+  "cardgame_art_batch_21_package": [
+    "bb_pg_hunt_21",
+    "bb_sg_nova"
+  ],
+  "cardgame_art_batch_22_package": [
+    "fb_qb_ford_21",
+    "fb_edge_vega"
+  ],
+  "cardgame_art_batch_23_package": [
+    "sc_st_moreau",
+    "sc_gk_hawkins_21"
+  ]
+}
+Normalized files:
+[]

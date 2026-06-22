@@ -282,11 +282,11 @@ const CARDS = [
     "pos": "SG",
     "emoji": "\ud83c\udfc0",
     "rarity": "Epic",
-    "off": 98,
-    "def": 73,
-    "ath": 86,
-    "iq": 78,
-    "desc": "Three-level scorer with logo range. Specialist build: strongest in OFF phases.",
+    "off": 97,
+    "def": 79,
+    "ath": 98,
+    "iq": 88,
+    "desc": "High-flying shot-maker with elite flair. Two-stat build: strongest in ATH and OFF.",
     "art": "assets/players/bb_sg_nova.svg",
     "cardArt": "assets/cards/bb_sg_nova.svg",
     "realisticArt": "assets/realistic/bb_sg_nova.jpg",
@@ -793,7 +793,7 @@ const CARDS = [
     "desc": "Useful rotation QB with upgrade potential. Specialist build: strongest in OFF phases.",
     "art": "assets/players/fb_qb_valdez_11.svg",
     "cardArt": "assets/cards/fb_qb_valdez_11.svg",
-    "realisticArt": "assets/cards/fb_qb_valdez_11.svg",
+    "realisticArt": "assets/realistic/fb_qb_valdez_11.jpg",
     "archetype": "Specialist"
   },
   {
@@ -811,7 +811,7 @@ const CARDS = [
     "desc": "Useful rotation RB with upgrade potential. Boom/bust specialist: elite OFF with real tradeoffs.",
     "art": "assets/players/fb_rb_reyes_12.svg",
     "cardArt": "assets/cards/fb_rb_reyes_12.svg",
-    "realisticArt": "assets/cards/fb_rb_reyes_12.svg",
+    "realisticArt": "assets/realistic/fb_rb_reyes_12.jpg",
     "archetype": "Boom/Bust"
   },
   {
@@ -829,7 +829,7 @@ const CARDS = [
     "desc": "Useful rotation WR with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/fb_wr_mills_13.svg",
     "cardArt": "assets/cards/fb_wr_mills_13.svg",
-    "realisticArt": "assets/cards/fb_wr_mills_13.svg",
+    "realisticArt": "assets/realistic/fb_wr_mills_13.jpg",
     "archetype": "Balanced"
   },
   {
@@ -865,7 +865,7 @@ const CARDS = [
     "desc": "Useful rotation LB with upgrade potential. Boom/bust specialist: elite DEF with real tradeoffs.",
     "art": "assets/players/fb_lb_hunt_15.svg",
     "cardArt": "assets/cards/fb_lb_hunt_15.svg",
-    "realisticArt": "assets/cards/fb_lb_hunt_15.svg",
+    "realisticArt": "assets/realistic/fb_lb_hunt_15.jpg",
     "archetype": "Boom/Bust"
   },
   {
@@ -883,7 +883,7 @@ const CARDS = [
     "desc": "Useful rotation CB with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/fb_cb_morrow_16.svg",
     "cardArt": "assets/cards/fb_cb_morrow_16.svg",
-    "realisticArt": "assets/cards/fb_cb_morrow_16.svg",
+    "realisticArt": "assets/realistic/fb_cb_morrow_16.jpg",
     "archetype": "Balanced"
   },
   {
@@ -901,7 +901,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling S for competitive lineups. Balanced profile with no major hole.",
     "art": "assets/players/fb_s_price_17.svg",
     "cardArt": "assets/cards/fb_s_price_17.svg",
-    "realisticArt": "assets/cards/fb_s_price_17.svg",
+    "realisticArt": "assets/realistic/fb_s_price_17.jpg",
     "archetype": "Balanced"
   },
   {
@@ -919,7 +919,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling EDGE for competitive lineups. Two-stat build: strongest in DEF and ATH.",
     "art": "assets/players/fb_edge_sterling_18.svg",
     "cardArt": "assets/cards/fb_edge_sterling_18.svg",
-    "realisticArt": "assets/cards/fb_edge_sterling_18.svg",
+    "realisticArt": "assets/realistic/fb_edge_sterling_18.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -937,7 +937,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling DT for competitive lineups. Balanced profile with no major hole.",
     "art": "assets/players/fb_dt_cross_19.svg",
     "cardArt": "assets/cards/fb_dt_cross_19.svg",
-    "realisticArt": "assets/cards/fb_dt_cross_19.svg",
+    "realisticArt": "assets/realistic/fb_dt_cross_19.jpg",
     "archetype": "Balanced"
   },
   {
@@ -955,7 +955,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling K for competitive lineups. Specialist build: strongest in OFF phases.",
     "art": "assets/players/fb_k_west_20.svg",
     "cardArt": "assets/cards/fb_k_west_20.svg",
-    "realisticArt": "assets/cards/fb_k_west_20.svg",
+    "realisticArt": "assets/realistic/fb_k_west_20.jpg",
     "archetype": "Specialist"
   },
   {
@@ -973,7 +973,7 @@ const CARDS = [
     "desc": "Premium QB with elite impact traits. Specialist build: strongest in OFF phases.",
     "art": "assets/players/fb_qb_ford_21.svg",
     "cardArt": "assets/cards/fb_qb_ford_21.svg",
-    "realisticArt": "assets/cards/fb_qb_ford_21.svg",
+    "realisticArt": "assets/realistic/fb_qb_ford_21.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1243,7 +1243,7 @@ const CARDS = [
     "desc": "Useful rotation PF with upgrade potential. Specialist build: strongest in DEF phases.",
     "art": "assets/players/bb_pf_barrett_14.svg",
     "cardArt": "assets/cards/bb_pf_barrett_14.svg",
-    "realisticArt": "assets/cards/bb_pf_barrett_14.svg",
+    "realisticArt": "assets/realistic/bb_pf_barrett_14.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1279,7 +1279,7 @@ const CARDS = [
     "desc": "Useful rotation PG with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/bb_pg_cross_16.svg",
     "cardArt": "assets/cards/bb_pg_cross_16.svg",
-    "realisticArt": "assets/cards/bb_pg_cross_16.svg",
+    "realisticArt": "assets/realistic/bb_pg_cross_16.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1297,7 +1297,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling SG for competitive lineups. Two-stat build: strongest in OFF and ATH.",
     "art": "assets/players/bb_sg_santiago_17.svg",
     "cardArt": "assets/cards/bb_sg_santiago_17.svg",
-    "realisticArt": "assets/cards/bb_sg_santiago_17.svg",
+    "realisticArt": "assets/realistic/bb_sg_santiago_17.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1315,7 +1315,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling SF for competitive lineups. Balanced profile with no major hole.",
     "art": "assets/players/bb_sf_ellis_18.svg",
     "cardArt": "assets/cards/bb_sf_ellis_18.svg",
-    "realisticArt": "assets/cards/bb_sf_ellis_18.svg",
+    "realisticArt": "assets/realistic/bb_sf_ellis_18.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1333,7 +1333,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling PF for competitive lineups. Two-stat build: strongest in DEF and IQ.",
     "art": "assets/players/bb_pf_santiago_19.svg",
     "cardArt": "assets/cards/bb_pf_santiago_19.svg",
-    "realisticArt": "assets/cards/bb_pf_santiago_19.svg",
+    "realisticArt": "assets/realistic/bb_pf_santiago_19.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1351,7 +1351,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling C for competitive lineups. Specialist build: strongest in DEF phases.",
     "art": "assets/players/bb_c_reed_20.svg",
     "cardArt": "assets/cards/bb_c_reed_20.svg",
-    "realisticArt": "assets/cards/bb_c_reed_20.svg",
+    "realisticArt": "assets/realistic/bb_c_reed_20.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1362,14 +1362,14 @@ const CARDS = [
     "pos": "PG",
     "emoji": "\ud83c\udfc0",
     "rarity": "Epic",
-    "off": 93,
-    "def": 85,
-    "ath": 88,
-    "iq": 93,
-    "desc": "Premium PG with elite impact traits. Two-stat build: strongest in IQ and OFF.",
+    "off": 95,
+    "def": 82,
+    "ath": 93,
+    "iq": 90,
+    "desc": "Electric floor general with swagger and flair. Two-stat build: strongest in OFF and ATH.",
     "art": "assets/players/bb_pg_hunt_21.svg",
     "cardArt": "assets/cards/bb_pg_hunt_21.svg",
-    "realisticArt": "assets/cards/bb_pg_hunt_21.svg",
+    "realisticArt": "assets/realistic/bb_pg_hunt_21.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1585,7 +1585,7 @@ const CARDS = [
     "desc": "Useful rotation W with upgrade potential. Specialist build: strongest in OFF phases.",
     "art": "assets/players/sc_w_hayes_11.svg",
     "cardArt": "assets/cards/sc_w_hayes_11.svg",
-    "realisticArt": "assets/cards/sc_w_hayes_11.svg",
+    "realisticArt": "assets/realistic/sc_w_hayes_11.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1603,7 +1603,7 @@ const CARDS = [
     "desc": "Useful rotation CB with upgrade potential. Specialist build: strongest in DEF phases.",
     "art": "assets/players/sc_cb_holloway_12.svg",
     "cardArt": "assets/cards/sc_cb_holloway_12.svg",
-    "realisticArt": "assets/cards/sc_cb_holloway_12.svg",
+    "realisticArt": "assets/realistic/sc_cb_holloway_12.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1639,7 +1639,7 @@ const CARDS = [
     "desc": "Useful rotation AM with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/sc_am_hayes_14.svg",
     "cardArt": "assets/cards/sc_am_hayes_14.svg",
-    "realisticArt": "assets/cards/sc_am_hayes_14.svg",
+    "realisticArt": "assets/realistic/sc_am_hayes_14.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1657,7 +1657,7 @@ const CARDS = [
     "desc": "Useful rotation CDM with upgrade potential. Balanced profile with no major hole.",
     "art": "assets/players/sc_cdm_west_15.svg",
     "cardArt": "assets/cards/sc_cdm_west_15.svg",
-    "realisticArt": "assets/cards/sc_cdm_west_15.svg",
+    "realisticArt": "assets/realistic/sc_cdm_west_15.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1675,7 +1675,7 @@ const CARDS = [
     "desc": "Useful rotation FB with upgrade potential. Specialist build: strongest in DEF phases.",
     "art": "assets/players/sc_fb_sterling_16.svg",
     "cardArt": "assets/cards/sc_fb_sterling_16.svg",
-    "realisticArt": "assets/cards/sc_fb_sterling_16.svg",
+    "realisticArt": "assets/realistic/sc_fb_sterling_16.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1693,7 +1693,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling ST for competitive lineups. Balanced profile with no major hole.",
     "art": "assets/players/sc_st_mason_17.svg",
     "cardArt": "assets/cards/sc_st_mason_17.svg",
-    "realisticArt": "assets/cards/sc_st_mason_17.svg",
+    "realisticArt": "assets/realistic/sc_st_mason_17.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1711,7 +1711,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling CM for competitive lineups. Specialist build: strongest in IQ phases.",
     "art": "assets/players/sc_cm_price_18.svg",
     "cardArt": "assets/cards/sc_cm_price_18.svg",
-    "realisticArt": "assets/cards/sc_cm_price_18.svg",
+    "realisticArt": "assets/realistic/sc_cm_price_18.jpg",
     "archetype": "Specialist"
   },
   {
@@ -1729,7 +1729,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling W for competitive lineups. Two-stat build: strongest in OFF and ATH.",
     "art": "assets/players/sc_w_barrett_19.svg",
     "cardArt": "assets/cards/sc_w_barrett_19.svg",
-    "realisticArt": "assets/cards/sc_w_barrett_19.svg",
+    "realisticArt": "assets/realistic/sc_w_barrett_19.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1747,7 +1747,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling CB for competitive lineups. Balanced profile with no major hole.",
     "art": "assets/players/sc_cb_winters_20.svg",
     "cardArt": "assets/cards/sc_cb_winters_20.svg",
-    "realisticArt": "assets/cards/sc_cb_winters_20.svg",
+    "realisticArt": "assets/realistic/sc_cb_winters_20.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1765,7 +1765,7 @@ const CARDS = [
     "desc": "Premium GK with elite impact traits. Specialist build: strongest in DEF phases.",
     "art": "assets/players/sc_gk_hawkins_21.svg",
     "cardArt": "assets/cards/sc_gk_hawkins_21.svg",
-    "realisticArt": "assets/cards/sc_gk_hawkins_21.svg",
+    "realisticArt": "assets/realistic/sc_gk_hawkins_21.jpg",
     "archetype": "Specialist"
   },
   {
@@ -2089,7 +2089,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling SS for competitive lineups. Specialist build: strongest in ATH phases.",
     "art": "assets/players/bs_ss_hawkins_17.svg",
     "cardArt": "assets/cards/bs_ss_hawkins_17.svg",
-    "realisticArt": "assets/cards/bs_ss_hawkins_17.svg",
+    "realisticArt": "assets/realistic/bs_ss_hawkins_17.jpg",
     "archetype": "Specialist"
   },
   {
@@ -2107,7 +2107,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling CF for competitive lineups. Specialist build: strongest in ATH phases.",
     "art": "assets/players/bs_cf_sterling_18.svg",
     "cardArt": "assets/cards/bs_cf_sterling_18.svg",
-    "realisticArt": "assets/cards/bs_cf_sterling_18.svg",
+    "realisticArt": "assets/realistic/bs_cf_sterling_18.jpg",
     "archetype": "Specialist"
   },
   {
@@ -2125,7 +2125,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling OF for competitive lineups. Specialist build: strongest in OFF phases.",
     "art": "assets/players/bs_of_hayes_19.svg",
     "cardArt": "assets/cards/bs_of_hayes_19.svg",
-    "realisticArt": "assets/cards/bs_of_hayes_19.svg",
+    "realisticArt": "assets/realistic/bs_of_hayes_19.jpg",
     "archetype": "Specialist"
   },
   {
@@ -2143,7 +2143,7 @@ const CARDS = [
     "desc": "Reliable high-ceiling DH for competitive lineups. Balanced profile with no major hole.",
     "art": "assets/players/bs_dh_price_20.svg",
     "cardArt": "assets/cards/bs_dh_price_20.svg",
-    "realisticArt": "assets/cards/bs_dh_price_20.svg",
+    "realisticArt": "assets/realistic/bs_dh_price_20.jpg",
     "archetype": "Balanced"
   },
   {
@@ -2161,7 +2161,7 @@ const CARDS = [
     "desc": "Premium SP with elite impact traits. Two-stat build: strongest in DEF and IQ.",
     "art": "assets/players/bs_sp_frost_21.svg",
     "cardArt": "assets/cards/bs_sp_frost_21.svg",
-    "realisticArt": "assets/cards/bs_sp_frost_21.svg",
+    "realisticArt": "assets/realistic/bs_sp_frost_21.jpg",
     "archetype": "Two-Way"
   },
   {

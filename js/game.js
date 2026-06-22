@@ -1,6 +1,6 @@
 // js/game.js
 
-const SAVE_KEY = "majorSportsCardCollector_core_stability_test_v2";
+const SAVE_KEY = "majorSportsCardCollector_core_stability_test_v9";
 
 let state = loadGame();
 let currentView = "home";
@@ -214,13 +214,42 @@ function ensurePackRevealVisible(){
   }, 250);
 }
 
+
+function forceEnterPackRevealAfterPurchase(quantity = 1){
+  persistPackRuntime();
+  state.runtimeCurrentView = "packs";
+  currentView = "packs";
+  localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+
+  if(quantity >= 5){
+    window.location.reload();
+    return;
+  }
+
+  render();
+  setTimeout(render, 0);
+  requestAnimationFrame(() => {
+    if(currentView === "packs") render();
+  });
+}
+
+
 function handlePackBuy(event, key, quantity = 1){
   if(event){
     event.preventDefault();
     event.stopPropagation();
   }
+
+  const btn = event && event.currentTarget ? event.currentTarget : null;
+  if(btn){
+    btn.disabled = true;
+    btn.classList.add("busy");
+  }
+
   openPack(key, quantity);
 }
+
+
 
 
 
@@ -362,7 +391,15 @@ function flipInspect(){
   renderInspect();
 }
 
+
+function isTouchDevice(){
+  return window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+}
+
+
 function tiltInspect(event){
+  if(isTouchDevice()) return;
+
   const shell = event.currentTarget;
   const rect = shell.getBoundingClientRect();
   const x = (event.clientX - rect.left) / rect.width;
@@ -376,13 +413,20 @@ function tiltInspect(event){
   shell.style.setProperty("--my", `${y * 100}%`);
 }
 
+
+
+
 function resetInspectTilt(event){
   const shell = event.currentTarget;
+  if(!shell) return;
+
   shell.style.setProperty("--rx", "0deg");
   shell.style.setProperty("--ry", "0deg");
   shell.style.setProperty("--mx", "50%");
   shell.style.setProperty("--my", "50%");
 }
+
+
 
 
 function cardVariant(c){
@@ -448,8 +492,8 @@ function renderInspect(){
 
         <div class="inspect-stage">
           <div class="inspect-card-shell ${isStatsView ? "stats-mode" : ""}"
-               onpointermove="${isStatsView ? "" : "tiltInspect(event)"}"
-               onpointerleave="${isStatsView ? "" : "resetInspectTilt(event)"}">
+               onpointermove="${isStatsView || isTouchDevice() ? "" : "tiltInspect(event)"}"
+               onpointerleave="${isStatsView || isTouchDevice() ? "" : "resetInspectTilt(event)"}">
 
             ${!isStatsView ? `
               <div class="inspect-single-card inspect-front ${c.rarity}">
@@ -535,7 +579,7 @@ function renderInspect(){
 
         <div class="inspect-actions">
           <button onclick="flipInspect()" class="gold">${isStatsView ? "Back to card front" : "Flip to stats"}</button>
-          ${!isStatsView ? `<button onclick="resetInspectTilt({currentTarget: document.querySelector('.inspect-card-shell')})">Reset angle</button>` : ""}
+          ${!isStatsView && !isTouchDevice() ? `<button onclick="resetInspectTilt({currentTarget: document.querySelector('.inspect-card-shell')})">Reset angle</button>` : ""}
         </div>
 
         <div class="inspect-help">
@@ -951,6 +995,7 @@ function buyOnePack(key){
 }
 
 
+
 function openPack(key, quantity = 1){
   const pack = PACKS[key];
   if(!pack) return;
@@ -976,12 +1021,11 @@ function openPack(key, quantity = 1){
 
   if(packOpening || packQueue.length || (state.activePackQueue || []).length || state.activePackOpening){
     toast("Finish the current pack reveal first.");
-    saveAndRenderPackReveal();
+    forceEnterPackRevealAfterPurchase(1);
     return;
   }
 
   state.coins -= totalCost;
-
   const newQueue = [];
 
   for(let q = 0; q < quantity; q++){
@@ -1009,7 +1053,6 @@ function openPack(key, quantity = 1){
 
     updatePackPityAfterOpen(key, finalPulled);
     recordPackHistory(key, finalPulled, guaranteedResult.applied);
-
     state.trainingPoints += packTPReward(key, finalPulled);
     addCollectorXP(packXPReward(key, finalPulled), `${pack.name} opening`);
 
@@ -1030,10 +1073,14 @@ function openPack(key, quantity = 1){
 
   startNextPackFromStateQueue();
   checkQuests();
-  saveAndRenderPackReveal();
+  forceEnterPackRevealAfterPurchase(quantity);
 
-  toast(quantity > 1 ? `${quantity} ${pack.name}s ready. Rip the first pack.` : `${pack.name} ready. Rip it open.`);
+  if(quantity < 5){
+    toast(`${quantity} ${pack.name}${quantity > 1 ? "s" : ""} ready. Rip the first pack.`);
+  }
 }
+
+
 
 function startNextPackFromQueue(){
   return startNextPackFromStateQueue();
@@ -1648,7 +1695,7 @@ function rawEffectiveStat(c, key){
 }
 
 function effectiveStat(c, key){
-  // Core Stability Test v2:
+  // Core Stability Test v9:
   // Base cards still live on a 25-99 scale, but upgrades/foils can push
   // effective stats beyond 99 so high-end cards do not waste upgrades.
   return Math.min(125, rawEffectiveStat(c, key));
@@ -1878,7 +1925,7 @@ function startMatch(cup = false){
     return;
   }
 
-  // Core Stability Test v2:
+  // Core Stability Test v9:
   // Free Quick Match should not let players bank clears indefinitely.
   // If clears are waiting, send the player to the Draft Board first.
   if(!cup && state.draft && (state.draft.clears || 0) > 0){
@@ -2024,7 +2071,7 @@ function finishMatch(){
     state.coins += reward;
     state.trainingPoints += tpReward;
   }else{
-    // Core Stability Test v2:
+    // Core Stability Test v9:
     // Quick Match is always playable. The real reward is controlled by Draft clears.
     draftClears = won ? 3 : 1;
     state.draft = state.draft || {clears:0, board:null, history:[]};
@@ -2209,7 +2256,7 @@ function cardHtml(c, options = {}){
 
   const disabledClass = mode === "match" && (matchState.used.includes(c.id) || matchState.finished) ? "disabled-click" : "";
   const clickAttr = cardClick ? `onclick="event.stopPropagation(); ${cardClick}"` : "";
-  const showCardBadges = mode !== "lineup" && mode !== "lineup-add";
+  const showCardBadges = !["lineup","lineup-add","collection"].includes(mode);
 
   return `
     <div data-card-id="${c.id}" class="card ${state.collectionFocusId === c.id ? "" : ""} real-card ${c.rarity} ${selected} ${disabledClass}" style="${sportStyle(c)}">
@@ -2253,7 +2300,10 @@ function packCardHtml(c){
 
 
 
+
 function buyPackFromReveal(key, quantity = 1){
+  quantity = Math.max(1, Math.min(10, Number(quantity) || 1));
+
   if(packOpening){
     if(allPackCardsFlipped()){
       finishPackReveal(false);
@@ -2261,7 +2311,6 @@ function buyPackFromReveal(key, quantity = 1){
       toast("Flip all cards first.");
       currentView = "packs";
       render();
-      ensurePackRevealVisible();
       return;
     }
   }
@@ -2270,6 +2319,8 @@ function buyPackFromReveal(key, quantity = 1){
   currentView = "packs";
   openPack(key, quantity);
 }
+
+
 
 function finishAndOpenSamePack(){
   const key = packOpening ? packOpening.key : lastOpenedPackKey;
@@ -3364,7 +3415,7 @@ function viewHome(){
   return `
     <div class="section-title">
       <div>
-        <h2>Clubhouse</h2><div class="build-label">Core Stability Test v2</div>
+        <h2>Clubhouse</h2><div class="build-label">Core Stability Test v9</div>
         <p>Earn coins, open sport packs, complete goals, and build a 5-card lineup.</p>
       </div>
 
@@ -3424,6 +3475,7 @@ function suggestion(){
 }
 
 
+
 function viewCollection(){
   const sports = ["All", ...Object.keys(SPORTS)];
   const rarities = ["All","Common","Uncommon","Rare","Epic","Legendary"];
@@ -3441,15 +3493,12 @@ function viewCollection(){
     slots.push(null);
   }
 
-  const ownedCount = ownedCards().length;
-
   return `
     <div class="section-title">
       <div>
         <h2>Collection Binder</h2>
         <p>Cards are stored in binder pockets. Locked pockets show cards you have not found yet.</p>
       </div>
-      <span class="pill">🃏 ${ownedCount}/${CARDS.length} owned</span>
     </div>
 
     <div class="filters">
@@ -3495,9 +3544,9 @@ function viewCollection(){
               <div class="binder-card-wrap">
                 ${cardHtml(c, {mode:"collection", selected:inLineup})}
               </div>
-              <div class="binder-card-footer">
-                <span>×${owned}</span>
-                <span>${inLineup ? "In lineup" : "Owned"}</span>
+              <div class="binder-card-footer collection-meta-footer">
+                <span>Lv ${cardLevel(c.id)} · ${foilTier(c.id)}</span>
+                <span>x${owned}</span>
               </div>
             </div>
           `;
@@ -3510,6 +3559,8 @@ function viewCollection(){
     </div>
   `;
 }
+
+
 
 
 function viewPacks(){
@@ -3546,9 +3597,9 @@ function viewPacks(){
         </div>
 
         <div class="pack-buy-row">
-          <button onclick="handlePackBuy(event, '${key}', 1)" ${!unlocked || state.coins < p.cost || packBusy ? "disabled" : ""}>Buy 1</button>
-          <button onclick="handlePackBuy(event, '${key}', 5)" ${!unlocked || state.coins < p.cost * 5 || packBusy ? "disabled" : ""}>Buy 5</button>
-          <button onclick="handlePackBuy(event, '${key}', 10)" ${!unlocked || state.coins < p.cost * 10 || packBusy ? "disabled" : ""}>Buy 10</button>
+          <button onclick="handlePackBuy(event, \'${key}\', 1)" ${!unlocked || state.coins < p.cost || packBusy ? "disabled" : ""}>Buy 1</button>
+          <button onclick="handlePackBuy(event, \'${key}\', 5)" ${!unlocked || state.coins < p.cost * 5 || packBusy ? "disabled" : ""}>Buy 5</button>
+          <button onclick="handlePackBuy(event, \'${key}\', 10)" ${!unlocked || state.coins < p.cost * 10 || packBusy ? "disabled" : ""}>Buy 10</button>
         </div>
       </div>
     `;
@@ -3561,7 +3612,7 @@ function viewPacks(){
   return `
     <div class="section-title">
       <div>
-        <h2>Packs</h2><div class="build-label">Core Stability Test v2</div>
+        <h2>Packs</h2><div class="build-label">Core Stability Test v9</div>
       </div>
     </div>
 
@@ -5133,7 +5184,7 @@ function viewCup(){
   return `
     <div class="section-title">
       <div>
-        <h2>Collector Cup</h2><div class="build-label">Core Stability Test v2</div>
+        <h2>Collector Cup</h2><div class="build-label">Core Stability Test v9</div>
       </div>
       <span class="pill">🏆 ${state.stats.cupChampionships || 0} <small>titles</small></span>
     </div>
