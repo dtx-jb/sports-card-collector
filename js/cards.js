@@ -297,7 +297,7 @@ const CARDS = [
     "sport": "Basketball",
     "name": "Malik Prime",
     "team": "Atlanta Nighthawks",
-    "pos": "SG",
+    "pos": "SF",
     "emoji": "\ud83c\udfc0",
     "rarity": "Legendary",
     "off": 95,
@@ -991,7 +991,7 @@ const CARDS = [
     "desc": "Franchise-defining RB with chase-card upside. Balanced profile with no major hole.",
     "art": "assets/players/fb_rb_morrow_22.svg",
     "cardArt": "assets/cards/fb_rb_morrow_22.svg",
-    "realisticArt": "assets/cards/fb_rb_morrow_22.svg",
+    "realisticArt": "assets/realistic/fb_rb_morrow_22.jpg",
     "archetype": "Balanced"
   },
   {
@@ -1376,7 +1376,7 @@ const CARDS = [
     "id": "bb_sg_page_22",
     "sport": "Basketball",
     "name": "Tariq Page",
-    "team": "Portland Roses",
+    "team": "Seattle Rain",
     "pos": "SG",
     "emoji": "\ud83c\udfc0",
     "rarity": "Legendary",
@@ -1387,7 +1387,7 @@ const CARDS = [
     "desc": "Franchise-defining SG with chase-card upside. Two-stat build: strongest in OFF and ATH.",
     "art": "assets/players/bb_sg_page_22.svg",
     "cardArt": "assets/cards/bb_sg_page_22.svg",
-    "realisticArt": "assets/cards/bb_sg_page_22.svg",
+    "realisticArt": "assets/realistic/bb_sg_page_22.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -1783,7 +1783,7 @@ const CARDS = [
     "desc": "Franchise-defining AM with chase-card upside. Two-stat build: strongest in OFF and ATH.",
     "art": "assets/players/sc_am_rivera_22.svg",
     "cardArt": "assets/cards/sc_am_rivera_22.svg",
-    "realisticArt": "assets/cards/sc_am_rivera_22.svg",
+    "realisticArt": "assets/realistic/sc_am_rivera_22.jpg",
     "archetype": "Two-Way"
   },
   {
@@ -2168,7 +2168,7 @@ const CARDS = [
     "id": "bs_cp_pierce_22",
     "sport": "Baseball",
     "name": "Elias Pierce",
-    "team": "Vegas Diamonds",
+    "team": "Phoenix Cactus",
     "pos": "CP",
     "emoji": "\u26be",
     "rarity": "Legendary",
@@ -2179,7 +2179,7 @@ const CARDS = [
     "desc": "Franchise-defining CP with chase-card upside. Specialist build: strongest in DEF phases.",
     "art": "assets/players/bs_cp_pierce_22.svg",
     "cardArt": "assets/cards/bs_cp_pierce_22.svg",
-    "realisticArt": "assets/cards/bs_cp_pierce_22.svg",
+    "realisticArt": "assets/realistic/bs_cp_pierce_22.jpg",
     "archetype": "Specialist"
   },
   {

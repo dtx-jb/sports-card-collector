@@ -6617,3 +6617,334 @@ button.busy{
     transform:none!important;
   }
 }
+
+
+/* Economy Stability Test v1 */
+.cup-power-panel{
+  margin:12px 0;
+  padding:14px;
+  border-radius:18px;
+  border:1px solid rgba(148,163,184,.22);
+  background:rgba(15,23,42,.64);
+  box-shadow:0 14px 35px rgba(0,0,0,.22);
+}
+
+.cup-power-panel h3{
+  margin:0 0 4px;
+}
+
+.cup-power-panel p{
+  margin:0;
+  color:#cbd5e1;
+}
+
+.cup-power-breakdown{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+
+.cup-power-breakdown span{
+  text-align:center;
+  padding:7px 8px;
+  border-radius:999px;
+  background:rgba(30,41,59,.82);
+  border:1px solid rgba(148,163,184,.18);
+  font-size:11px;
+  font-weight:900;
+  color:#dbeafe;
+}
+
+@media(max-width:700px){
+  .cup-power-breakdown{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+
+/* Economy Stability Test v2 - mobile Quick Match fit */
+@media(max-width:700px){
+  body.quick-match-active-view{
+    overflow:hidden;
+  }
+
+  body.quick-match-active-view .app{
+    height:100dvh;
+    min-height:100dvh;
+    overflow:hidden;
+  }
+
+  body.quick-match-active-view main,
+  body.quick-match-active-view .main,
+  body.quick-match-active-view .content,
+  body.quick-match-active-view #app{
+    height:100dvh;
+    max-height:100dvh;
+    overflow:hidden;
+  }
+
+  body.quick-match-active-view .sidebar,
+  body.quick-match-active-view nav,
+  body.quick-match-active-view .side-nav{
+    display:none!important;
+  }
+
+  body.quick-match-active-view .arena{
+    height:100dvh;
+    max-height:100dvh;
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+    padding:6px 8px calc(env(safe-area-inset-bottom,0px) + 4px);
+  }
+
+  body.quick-match-active-view .arena-header{
+    min-height:auto;
+    padding:6px 8px;
+    border-radius:18px;
+  }
+
+  body.quick-match-active-view .arena-header h1,
+  body.quick-match-active-view .arena-header h2,
+  body.quick-match-active-view .arena-title h1,
+  body.quick-match-active-view .arena-title h2{
+    font-size:20px!important;
+    line-height:1.05;
+    margin:0;
+  }
+
+  body.quick-match-active-view .arena-title,
+  body.quick-match-active-view .arena-subtitle{
+    gap:1px;
+  }
+
+  body.quick-match-active-view .arena-header .btn,
+  body.quick-match-active-view .arena-header button,
+  body.quick-match-active-view .forfeit-btn{
+    padding:7px 10px!important;
+    min-height:34px;
+    border-radius:16px;
+    font-size:12px!important;
+  }
+
+  body.quick-match-active-view .arena-score,
+  body.quick-match-active-view .match-score{
+    padding:7px 12px!important;
+    min-width:70px;
+    font-size:24px!important;
+  }
+
+  body.quick-match-active-view .phase-strip,
+  body.quick-match-active-view .round-tabs{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:4px;
+  }
+
+  body.quick-match-active-view .phase-chip,
+  body.quick-match-active-view .round-chip{
+    min-height:42px!important;
+    padding:5px 4px!important;
+    border-radius:12px!important;
+    font-size:10px!important;
+    line-height:1.05;
+  }
+
+  body.quick-match-active-view .phase-chip strong,
+  body.quick-match-active-view .round-chip strong{
+    font-size:12px!important;
+  }
+
+  body.quick-match-active-view .current-phase,
+  body.quick-match-active-view .phase-card{
+    padding:7px 10px!important;
+    border-radius:15px!important;
+    min-height:auto!important;
+  }
+
+  body.quick-match-active-view .current-phase h3,
+  body.quick-match-active-view .phase-card h3{
+    font-size:17px!important;
+    line-height:1.05;
+    margin:0;
+  }
+
+  body.quick-match-active-view .current-phase p,
+  body.quick-match-active-view .phase-card p{
+    font-size:12px!important;
+    line-height:1.1;
+    margin:2px 0 0;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  body.quick-match-active-view .score-panel,
+  body.quick-match-active-view .arena-scoreboard{
+    padding:7px!important;
+    border-radius:16px!important;
+    gap:5px!important;
+  }
+
+  body.quick-match-active-view .score-box,
+  body.quick-match-active-view .scoreboard-box{
+    padding:7px 8px!important;
+    min-height:46px!important;
+    border-radius:15px!important;
+  }
+
+  body.quick-match-active-view .score-box .value,
+  body.quick-match-active-view .scoreboard-box .value,
+  body.quick-match-active-view .score-number{
+    font-size:27px!important;
+    line-height:1;
+  }
+
+  body.quick-match-active-view .score-box .label,
+  body.quick-match-active-view .scoreboard-box .label{
+    font-size:9px!important;
+    letter-spacing:.08em;
+  }
+
+  body.quick-match-active-view .arena-field,
+  body.quick-match-active-view .match-field{
+    flex:1 1 auto;
+    min-height:0!important;
+    height:auto!important;
+    padding:8px!important;
+    border-radius:18px!important;
+    overflow:hidden!important;
+  }
+
+  body.quick-match-active-view .arena-field::before,
+  body.quick-match-active-view .match-field::before{
+    opacity:.45;
+  }
+
+  body.quick-match-active-view .field-placeholder,
+  body.quick-match-active-view .arena-placeholder{
+    transform:scale(.75);
+    transform-origin:center;
+  }
+
+  body.quick-match-active-view .field-placeholder h3,
+  body.quick-match-active-view .arena-placeholder h3{
+    font-size:18px!important;
+    line-height:1.05;
+  }
+
+  body.quick-match-active-view .field-placeholder p,
+  body.quick-match-active-view .arena-placeholder p{
+    font-size:11px!important;
+    line-height:1.1;
+    max-width:320px;
+  }
+
+  body.quick-match-active-view .lineup-dock,
+  body.quick-match-active-view .arena-lineup,
+  body.quick-match-active-view .match-lineup{
+    flex:0 0 auto;
+    padding:7px!important;
+    border-radius:18px!important;
+    overflow:hidden;
+  }
+
+  body.quick-match-active-view .lineup-dock-header,
+  body.quick-match-active-view .arena-lineup-header,
+  body.quick-match-active-view .match-lineup-header{
+    margin-bottom:5px!important;
+  }
+
+  body.quick-match-active-view .lineup-dock-header h3,
+  body.quick-match-active-view .arena-lineup-header h3,
+  body.quick-match-active-view .match-lineup-header h3{
+    font-size:13px!important;
+    line-height:1;
+    margin:0;
+  }
+
+  body.quick-match-active-view .lineup-cards,
+  body.quick-match-active-view .arena-lineup-grid,
+  body.quick-match-active-view .match-lineup-grid{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:5px!important;
+  }
+
+  body.quick-match-active-view .lineup-card,
+  body.quick-match-active-view .arena-player-card,
+  body.quick-match-active-view .match-player-card{
+    min-width:0!important;
+    padding:4px!important;
+    border-radius:12px!important;
+  }
+
+  body.quick-match-active-view .lineup-card img,
+  body.quick-match-active-view .arena-player-card img,
+  body.quick-match-active-view .match-player-card img,
+  body.quick-match-active-view .mini-card img{
+    width:100%!important;
+    max-height:96px!important;
+    object-fit:cover!important;
+    object-position:top center!important;
+    border-radius:9px!important;
+  }
+
+  body.quick-match-active-view .lineup-card .card-name,
+  body.quick-match-active-view .arena-player-card .card-name,
+  body.quick-match-active-view .match-player-card .card-name{
+    font-size:10px!important;
+    line-height:1.05;
+    margin-top:3px!important;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  body.quick-match-active-view .stat-grid,
+  body.quick-match-active-view .mini-stat-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:2px!important;
+    margin-top:3px!important;
+  }
+
+  body.quick-match-active-view .stat-pill,
+  body.quick-match-active-view .mini-stat{
+    padding:2px!important;
+    min-height:20px!important;
+    border-radius:7px!important;
+    font-size:9px!important;
+    line-height:1;
+  }
+
+  body.quick-match-active-view .stat-pill span,
+  body.quick-match-active-view .mini-stat span{
+    font-size:8px!important;
+  }
+}
+
+@media(max-width:700px) and (max-height:740px){
+  body.quick-match-active-view .arena{
+    gap:4px;
+    padding-top:4px;
+  }
+
+  body.quick-match-active-view .arena-field,
+  body.quick-match-active-view .match-field{
+    padding:5px!important;
+  }
+
+  body.quick-match-active-view .lineup-card img,
+  body.quick-match-active-view .arena-player-card img,
+  body.quick-match-active-view .match-player-card img,
+  body.quick-match-active-view .mini-card img{
+    max-height:78px!important;
+  }
+
+  body.quick-match-active-view .field-placeholder,
+  body.quick-match-active-view .arena-placeholder{
+    transform:scale(.64);
+  }
+}

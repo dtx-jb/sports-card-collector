@@ -1202,3 +1202,52 @@ Updated IDs by package:
 }
 Normalized files:
 []
+
+## Economy Stability Test v1
+
+Applied analyzer-recommended economy patch:
+- Duplicate quick-sell coin values: Common 10, Uncommon 16, Rare 44, Epic 80, Legendary 140.
+- Duplicate quick-sell TP values: Common 6, Uncommon 10, Rare 24, Epic 50, Legendary 100.
+- Guarantee logic changed:
+  - Rare+ guarantee: 85% Rare / 13% Epic / 2% Legendary.
+  - Epic+ guarantee: 90% Epic / 10% Legendary.
+  - Legendary guarantee: Legendary.
+- Rare foil duplicate costs reduced to 1 / 2 / 3 / 4.
+- Collector Cup now displays Cup Power and power breakdown.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v1
+
+Art update:
+- Applied batches 24, 25, and 26 as existing-card art updates only.
+- Updated IDs by package:
+{
+  "cardgame_art_batch_24_package": [
+    "sc_gk_hawkins_21",
+    "fb_qb_jalen_arden",
+    "bs_cp_pierce_22",
+    "bb_star_prime",
+    "bb_sg_page_22"
+  ],
+  "cardgame_art_batch_25_package": [
+    "fb_rb_morrow_22",
+    "fb_star_king",
+    "sc_star_soleil"
+  ],
+  "cardgame_art_batch_26_package": [
+    "sc_am_rivera_22",
+    "bb_sg_kaden_vail",
+    "fb_cb_chase_baylor"
+  ]
+}
+- Card count remained 126.
+- Normalized files:
+[]
+
+## Economy Stability Test v2
+
+Mobile Quick Match UI patch:
+- Added Quick Match active body class.
+- Compacts Quick Match Arena on mobile to fit within one phone viewport.
+- Hides side navigation during an active mobile Quick Match.
+- Reduces arena field, phase chips, score boxes, and lineup cards on small screens.
+- Prevents vertical page scrolling while an active Quick Match is open.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v2

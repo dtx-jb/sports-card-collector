@@ -1,6 +1,6 @@
 // js/game.js
 
-const SAVE_KEY = "majorSportsCardCollector_core_stability_test_v9";
+const SAVE_KEY = "majorSportsCardCollector_economy_stability_test_v2";
 
 let state = loadGame();
 let currentView = "home";
@@ -825,21 +825,52 @@ function pityGuaranteesForPack(packKey){
   return due;
 }
 
+
 function randomCardByMinRank(packKey, minRank){
   const pack = PACKS[packKey];
 
-  let pool = CARDS.filter(c => rarityRank(c.rarity) >= minRank);
+  let targetRank = minRank;
 
-  if(pack.sport){
-    pool = pool.filter(c => c.sport === pack.sport);
+  if(minRank === 3){
+    const roll = Math.random();
+    if(roll < 0.02) targetRank = 5;
+    else if(roll < 0.15) targetRank = 4;
+    else targetRank = 3;
+  }else if(minRank === 4){
+    targetRank = Math.random() < 0.10 ? 5 : 4;
+  }else if(minRank >= 5){
+    targetRank = 5;
+  }
+
+  const targetRarity = {
+    3:"Rare",
+    4:"Epic",
+    5:"Legendary"
+  }[targetRank] || "Rare";
+
+  let pool = CARDS.filter(c => c.rarity === targetRarity);
+
+  if(pack && pack.sport){
+    const sportPool = pool.filter(c => c.sport === pack.sport);
+    if(sportPool.length) pool = sportPool;
   }
 
   if(!pool.length){
-    pool = CARDS.filter(c => pack.sport ? c.sport === pack.sport : true);
+    pool = CARDS.filter(c => rarityRank(c.rarity) >= minRank);
+    if(pack && pack.sport){
+      const sportPool = pool.filter(c => c.sport === pack.sport);
+      if(sportPool.length) pool = sportPool;
+    }
+  }
+
+  if(!pool.length){
+    pool = CARDS.filter(c => pack && pack.sport ? c.sport === pack.sport : true);
   }
 
   return pool[Math.floor(Math.random() * pool.length)];
 }
+
+
 
 function applyPackGuarantee(packKey, pulledIds, guarantees){
   if(!guarantees.length) return {cards:pulledIds, applied:null};
@@ -1653,7 +1684,13 @@ function foilCost(c){
 
   const dupeDiscount = rarity === "Legendary" ? 3 : rarity === "Epic" ? 2 : rarity === "Rare" ? 1 : 0;
 
-  const dupes = Math.max(1, base.dupes - dupeDiscount);
+  let dupes = Math.max(1, base.dupes - dupeDiscount);
+
+  // Economy Stability v1: Rare cards were harder to fully max than Epics.
+  // Cut Rare foil duplicate demand from 24 total to 10 total.
+  if(rarity === "Rare"){
+    dupes = [1,2,3,4][tier] || dupes;
+  }
 
   return {
     coins:Math.round(coins * (tier === 0 ? 1 : rarityMult)),
@@ -1695,7 +1732,7 @@ function rawEffectiveStat(c, key){
 }
 
 function effectiveStat(c, key){
-  // Core Stability Test v9:
+  // Economy Stability Test v2:
   // Base cards still live on a 25-99 scale, but upgrades/foils can push
   // effective stats beyond 99 so high-end cards do not waste upgrades.
   return Math.min(125, rawEffectiveStat(c, key));
@@ -1789,6 +1826,7 @@ function upgradeFoil(id){
   toast(`${next} Foil unlocked.`);
 }
 
+
 function quickSellDuplicate(id){
   const c = card(id);
   if(!c) return;
@@ -1799,8 +1837,8 @@ function quickSellDuplicate(id){
   }
 
   const rank = rarityRank(c.rarity);
-  const coins = {1:18,2:28,3:48,4:85,5:150}[rank] || 18;
-  const tp = {1:15,2:24,3:40,4:75,5:140}[rank] || 15;
+  const coins = {1:10,2:16,3:44,4:80,5:140}[rank] || 10;
+  const tp = {1:6,2:10,3:24,4:50,5:100}[rank] || 6;
 
   state.collection[id] -= 1;
   state.coins += coins;
@@ -1813,6 +1851,8 @@ function quickSellDuplicate(id){
   render();
   toast(`+${coins} coins, +${tp} TP`);
 }
+
+
 
 
 function claimDailyBonus(){
@@ -1925,7 +1965,7 @@ function startMatch(cup = false){
     return;
   }
 
-  // Core Stability Test v9:
+  // Economy Stability Test v2:
   // Free Quick Match should not let players bank clears indefinitely.
   // If clears are waiting, send the player to the Draft Board first.
   if(!cup && state.draft && (state.draft.clears || 0) > 0){
@@ -2071,7 +2111,7 @@ function finishMatch(){
     state.coins += reward;
     state.trainingPoints += tpReward;
   }else{
-    // Core Stability Test v9:
+    // Economy Stability Test v2:
     // Quick Match is always playable. The real reward is controlled by Draft clears.
     draftClears = won ? 3 : 1;
     state.draft = state.draft || {clears:0, board:null, history:[]};
@@ -2483,7 +2523,14 @@ function packOpeningHtml(){
   `;
 }
 
+
+function applyViewBodyClass(){
+  document.body.classList.toggle("quick-match-view", state.view === "match");
+  document.body.classList.toggle("quick-match-active-view", state.view === "match" && !!state.activeMatch);
+}
+
 function render(){
+  applyViewBodyClass();
   checkQuests();
 
   document.getElementById("stats").innerHTML = statsHtml();
@@ -3415,7 +3462,7 @@ function viewHome(){
   return `
     <div class="section-title">
       <div>
-        <h2>Clubhouse</h2><div class="build-label">Core Stability Test v9</div>
+        <h2>Clubhouse</h2><div class="build-label">Economy Stability Test v2</div>
         <p>Earn coins, open sport packs, complete goals, and build a 5-card lineup.</p>
       </div>
 
@@ -3612,7 +3659,7 @@ function viewPacks(){
   return `
     <div class="section-title">
       <div>
-        <h2>Packs</h2><div class="build-label">Core Stability Test v9</div>
+        <h2>Packs</h2><div class="build-label">Economy Stability Test v2</div>
       </div>
     </div>
 
@@ -5106,6 +5153,43 @@ function cupRequirementHtml(tierKey){
   return cupTierRequirements(tierKey).map(r => `<div class="pack-lock-req ${r.met ? "met" : "missing"}"><span>${r.met ? "✓" : "•"}</span><strong>${r.label}</strong></div>`).join("");
 }
 
+
+function currentCupPowerHtml(){
+  if(state.lineup.length < 5){
+    return `
+      <div class="cup-power-panel">
+        <h3>Cup Power</h3>
+        <p>Submit a full 5-card lineup to calculate Cup Power.</p>
+      </div>
+    `;
+  }
+
+  const snapshot = cupLineupSnapshot();
+  const score = cupSnapshotScore(snapshot);
+  const power = cupLineupPower(snapshot);
+  const uniqueSports = new Set(snapshot.map(c => c.sport)).size;
+  const levelBonus = snapshot.reduce((sum,c) => sum + Math.max(0, c.level - 1) * 4, 0);
+  const foilBonus = snapshot.reduce((sum,c) => sum + foilRank(c.foil) * 7, 0);
+  const rarityBonus = snapshot.reduce((sum,c) => sum + rarityRank(c.rarity) * 2, 0);
+  const balanceBonus = uniqueSports >= 4 ? 20 : uniqueSports * 4;
+
+  return `
+    <div class="cup-power-panel">
+      <div>
+        <h3>Cup Power</h3>
+        <p>Lineup Score ${score} · Cup Power ${power}</p>
+      </div>
+      <div class="cup-power-breakdown">
+        <span>Level +${levelBonus}</span>
+        <span>Foil +${foilBonus}</span>
+        <span>Rarity +${rarityBonus}</span>
+        <span>Sport balance +${balanceBonus}</span>
+      </div>
+    </div>
+  `;
+}
+
+
 function cupSnapshotHtml(snapshot){
   if(!snapshot || !snapshot.length) return "";
   return `<div class="cup-snapshot-grid">${snapshot.map(c => `
@@ -5184,10 +5268,12 @@ function viewCup(){
   return `
     <div class="section-title">
       <div>
-        <h2>Collector Cup</h2><div class="build-label">Core Stability Test v9</div>
+        <h2>Collector Cup</h2><div class="build-label">Economy Stability Test v2</div>
       </div>
       <span class="pill">🏆 ${state.stats.cupChampionships || 0} <small>titles</small></span>
     </div>
+
+    ${currentCupPowerHtml()}
 
     ${active ? `
       <div class="cup-active-panel ${active.completed ? "completed" : "live"}">
