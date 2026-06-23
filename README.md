@@ -1261,3 +1261,13 @@ Mobile Quick Match scroll-lock patch:
 - Blocks active Quick Match touchmove scrolling.
 - Restores previous page scroll position after leaving Quick Match.
 - Fresh save key: majorSportsCardCollector_economy_stability_test_v3
+
+## Economy Stability Test v4
+
+Mobile Quick Match compact layout patch:
+- Removed Current Phase banner from active match view.
+- Removed full all-stat strip from played battle cards.
+- Battle cards now show card image, name, and the active phase score only.
+- Removed match log from active match screen to save vertical space.
+- Shortened the battle field and lineup dock on mobile.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v4

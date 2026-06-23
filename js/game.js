@@ -1,6 +1,6 @@
 // js/game.js
 
-const SAVE_KEY = "majorSportsCardCollector_economy_stability_test_v3";
+const SAVE_KEY = "majorSportsCardCollector_economy_stability_test_v4";
 
 let state = loadGame();
 let currentView = "home";
@@ -1562,7 +1562,7 @@ function battleCardHtml(c, side, score, outcome, category){
   const scoreText = typeof score === "number" ? score : "—";
 
   return `
-    <div class="battle-card-display ${side} ${outcomeClass}">
+    <div class="battle-card-display compact-battle-card ${side} ${outcomeClass}">
       <div class="battle-side-label">${side === "player" ? "Your card" : "Opponent card"}</div>
       <div class="battle-card-image">
         <img src="${c.realisticArt}"
@@ -1572,18 +1572,10 @@ function battleCardHtml(c, side, score, outcome, category){
       </div>
       <div class="battle-card-info">
         <strong>${c.name}</strong>
-        <span>${c.sport} · ${c.pos} · ${c.rarity}</span>
       </div>
-      <div class="battle-score-box">
+      <div class="battle-score-box compact-phase-score">
         <span>${category || "Score"}</span>
         <strong>${scoreText}</strong>
-      </div>
-      <div class="battle-mini-stats">
-        <span>OVR ${effectiveOverall(c)}</span>
-        <span>OFF ${displayStatValue(c,"off")}</span>
-        <span>DEF ${displayStatValue(c,"def")}</span>
-        <span>ATH ${displayStatValue(c,"ath")}</span>
-        <span>IQ ${displayStatValue(c,"iq")}</span>
       </div>
     </div>
   `;
@@ -1732,7 +1724,7 @@ function rawEffectiveStat(c, key){
 }
 
 function effectiveStat(c, key){
-  // Economy Stability Test v3:
+  // Economy Stability Test v4:
   // Base cards still live on a 25-99 scale, but upgrades/foils can push
   // effective stats beyond 99 so high-end cards do not waste upgrades.
   return Math.min(125, rawEffectiveStat(c, key));
@@ -1965,7 +1957,7 @@ function startMatch(cup = false){
     return;
   }
 
-  // Economy Stability Test v3:
+  // Economy Stability Test v4:
   // Free Quick Match should not let players bank clears indefinitely.
   // If clears are waiting, send the player to the Draft Board first.
   if(!cup && state.draft && (state.draft.clears || 0) > 0){
@@ -2111,7 +2103,7 @@ function finishMatch(){
     state.coins += reward;
     state.trainingPoints += tpReward;
   }else{
-    // Economy Stability Test v3:
+    // Economy Stability Test v4:
     // Quick Match is always playable. The real reward is controlled by Draft clears.
     draftClears = won ? 3 : 1;
     state.draft = state.draft || {clears:0, board:null, history:[]};
@@ -3549,7 +3541,7 @@ function viewHome(){
   return `
     <div class="section-title">
       <div>
-        <h2>Clubhouse</h2><div class="build-label">Economy Stability Test v3</div>
+        <h2>Clubhouse</h2><div class="build-label">Economy Stability Test v4</div>
         <p>Earn coins, open sport packs, complete goals, and build a 5-card lineup.</p>
       </div>
 
@@ -3746,7 +3738,7 @@ function viewPacks(){
   return `
     <div class="section-title">
       <div>
-        <h2>Packs</h2><div class="build-label">Economy Stability Test v3</div>
+        <h2>Packs</h2><div class="build-label">Economy Stability Test v4</div>
       </div>
     </div>
 
@@ -4700,25 +4692,6 @@ function viewMatch(){
 
         ${phaseScheduleHtml()}
 
-        <div class="arena-phase-callout">
-          ${!matchState.finished ? `
-            <div>
-              <span>Current phase</span>
-              <strong>${phase.icon} ${phase.label}</strong>
-              <small>${phase.type === "combo" ? "Combo round: phase score is the two listed stats added together." : phase.type === "clutch" ? "Clutch round: uses effective overall." : "Single-stat round: specialists can steal these phases."}</small>
-            </div>
-            <div class="arena-phase-formula">
-              ${phase.stats.map(s => `<b>${phaseStatLabel(s)}</b>`).join("<em>+</em>")}
-            </div>
-          ` : `
-            <div>
-              <span>Match complete</span>
-              <strong>${matchState.result === "win" ? "Victory" : "Defeat"}</strong>
-              ${matchRewardsHtml()}
-            </div>
-          `}
-        </div>
-
         <div class="match-score-strip arena-score-strip ${finishedClass}">
           <div>
             <span>Your rounds</span>
@@ -4753,7 +4726,7 @@ function viewMatch(){
               <div class="floating-card-back one"></div>
               <div class="floating-card-back two"></div>
               <h3>Choose from your lineup dock</h3>
-              <p>Bottom cards show OVR, all four stats, and the current phase score.</p>
+              <p>Pick the best card for the highlighted phase.</p>
             </div>
           `}
         </div>
@@ -4767,12 +4740,7 @@ function viewMatch(){
             ${dock}
           </div>
         </div>
-
-        <details class="arena-log">
-          <summary>Match log</summary>
-          <div class="log">${log || `<div class="log-entry">The other collector shuffles their lineup.</div>`}</div>
-        </details>
-      </div>
+</div>
     `;
   }
 
@@ -5355,7 +5323,7 @@ function viewCup(){
   return `
     <div class="section-title">
       <div>
-        <h2>Collector Cup</h2><div class="build-label">Economy Stability Test v3</div>
+        <h2>Collector Cup</h2><div class="build-label">Economy Stability Test v4</div>
       </div>
       <span class="pill">🏆 ${state.stats.cupChampionships || 0} <small>titles</small></span>
     </div>
