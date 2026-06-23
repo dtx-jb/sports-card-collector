@@ -6948,3 +6948,47 @@ button.busy{
     transform:scale(.64);
   }
 }
+
+
+/* Economy Stability Test v3 - stricter iPhone Quick Match scroll lock */
+html.quick-match-active-view,
+html.quick-match-active-view body,
+body.quick-match-active-view{
+  height:var(--qm-vh)!important;
+  max-height:var(--qm-vh)!important;
+  min-height:var(--qm-vh)!important;
+  overflow:hidden!important;
+  overscroll-behavior:none!important;
+  -webkit-overflow-scrolling:auto!important;
+}
+
+body.quick-match-active-view{
+  position:fixed!important;
+  inset:auto 0 auto 0!important;
+  width:100%!important;
+}
+
+@media(max-width:700px){
+  html.quick-match-active-view .app,
+  body.quick-match-active-view .app,
+  body.quick-match-active-view main,
+  body.quick-match-active-view .main,
+  body.quick-match-active-view .content,
+  body.quick-match-active-view #app{
+    height:var(--qm-vh)!important;
+    max-height:var(--qm-vh)!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+
+  body.quick-match-active-view .arena{
+    height:var(--qm-vh)!important;
+    max-height:var(--qm-vh)!important;
+    min-height:0!important;
+    overflow:hidden!important;
+  }
+
+  body.quick-match-active-view *{
+    overscroll-behavior:none!important;
+  }
+}

@@ -1251,3 +1251,13 @@ Mobile Quick Match UI patch:
 - Reduces arena field, phase chips, score boxes, and lineup cards on small screens.
 - Prevents vertical page scrolling while an active Quick Match is open.
 - Fresh save key: majorSportsCardCollector_economy_stability_test_v2
+
+## Economy Stability Test v3
+
+Mobile Quick Match scroll-lock patch:
+- Adds iPhone/Safari viewport lock during active Quick Match.
+- Locks html/body to the actual window.innerHeight via --qm-vh.
+- Uses fixed body positioning during active Quick Match.
+- Blocks active Quick Match touchmove scrolling.
+- Restores previous page scroll position after leaving Quick Match.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v3

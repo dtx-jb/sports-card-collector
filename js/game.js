@@ -1,6 +1,6 @@
 // js/game.js
 
-const SAVE_KEY = "majorSportsCardCollector_economy_stability_test_v2";
+const SAVE_KEY = "majorSportsCardCollector_economy_stability_test_v3";
 
 let state = loadGame();
 let currentView = "home";
@@ -1732,7 +1732,7 @@ function rawEffectiveStat(c, key){
 }
 
 function effectiveStat(c, key){
-  // Economy Stability Test v2:
+  // Economy Stability Test v3:
   // Base cards still live on a 25-99 scale, but upgrades/foils can push
   // effective stats beyond 99 so high-end cards do not waste upgrades.
   return Math.min(125, rawEffectiveStat(c, key));
@@ -1965,7 +1965,7 @@ function startMatch(cup = false){
     return;
   }
 
-  // Economy Stability Test v2:
+  // Economy Stability Test v3:
   // Free Quick Match should not let players bank clears indefinitely.
   // If clears are waiting, send the player to the Draft Board first.
   if(!cup && state.draft && (state.draft.clears || 0) > 0){
@@ -2111,7 +2111,7 @@ function finishMatch(){
     state.coins += reward;
     state.trainingPoints += tpReward;
   }else{
-    // Economy Stability Test v2:
+    // Economy Stability Test v3:
     // Quick Match is always playable. The real reward is controlled by Draft clears.
     draftClears = won ? 3 : 1;
     state.draft = state.draft || {clears:0, board:null, history:[]};
@@ -2524,10 +2524,97 @@ function packOpeningHtml(){
 }
 
 
-function applyViewBodyClass(){
-  document.body.classList.toggle("quick-match-view", state.view === "match");
-  document.body.classList.toggle("quick-match-active-view", state.view === "match" && !!state.activeMatch);
+
+
+let quickMatchScrollY = 0;
+let quickMatchViewportLocked = false;
+
+
+function quickMatchTouchScrollBlocker(event){
+  if(document.body.classList.contains("quick-match-active-view")){
+    event.preventDefault();
+  }
 }
+
+document.addEventListener("touchmove", quickMatchTouchScrollBlocker, {passive:false});
+
+function setQuickMatchViewportHeight(){
+  const h = window.innerHeight || document.documentElement.clientHeight || 700;
+  document.documentElement.style.setProperty("--qm-vh", `${h}px`);
+}
+
+function lockQuickMatchViewport(locked){
+  setQuickMatchViewportHeight();
+
+  if(locked){
+    if(!quickMatchViewportLocked){
+      quickMatchScrollY = window.scrollY || window.pageYOffset || 0;
+      quickMatchViewportLocked = true;
+    }
+
+    document.documentElement.style.overflow = "hidden";
+    document.documentElement.style.height = "var(--qm-vh)";
+    document.documentElement.style.maxHeight = "var(--qm-vh)";
+
+    document.body.style.overflow = "hidden";
+    document.body.style.height = "var(--qm-vh)";
+    document.body.style.maxHeight = "var(--qm-vh)";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${quickMatchScrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+    document.body.style.touchAction = "none";
+  }else if(quickMatchViewportLocked){
+    document.documentElement.style.overflow = "";
+    document.documentElement.style.height = "";
+    document.documentElement.style.maxHeight = "";
+
+    document.body.style.overflow = "";
+    document.body.style.height = "";
+    document.body.style.maxHeight = "";
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.left = "";
+    document.body.style.right = "";
+    document.body.style.width = "";
+    document.body.style.touchAction = "";
+
+    const y = quickMatchScrollY;
+    quickMatchViewportLocked = false;
+    quickMatchScrollY = 0;
+    window.scrollTo(0, y);
+  }
+}
+
+window.addEventListener("resize", () => {
+  setQuickMatchViewportHeight();
+  if(document.body.classList.contains("quick-match-active-view")){
+    lockQuickMatchViewport(true);
+  }
+});
+
+window.addEventListener("orientationchange", () => {
+  setTimeout(() => {
+    setQuickMatchViewportHeight();
+    if(document.body.classList.contains("quick-match-active-view")){
+      lockQuickMatchViewport(true);
+    }
+  }, 80);
+});
+
+function applyViewBodyClass(){
+  const isQuickMatch = state.view === "match";
+  const isActiveQuickMatch = isQuickMatch && !!state.activeMatch;
+
+  document.body.classList.toggle("quick-match-view", isQuickMatch);
+  document.body.classList.toggle("quick-match-active-view", isActiveQuickMatch);
+  document.documentElement.classList.toggle("quick-match-active-view", isActiveQuickMatch);
+
+  lockQuickMatchViewport(isActiveQuickMatch);
+}
+
+
 
 function render(){
   applyViewBodyClass();
@@ -3462,7 +3549,7 @@ function viewHome(){
   return `
     <div class="section-title">
       <div>
-        <h2>Clubhouse</h2><div class="build-label">Economy Stability Test v2</div>
+        <h2>Clubhouse</h2><div class="build-label">Economy Stability Test v3</div>
         <p>Earn coins, open sport packs, complete goals, and build a 5-card lineup.</p>
       </div>
 
@@ -3659,7 +3746,7 @@ function viewPacks(){
   return `
     <div class="section-title">
       <div>
-        <h2>Packs</h2><div class="build-label">Economy Stability Test v2</div>
+        <h2>Packs</h2><div class="build-label">Economy Stability Test v3</div>
       </div>
     </div>
 
@@ -5268,7 +5355,7 @@ function viewCup(){
   return `
     <div class="section-title">
       <div>
-        <h2>Collector Cup</h2><div class="build-label">Economy Stability Test v2</div>
+        <h2>Collector Cup</h2><div class="build-label">Economy Stability Test v3</div>
       </div>
       <span class="pill">🏆 ${state.stats.cupChampionships || 0} <small>titles</small></span>
     </div>
