@@ -7277,3 +7277,555 @@ body.quick-match-active-view{
     transform:scale(.45)!important;
   }
 }
+
+
+/* Economy Stability Test v5 - Tier 1 hybrid visual update */
+.pack-product-art{
+  width:100%;
+  display:flex;
+  justify-content:center;
+  margin:8px 0 10px;
+}
+.pack-product-art img{
+  width:min(168px, 78%);
+  aspect-ratio:2/3;
+  object-fit:cover;
+  border-radius:16px;
+  box-shadow:0 18px 42px rgba(0,0,0,.38),0 0 20px rgba(148,163,184,.12);
+  border:1px solid rgba(255,255,255,.12);
+}
+.pack.unlocked:hover .pack-product-art img{
+  transform:translateY(-2px) scale(1.015);
+  filter:saturate(1.05) contrast(1.04);
+}
+.pack-wrapper-image{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border-radius:inherit;
+  z-index:0;
+}
+.foil-pack .pack-glint{z-index:2}
+.mini-pack-thumb-force{display:flex;justify-content:center;margin-bottom:7px}
+.mini-pack-thumb-force img{
+  width:66px;
+  aspect-ratio:2/3;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:0 8px 22px rgba(0,0,0,.28);
+}
+
+.card-back,
+.big-card-back,
+.floating-card-back{
+  background-image:linear-gradient(180deg,rgba(2,6,23,.08),rgba(2,6,23,.2)), url("../assets/ui/card_back_base_v1.jpg")!important;
+  background-size:cover!important;
+  background-position:center!important;
+}
+.big-card-back .back-orbit,
+.big-card-back > strong,
+.big-card-back > span{display:none!important}
+.card-back::after,
+.big-card-back::after,
+.floating-card-back::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(105deg,transparent 28%,rgba(255,255,255,.18) 46%,transparent 62%);
+  mix-blend-mode:screen;
+  opacity:.7;
+}
+
+.draft-tile.hidden{
+  background-image:linear-gradient(180deg,rgba(15,23,42,.20),rgba(2,6,23,.32)), url("../assets/ui/draft_tile_hidden_v1.png")!important;
+  background-size:cover!important;
+  background-position:center!important;
+  border-color:rgba(148,163,184,.28)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 12px 26px rgba(0,0,0,.22)!important;
+}
+.draft-tile.hidden span,
+.draft-tile.hidden strong{
+  position:relative;
+  z-index:1;
+  text-shadow:0 2px 8px rgba(0,0,0,.75);
+}
+
+.real-card,
+.inspect-single-card,
+.battle-card-display,
+.arena-dock-card{position:relative;overflow:hidden}
+.real-card.Rare{box-shadow:0 0 0 1px rgba(96,165,250,.18),0 12px 28px rgba(37,99,235,.10)}
+.real-card.Epic{box-shadow:0 0 0 1px rgba(192,132,252,.22),0 14px 34px rgba(168,85,247,.16)}
+.real-card.Legendary{box-shadow:0 0 0 1px rgba(251,191,36,.32),0 16px 42px rgba(245,158,11,.22)}
+.real-card.Rare .full-card-art::before,
+.real-card.Epic .full-card-art::before,
+.real-card.Legendary .full-card-art::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  pointer-events:none;
+  border-radius:inherit;
+  opacity:.55;
+}
+.real-card.Rare .full-card-art::before{box-shadow:inset 0 0 16px rgba(96,165,250,.32)}
+.real-card.Epic .full-card-art::before{box-shadow:inset 0 0 20px rgba(192,132,252,.40)}
+.real-card.Legendary .full-card-art::before{box-shadow:inset 0 0 24px rgba(251,191,36,.52)}
+
+.real-card.foil-bronze .full-card-art::after,
+.real-card.foil-silver .full-card-art::after,
+.real-card.foil-gold .full-card-art::after,
+.real-card.foil-holo .full-card-art::after,
+.inspect-single-card.foil-bronze::after,
+.inspect-single-card.foil-silver::after,
+.inspect-single-card.foil-gold::after,
+.inspect-single-card.foil-holo::after,
+.battle-card-display.foil-bronze::after,
+.battle-card-display.foil-silver::after,
+.battle-card-display.foil-gold::after,
+.battle-card-display.foil-holo::after{
+  content:"";
+  position:absolute;
+  inset:-25%;
+  pointer-events:none;
+  background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.44) 47%, transparent 59%);
+  mix-blend-mode:screen;
+  opacity:.55;
+  animation:mscFoilSweep 3.8s ease-in-out infinite;
+}
+.real-card.foil-bronze .full-card-art::after,.inspect-single-card.foil-bronze::after,.battle-card-display.foil-bronze::after{background:linear-gradient(115deg, transparent 34%, rgba(251,146,60,.38) 47%, rgba(255,255,255,.22) 52%, transparent 62%);opacity:.42}
+.real-card.foil-silver .full-card-art::after,.inspect-single-card.foil-silver::after,.battle-card-display.foil-silver::after{background:linear-gradient(115deg, transparent 34%, rgba(226,232,240,.55) 47%, rgba(125,211,252,.24) 53%, transparent 62%);opacity:.52}
+.real-card.foil-gold .full-card-art::after,.inspect-single-card.foil-gold::after,.battle-card-display.foil-gold::after{background:linear-gradient(115deg, transparent 33%, rgba(251,191,36,.62) 46%, rgba(255,255,255,.35) 52%, transparent 62%);opacity:.62}
+.real-card.foil-holo .full-card-art::after,.inspect-single-card.foil-holo::after,.battle-card-display.foil-holo::after{
+  background:linear-gradient(115deg, transparent 30%, rgba(56,189,248,.32), rgba(244,114,182,.34), rgba(251,191,36,.32), transparent 68%);
+  opacity:.72;
+  animation:mscFoilSweep 3s ease-in-out infinite;
+}
+.real-card.foil-bronze{box-shadow:0 0 0 1px rgba(251,146,60,.26),0 12px 30px rgba(251,146,60,.10)}
+.real-card.foil-silver{box-shadow:0 0 0 1px rgba(226,232,240,.30),0 12px 30px rgba(125,211,252,.12)}
+.real-card.foil-gold{box-shadow:0 0 0 1px rgba(251,191,36,.38),0 14px 36px rgba(251,191,36,.18)}
+.real-card.foil-holo{box-shadow:0 0 0 1px rgba(244,114,182,.35),0 16px 44px rgba(56,189,248,.18),0 0 28px rgba(251,191,36,.10)}
+@keyframes mscFoilSweep{
+  0%,36%{transform:translateX(-42%) rotate(0deg);opacity:.08}
+  52%{opacity:.72}
+  100%{transform:translateX(42%) rotate(0deg);opacity:.08}
+}
+.reveal-card.flipped.rare .reveal-front{box-shadow:0 0 24px rgba(96,165,250,.28)}
+.reveal-card.flipped.epic .reveal-front{box-shadow:0 0 34px rgba(192,132,252,.36)}
+.reveal-card.flipped.legendary .reveal-front{box-shadow:0 0 42px rgba(251,191,36,.46)}
+@media(prefers-reduced-motion:reduce){
+  .real-card .full-card-art::after,
+  .inspect-single-card::after,
+  .battle-card-display::after{animation:none!important}
+}
+
+
+/* Economy Stability Test v6 - pack reveal card face fix */
+.pack-reveal-card,
+.reveal-card,
+.flip-card,
+.pack-card-flip{
+  transform-style:preserve-3d;
+}
+
+.card-face,
+.card-face-front,
+.card-face-back,
+.reveal-card-front,
+.reveal-card-back,
+.pack-card-front,
+.pack-card-back{
+  backface-visibility:hidden!important;
+  -webkit-backface-visibility:hidden!important;
+}
+
+.card-face-front,
+.reveal-card-front,
+.pack-card-front{
+  transform:rotateY(0deg)!important;
+}
+
+.card-face-back,
+.reveal-card-back,
+.pack-card-back{
+  transform:rotateY(180deg)!important;
+}
+
+.pack-reveal-card.flipped .card-face-front,
+.reveal-card.flipped .card-face-front,
+.flip-card.flipped .card-face-front,
+.pack-card-flip.flipped .card-face-front{
+  z-index:2;
+}
+
+.pack-reveal-card.flipped .card-face-back,
+.reveal-card.flipped .card-face-back,
+.flip-card.flipped .card-face-back,
+.pack-card-flip.flipped .card-face-back{
+  z-index:1;
+}
+
+/* Make rarity glow visible on owned/revealed high-rarity cards even without foil. */
+.rarity-rare,
+.card.rare,
+.card-rare{
+  filter:drop-shadow(0 0 6px rgba(96,165,250,.20));
+}
+
+.rarity-epic,
+.card.epic,
+.card-epic{
+  filter:drop-shadow(0 0 9px rgba(168,85,247,.28));
+}
+
+.rarity-legendary,
+.card.legendary,
+.card-legendary{
+  filter:drop-shadow(0 0 12px rgba(245,158,11,.34));
+}
+
+
+.pack-card-back img,
+.reveal-card-back img,
+.card-face-back img{
+  transform:none!important;
+}
+
+/* Economy Stability Test v7 - deterministic pack reveal face swap */
+.reveal-grid .reveal-card .reveal-inner,
+.v2-reveal-grid .reveal-card .reveal-inner,
+.heat-reveal-grid .reveal-card .reveal-inner{
+  transform:none!important;
+  transition:filter .22s ease, opacity .22s ease!important;
+}
+
+.reveal-grid .reveal-card .reveal-face,
+.v2-reveal-grid .reveal-card .reveal-face,
+.heat-reveal-grid .reveal-card .reveal-face{
+  transform:none!important;
+  backface-visibility:visible!important;
+  -webkit-backface-visibility:visible!important;
+}
+
+.reveal-grid .reveal-card:not(.flipped) .reveal-front,
+.v2-reveal-grid .reveal-card:not(.flipped) .reveal-front,
+.heat-reveal-grid .reveal-card:not(.flipped) .reveal-front{
+  display:none!important;
+}
+
+.reveal-grid .reveal-card.flipped .reveal-face:not(.reveal-front),
+.v2-reveal-grid .reveal-card.flipped .reveal-face:not(.reveal-front),
+.heat-reveal-grid .reveal-card.flipped .reveal-face:not(.reveal-front){
+  display:none!important;
+}
+
+.reveal-grid .reveal-card.flipped .reveal-front,
+.v2-reveal-grid .reveal-card.flipped .reveal-front,
+.heat-reveal-grid .reveal-card.flipped .reveal-front{
+  display:block!important;
+  opacity:1!important;
+  visibility:visible!important;
+  transform:none!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:5!important;
+}
+
+.reveal-grid .reveal-card.flipped .reveal-front .card,
+.v2-reveal-grid .reveal-card.flipped .reveal-front .card,
+.heat-reveal-grid .reveal-card.flipped .reveal-front .card{
+  transform:none!important;
+  opacity:1!important;
+}
+
+.reveal-grid .reveal-card.flipped .reveal-front img,
+.v2-reveal-grid .reveal-card.flipped .reveal-front img,
+.heat-reveal-grid .reveal-card.flipped .reveal-front img{
+  transform:none!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+
+/* Make rarity glow obvious on reveal, collection, lineup and inspect views. */
+.card.real-card.Rare,
+.card.real-card.rare,
+.reveal-card.flipped.rare,
+.reveal-card.flipped.Rare{
+  box-shadow:0 0 0 1px rgba(59,130,246,.25), 0 0 20px rgba(59,130,246,.22)!important;
+}
+
+.card.real-card.Epic,
+.card.real-card.epic,
+.reveal-card.flipped.epic,
+.reveal-card.flipped.Epic{
+  box-shadow:0 0 0 1px rgba(168,85,247,.30), 0 0 28px rgba(168,85,247,.30)!important;
+}
+
+.card.real-card.Legendary,
+.card.real-card.legendary,
+.reveal-card.flipped.legendary,
+.reveal-card.flipped.Legendary{
+  box-shadow:0 0 0 1px rgba(245,158,11,.34), 0 0 34px rgba(245,158,11,.36)!important;
+}
+
+
+/* Economy Stability Test v8 - visible rarity glow test pass */
+@keyframes mscRareGlowPulse{
+  0%,100%{ box-shadow:0 0 0 rgba(96,165,250,0), 0 0 12px rgba(96,165,250,.18); }
+  50%{ box-shadow:0 0 0 rgba(96,165,250,0), 0 0 22px rgba(96,165,250,.38); }
+}
+
+@keyframes mscEpicGlowPulse{
+  0%,100%{ box-shadow:0 0 0 rgba(168,85,247,0), 0 0 16px rgba(168,85,247,.26); }
+  50%{ box-shadow:0 0 0 rgba(168,85,247,0), 0 0 30px rgba(168,85,247,.54); }
+}
+
+@keyframes mscLegendaryGlowPulse{
+  0%,100%{ box-shadow:0 0 0 rgba(245,158,11,0), 0 0 20px rgba(245,158,11,.34); }
+  50%{ box-shadow:0 0 0 rgba(245,158,11,0), 0 0 38px rgba(245,158,11,.68); }
+}
+
+/* Apply to many possible card wrappers because card views use different markup. */
+.rarity-rare,
+.card.rare,
+.card-rare,
+.msc-rarity-rare,
+.binder-pocket.rarity-rare,
+.owned-pocket.rarity-rare,
+.pack-result-card.rarity-rare,
+.reveal-card.rarity-rare,
+.pack-card.rarity-rare,
+.battle-card-display.rarity-rare,
+.arena-dock-card.rarity-rare,
+.inspect-card.rarity-rare,
+.inspect-card-shell.rarity-rare{
+  position:relative;
+  border-color:rgba(96,165,250,.72)!important;
+  box-shadow:
+    0 0 0 1px rgba(96,165,250,.28),
+    0 0 18px rgba(96,165,250,.34),
+    inset 0 0 18px rgba(96,165,250,.08)!important;
+}
+
+.rarity-epic,
+.card.epic,
+.card-epic,
+.msc-rarity-epic,
+.binder-pocket.rarity-epic,
+.owned-pocket.rarity-epic,
+.pack-result-card.rarity-epic,
+.reveal-card.rarity-epic,
+.pack-card.rarity-epic,
+.battle-card-display.rarity-epic,
+.arena-dock-card.rarity-epic,
+.inspect-card.rarity-epic,
+.inspect-card-shell.rarity-epic{
+  position:relative;
+  border-color:rgba(168,85,247,.82)!important;
+  box-shadow:
+    0 0 0 1px rgba(168,85,247,.34),
+    0 0 24px rgba(168,85,247,.48),
+    inset 0 0 22px rgba(168,85,247,.12)!important;
+}
+
+.rarity-legendary,
+.card.legendary,
+.card-legendary,
+.msc-rarity-legendary,
+.binder-pocket.rarity-legendary,
+.owned-pocket.rarity-legendary,
+.pack-result-card.rarity-legendary,
+.reveal-card.rarity-legendary,
+.pack-card.rarity-legendary,
+.battle-card-display.rarity-legendary,
+.arena-dock-card.rarity-legendary,
+.inspect-card.rarity-legendary,
+.inspect-card-shell.rarity-legendary{
+  position:relative;
+  border-color:rgba(245,158,11,.95)!important;
+  box-shadow:
+    0 0 0 1px rgba(245,158,11,.42),
+    0 0 30px rgba(245,158,11,.58),
+    inset 0 0 26px rgba(245,158,11,.16)!important;
+}
+
+/* Extra visible aura layer, independent of the actual card image. */
+.rarity-rare::after,
+.msc-rarity-rare::after,
+.rarity-epic::after,
+.msc-rarity-epic::after,
+.rarity-legendary::after,
+.msc-rarity-legendary::after{
+  content:"";
+  pointer-events:none;
+  position:absolute;
+  inset:-4px;
+  border-radius:inherit;
+  z-index:0;
+  opacity:.95;
+  mix-blend-mode:screen;
+}
+
+.rarity-rare::after,
+.msc-rarity-rare::after{
+  background:radial-gradient(circle at 50% 20%, rgba(96,165,250,.22), transparent 62%);
+  animation:mscRareGlowPulse 2.8s ease-in-out infinite;
+}
+
+.rarity-epic::after,
+.msc-rarity-epic::after{
+  background:radial-gradient(circle at 50% 20%, rgba(168,85,247,.32), transparent 64%);
+  animation:mscEpicGlowPulse 2.5s ease-in-out infinite;
+}
+
+.rarity-legendary::after,
+.msc-rarity-legendary::after{
+  background:radial-gradient(circle at 50% 18%, rgba(245,158,11,.36), transparent 66%);
+  animation:mscLegendaryGlowPulse 2.2s ease-in-out infinite;
+}
+
+/* Keep card contents above aura. */
+.rarity-rare > *,
+.rarity-epic > *,
+.rarity-legendary > *,
+.msc-rarity-rare > *,
+.msc-rarity-epic > *,
+.msc-rarity-legendary > *{
+  position:relative;
+  z-index:1;
+}
+
+/* Pack reveal should show the clearest glow immediately after flip. */
+.pack-reveal-card.flipped.rarity-rare,
+.reveal-card.flipped.rarity-rare,
+.pack-card-flip.flipped.rarity-rare,
+.pack-reveal-card.flipped.msc-rarity-rare,
+.reveal-card.flipped.msc-rarity-rare,
+.pack-card-flip.flipped.msc-rarity-rare{
+  box-shadow:0 0 0 1px rgba(96,165,250,.45), 0 0 34px rgba(96,165,250,.55)!important;
+}
+
+.pack-reveal-card.flipped.rarity-epic,
+.reveal-card.flipped.rarity-epic,
+.pack-card-flip.flipped.rarity-epic,
+.pack-reveal-card.flipped.msc-rarity-epic,
+.reveal-card.flipped.msc-rarity-epic,
+.pack-card-flip.flipped.msc-rarity-epic{
+  box-shadow:0 0 0 1px rgba(168,85,247,.55), 0 0 46px rgba(168,85,247,.72)!important;
+}
+
+.pack-reveal-card.flipped.rarity-legendary,
+.reveal-card.flipped.rarity-legendary,
+.pack-card-flip.flipped.rarity-legendary,
+.pack-reveal-card.flipped.msc-rarity-legendary,
+.reveal-card.flipped.msc-rarity-legendary,
+.pack-card-flip.flipped.msc-rarity-legendary{
+  box-shadow:0 0 0 1px rgba(245,158,11,.7), 0 0 58px rgba(245,158,11,.85)!important;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .rarity-rare::after,
+  .msc-rarity-rare::after,
+  .rarity-epic::after,
+  .msc-rarity-epic::after,
+  .rarity-legendary::after,
+  .msc-rarity-legendary::after{
+    animation:none!important;
+  }
+}
+
+
+/* Economy Stability Test v11 - pack reveal bubble outside card face */
+.reveal-grid,
+.v2-reveal-grid,
+.heat-reveal-grid{
+  align-items:start;
+  row-gap:38px;
+}
+
+.reveal-card.v2-reveal-card,
+.reveal-card.heat-reveal-card{
+  height:426px;
+  overflow:visible!important;
+}
+
+.reveal-card.v2-reveal-card .reveal-inner,
+.reveal-card.heat-reveal-card .reveal-inner{
+  height:382px;
+  overflow:visible!important;
+}
+
+.reveal-card.v2-reveal-card .reveal-face,
+.reveal-card.heat-reveal-card .reveal-face{
+  overflow:hidden;
+}
+
+/* The actual rarity result pill now sits outside the front/back face crop. */
+.pull-banner.pull-banner-outside{
+  position:absolute!important;
+  left:50%!important;
+  bottom:2px!important;
+  transform:translateX(-50%)!important;
+  z-index:80!important;
+  width:max-content!important;
+  max-width:92%!important;
+  margin:0!important;
+  pointer-events:none;
+  white-space:nowrap;
+}
+
+.pull-banner.pull-banner-outside.msc-rarity-rare::after,
+.pull-banner.pull-banner-outside.msc-rarity-epic::after,
+.pull-banner.pull-banner-outside.msc-rarity-legendary::after{
+  display:none!important;
+}
+
+/* Keep card art full size and uncropped inside the reveal card. */
+.reveal-card.v2-reveal-card .reveal-front .card,
+.reveal-card.heat-reveal-card .reveal-front .card{
+  height:100%!important;
+  min-height:382px!important;
+  transform:none!important;
+}
+
+.reveal-card.v2-reveal-card .reveal-front img,
+.reveal-card.heat-reveal-card .reveal-front img{
+  transform:none!important;
+}
+
+/* Top NEW badge remains inside the face. */
+.pull-status{
+  z-index:85!important;
+}
+
+@media(max-width:700px){
+  .reveal-grid,
+  .v2-reveal-grid,
+  .heat-reveal-grid{
+    row-gap:30px!important;
+  }
+
+  .reveal-card.v2-reveal-card,
+  .reveal-card.heat-reveal-card{
+    height:352px!important;
+  }
+
+  .reveal-card.v2-reveal-card .reveal-inner,
+  .reveal-card.heat-reveal-card .reveal-inner{
+    height:318px!important;
+  }
+
+  .reveal-card.v2-reveal-card .reveal-front .card,
+  .reveal-card.heat-reveal-card .reveal-front .card{
+    min-height:318px!important;
+  }
+
+  .pull-banner.pull-banner-outside{
+    bottom:0!important;
+    font-size:10px!important;
+    padding:6px 9px!important;
+  }
+}

@@ -1271,3 +1271,65 @@ Mobile Quick Match compact layout patch:
 - Removed match log from active match screen to save vertical space.
 - Shortened the battle field and lineup dock on mobile.
 - Fresh save key: majorSportsCardCollector_economy_stability_test_v4
+
+
+## Economy Stability Test v5
+
+Playtest feedback patch:
+- All-Star and Hall of Fame pack unlock gates are stricter.
+- All-Star now requires Rare+ upgrade/foil progress instead of only generic Common upgrades.
+- Hall of Fame now requires Rare+/Epic+ upgrade progress, more Rare+ foils, and lineup score 460+.
+- Quick Match opponent now uses a fixed original 5-card lineup for the match. Overtime refreshes those original 5 cards instead of generating brand-new opponent cards.
+- Overtime phase is randomized from the normal phase pool instead of always being Overall.
+
+Tier 1 hybrid visual update:
+- Added new pack art to Pack screen and pack rip screen.
+- Added new universal card back art for face-down/reveal cards.
+- Added new hidden Draft Board tile art, optimized to 512x512.
+- Added lightweight rarity glow and foil sheen effects for existing card markup.
+- Copied visual effects system reference files into assets/effects for future deeper integration.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v5
+
+## Economy Stability Test v6
+
+Pack reveal visual fix:
+- Fixed card-face CSS so pack reveal backs/fronts do not show mirrored card backs after flip.
+- Added runtime safety helper for pack reveal face images.
+- Clarified rarity/foil effects:
+  - rarity glow is visible on Rare/Epic/Legendary cards without foil upgrades
+  - foil sheen is most noticeable on Bronze/Silver/Gold/Holo upgraded cards
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v6
+
+## Economy Stability Test v7
+
+Pack reveal fix:
+- Replaced 3D flip dependency with deterministic face swap for pack reveal cards.
+- Unflipped cards show only the card back.
+- Flipped cards hide the back face and show the player card art face flat.
+- This should stop the mirrored card-back issue.
+- Rarity glow made more explicit on reveal, collection, lineup, and inspect card views.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v7
+
+## Economy Stability Test v8
+
+Rarity glow visibility patch:
+- Increased Rare/Epic/Legendary glow strength for testing.
+- Added explicit rarity wrapper hooks where possible.
+- Added broad CSS selectors across Collection, Lineup, Pack Reveal, Inspect, and Quick Match card wrappers.
+- Added animated aura pulse for Rare/Epic/Legendary cards.
+- Foil sheen remains tied to foil upgrades.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v8
+
+Notes:
+- This build intentionally makes rarity glow more obvious than subtle.
+- If this is too strong after testing, tune down opacity/shadow values later.
+- Rarity glow should be most obvious on Epic/Legendary cards in Collection, Pack Reveal after flip, My Lineup, and Inspect.
+
+## Economy Stability Test v11
+
+Pack reveal bubble fix:
+- Reverted the bad v9/v10 spacing strategy by using v8 as the base.
+- Kept the stronger v8 rarity glow.
+- Moved the Rare/Epic/Legendary result bubble outside the cropped card face.
+- Preserved full card art size inside reveal cards.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v11

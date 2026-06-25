@@ -1,0 +1,665 @@
+/*
+Major Sports Card Collector
+Foil / Glow / Reveal Visual System
+Tier 1 + Tier 2-ready CSS
+
+Usage:
+<div class="msc-card" data-rarity="rare" data-foil="gold">
+  <div class="msc-card__inner">
+    ...
+  </div>
+</div>
+
+Recommended attributes:
+data-rarity="common|uncommon|rare|epic|legendary"
+data-foil="base|bronze|silver|gold|holo"
+
+Optional state classes:
+.is-selected
+.is-revealing
+.is-big-pull
+.is-jackpot
+*/
+
+:root {
+  --msc-bg: #070a0f;
+  --msc-panel: #101722;
+  --msc-text: #f5f7fa;
+  --msc-muted: #9aa7b5;
+
+  --msc-common: #8b949e;
+  --msc-uncommon: #35d16f;
+  --msc-rare: #2f8cff;
+  --msc-epic: #b04cff;
+  --msc-legendary: #f4c84a;
+
+  --msc-bronze: #b87333;
+  --msc-silver: #d8e1e8;
+  --msc-gold: #d4af37;
+
+  --msc-card-radius: 14px;
+  --msc-card-shadow: 0 14px 36px rgba(0, 0, 0, .48);
+  --msc-card-transition: 180ms ease;
+}
+
+/* ---------- Core card shell ---------- */
+
+.msc-card {
+  --rarity-color: var(--msc-common);
+  --rarity-glow: rgba(139, 148, 158, .12);
+  --rarity-glow-strong: rgba(139, 148, 158, .28);
+  --border-width: 1px;
+
+  --foil-color: transparent;
+  --foil-opacity: 0;
+  --foil-sweep-opacity: 0;
+  --foil-gradient: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255,255,255,.05) 35%,
+    rgba(255,255,255,.14) 50%,
+    rgba(255,255,255,.05) 65%,
+    transparent 100%
+  );
+
+  position: relative;
+  isolation: isolate;
+  width: 180px;
+  aspect-ratio: 2.5 / 3.5;
+  border-radius: var(--msc-card-radius);
+  color: var(--msc-text);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.06), rgba(255,255,255,.01)),
+    linear-gradient(180deg, #1b2431, #0a0f16);
+  border: var(--border-width) solid color-mix(in srgb, var(--rarity-color), #ffffff 12%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.04) inset,
+    0 0 14px var(--rarity-glow),
+    var(--msc-card-shadow);
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition:
+    transform var(--msc-card-transition),
+    box-shadow var(--msc-card-transition),
+    border-color var(--msc-card-transition),
+    filter var(--msc-card-transition);
+  will-change: transform;
+}
+
+.msc-card,
+.msc-card * {
+  box-sizing: border-box;
+}
+
+.msc-card__inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 22%, rgba(255,255,255,.11), transparent 33%),
+    linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.18));
+}
+
+/* Static foil surface. Kept behind text and above card art/background. */
+.msc-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: var(--foil-opacity);
+  mix-blend-mode: screen;
+  background:
+    var(--foil-gradient),
+    repeating-linear-gradient(
+      115deg,
+      rgba(255,255,255,.04) 0px,
+      rgba(255,255,255,.04) 1px,
+      transparent 1px,
+      transparent 5px
+    );
+  mask-image:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,.95) 0%,
+      rgba(0,0,0,.9) 56%,
+      rgba(0,0,0,.36) 74%,
+      rgba(0,0,0,.16) 100%
+    );
+}
+
+/* Animated shimmer sweep. Normally off; activates on hover/reveal/selected. */
+.msc-card::after {
+  content: "";
+  position: absolute;
+  inset: -45%;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-55%) rotate(15deg);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,.03) 36%,
+    rgba(255,255,255,.46) 50%,
+    rgba(255,255,255,.06) 64%,
+    transparent 100%
+  );
+  transition: opacity 160ms ease;
+}
+
+.msc-card:hover,
+.msc-card.is-selected {
+  transform: translateY(-4px) scale(1.025);
+  border-color: color-mix(in srgb, var(--rarity-color), white 24%);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.08) inset,
+    0 0 20px var(--rarity-glow-strong),
+    0 20px 48px rgba(0, 0, 0, .62);
+}
+
+.msc-card:hover::after,
+.msc-card.is-selected::after,
+.msc-card.is-revealing::after {
+  opacity: var(--foil-sweep-opacity);
+  animation: msc-foil-sweep 900ms ease-out both;
+}
+
+/* ---------- Rarity rules ---------- */
+
+.msc-card[data-rarity="common"] {
+  --rarity-color: var(--msc-common);
+  --rarity-glow: rgba(139, 148, 158, .08);
+  --rarity-glow-strong: rgba(139, 148, 158, .22);
+  --border-width: 1px;
+}
+
+.msc-card[data-rarity="uncommon"] {
+  --rarity-color: var(--msc-uncommon);
+  --rarity-glow: rgba(53, 209, 111, .14);
+  --rarity-glow-strong: rgba(53, 209, 111, .32);
+  --border-width: 1px;
+}
+
+.msc-card[data-rarity="rare"] {
+  --rarity-color: var(--msc-rare);
+  --rarity-glow: rgba(47, 140, 255, .24);
+  --rarity-glow-strong: rgba(47, 140, 255, .46);
+  --border-width: 1.5px;
+}
+
+.msc-card[data-rarity="epic"] {
+  --rarity-color: var(--msc-epic);
+  --rarity-glow: rgba(176, 76, 255, .32);
+  --rarity-glow-strong: rgba(176, 76, 255, .62);
+  --border-width: 1.5px;
+  animation: msc-epic-idle 5.5s ease-in-out infinite;
+}
+
+.msc-card[data-rarity="legendary"] {
+  --rarity-color: var(--msc-legendary);
+  --rarity-glow: rgba(244, 200, 74, .42);
+  --rarity-glow-strong: rgba(244, 200, 74, .78);
+  --border-width: 2px;
+  animation: msc-legendary-idle 6.8s ease-in-out infinite;
+}
+
+/* Disable large-grid idle noise by placing .msc-card-grid on collection screens. */
+.msc-card-grid .msc-card[data-rarity="epic"],
+.msc-card-grid .msc-card[data-rarity="legendary"] {
+  animation: none;
+}
+
+/* ---------- Foil rules ---------- */
+
+.msc-card[data-foil="base"] {
+  --foil-opacity: .035;
+  --foil-sweep-opacity: .1;
+  --foil-gradient: linear-gradient(
+    115deg,
+    transparent 0%,
+    rgba(255,255,255,.04) 45%,
+    rgba(255,255,255,.08) 52%,
+    transparent 100%
+  );
+}
+
+.msc-card[data-foil="bronze"] {
+  --foil-color: var(--msc-bronze);
+  --foil-opacity: .16;
+  --foil-sweep-opacity: .5;
+  --foil-gradient:
+    linear-gradient(
+      115deg,
+      transparent 0%,
+      rgba(184,115,51,.18) 32%,
+      rgba(255,197,121,.36) 49%,
+      rgba(184,115,51,.18) 66%,
+      transparent 100%
+    ),
+    radial-gradient(circle at 18% 10%, rgba(255,188,106,.22), transparent 34%);
+}
+
+.msc-card[data-foil="silver"] {
+  --foil-color: var(--msc-silver);
+  --foil-opacity: .2;
+  --foil-sweep-opacity: .58;
+  --foil-gradient:
+    linear-gradient(
+      115deg,
+      rgba(255,255,255,.02) 0%,
+      rgba(180,198,210,.18) 34%,
+      rgba(255,255,255,.5) 50%,
+      rgba(130,145,156,.16) 66%,
+      rgba(255,255,255,.02) 100%
+    );
+}
+
+.msc-card[data-foil="gold"] {
+  --foil-color: var(--msc-gold);
+  --foil-opacity: .24;
+  --foil-sweep-opacity: .7;
+  --foil-gradient:
+    linear-gradient(
+      115deg,
+      rgba(255,255,255,.02) 0%,
+      rgba(212,175,55,.2) 30%,
+      rgba(255,242,168,.58) 50%,
+      rgba(138,106,22,.22) 68%,
+      rgba(255,255,255,.02) 100%
+    ),
+    radial-gradient(circle at 75% 18%, rgba(255,224,118,.25), transparent 32%);
+}
+
+.msc-card[data-foil="holo"],
+.msc-card[data-foil="rainbow"] {
+  --foil-opacity: .28;
+  --foil-sweep-opacity: .78;
+  --foil-gradient:
+    linear-gradient(
+      115deg,
+      rgba(255, 0, 128, .18),
+      rgba(255, 196, 0, .18),
+      rgba(80, 255, 170, .18),
+      rgba(65, 150, 255, .2),
+      rgba(185, 75, 255, .18)
+    );
+}
+
+/* Foil trim stamp / extra metallic edge. */
+.msc-card[data-foil="bronze"],
+.msc-card[data-foil="silver"],
+.msc-card[data-foil="gold"],
+.msc-card[data-foil="holo"],
+.msc-card[data-foil="rainbow"] {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--foil-color), transparent 28%) inset,
+    0 0 18px var(--rarity-glow),
+    var(--msc-card-shadow);
+}
+
+/* ---------- Suggested inner card parts ---------- */
+
+.msc-card__art {
+  position: absolute;
+  inset: 8px 8px 54px;
+  border-radius: 10px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 25%, rgba(255,255,255,.18), transparent 36%),
+    linear-gradient(145deg, #263242, #090d13);
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+.msc-card__art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.msc-card__position,
+.msc-card__rating,
+.msc-card__name,
+.msc-card__team,
+.msc-card__badge {
+  position: absolute;
+  z-index: 6;
+  text-shadow: 0 1px 2px rgba(0,0,0,.75);
+}
+
+.msc-card__position {
+  top: 12px;
+  left: 12px;
+  min-width: 28px;
+  padding: 3px 5px;
+  border-radius: 5px;
+  font: 700 11px/1 system-ui, -apple-system, Segoe UI, sans-serif;
+  text-align: center;
+  background: rgba(0,0,0,.55);
+  border: 1px solid color-mix(in srgb, var(--rarity-color), white 30%);
+}
+
+.msc-card__rating {
+  top: 10px;
+  right: 12px;
+  font: 800 24px/.9 system-ui, -apple-system, Segoe UI, sans-serif;
+  letter-spacing: -.04em;
+}
+
+.msc-card__rating small {
+  display: block;
+  margin-top: 2px;
+  font-size: 8px;
+  letter-spacing: .08em;
+}
+
+.msc-card__name {
+  left: 12px;
+  right: 12px;
+  bottom: 31px;
+  font: 800 13px/1.05 system-ui, -apple-system, Segoe UI, sans-serif;
+  text-transform: uppercase;
+}
+
+.msc-card__team {
+  left: 12px;
+  bottom: 18px;
+  font: 600 8px/1 system-ui, -apple-system, Segoe UI, sans-serif;
+  color: rgba(255,255,255,.78);
+  text-transform: uppercase;
+}
+
+.msc-card__badge {
+  right: 12px;
+  bottom: 14px;
+  width: 24px;
+  height: 28px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  font: 800 9px/1 system-ui, -apple-system, Segoe UI, sans-serif;
+  background: rgba(0,0,0,.45);
+  border: 1px solid color-mix(in srgb, var(--rarity-color), white 18%);
+  color: color-mix(in srgb, var(--rarity-color), white 24%);
+}
+
+/* ---------- Reveal states ---------- */
+
+.msc-card.is-flipping {
+  animation: msc-card-flip 620ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.msc-card.is-revealing {
+  animation: msc-card-reveal 760ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.msc-card.is-big-pull {
+  animation: msc-big-pull-card 1450ms cubic-bezier(.16,.84,.22,1) both;
+}
+
+.msc-card.is-jackpot {
+  animation: msc-jackpot-card 1900ms cubic-bezier(.16,.84,.22,1) both;
+}
+
+/* Back state for unrevealed cards. Add .is-face-down. */
+.msc-card.is-face-down .msc-card__inner {
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255,255,255,.11), transparent 34%),
+    linear-gradient(145deg, #182231, #070a0f);
+}
+
+.msc-card.is-face-down .msc-card__art,
+.msc-card.is-face-down .msc-card__position,
+.msc-card.is-face-down .msc-card__rating,
+.msc-card.is-face-down .msc-card__name,
+.msc-card.is-face-down .msc-card__team,
+.msc-card.is-face-down .msc-card__badge {
+  opacity: 0;
+}
+
+.msc-card.is-face-down .msc-card__inner::before {
+  content: "MSC";
+  position: absolute;
+  inset: 18px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  font: 900 28px/1 system-ui, -apple-system, Segoe UI, sans-serif;
+  letter-spacing: .08em;
+  color: rgba(255,255,255,.72);
+  background:
+    linear-gradient(145deg, rgba(255,255,255,.07), rgba(255,255,255,.01)),
+    radial-gradient(circle at 50% 50%, rgba(47,140,255,.22), transparent 46%);
+  border: 1px solid rgba(255,255,255,.15);
+}
+
+/* Pack/reveal overlay. JS creates these nodes. */
+.msc-reveal-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(47,140,255,.18), transparent 35%),
+    rgba(3,5,9,.74);
+  backdrop-filter: blur(2px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease;
+}
+
+.msc-reveal-layer.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.msc-reveal-stage {
+  display: grid;
+  gap: 18px;
+  justify-items: center;
+  padding: 20px;
+}
+
+.msc-reveal-title {
+  margin: 0;
+  color: var(--msc-text);
+  font: 900 clamp(22px, 4vw, 44px)/1 system-ui, -apple-system, Segoe UI, sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  text-shadow: 0 0 24px rgba(255,255,255,.18);
+}
+
+.msc-reveal-title[data-rarity="epic"] {
+  color: #d7a0ff;
+  text-shadow: 0 0 30px rgba(176,76,255,.75);
+}
+
+.msc-reveal-title[data-rarity="legendary"],
+.msc-reveal-title[data-rarity="jackpot"] {
+  color: #ffe68f;
+  text-shadow: 0 0 34px rgba(244,200,74,.85);
+}
+
+.msc-particle {
+  position: fixed;
+  z-index: 10000;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 12px currentColor;
+  pointer-events: none;
+  animation: msc-particle-out 720ms ease-out forwards;
+}
+
+/* ---------- Keyframes ---------- */
+
+@keyframes msc-foil-sweep {
+  from {
+    transform: translateX(-62%) rotate(15deg);
+  }
+  to {
+    transform: translateX(62%) rotate(15deg);
+  }
+}
+
+@keyframes msc-card-flip {
+  0% {
+    transform: rotateY(0deg) scale(.98);
+    filter: brightness(.9);
+  }
+  45% {
+    transform: rotateY(88deg) scale(1.04);
+    filter: brightness(1.25);
+  }
+  100% {
+    transform: rotateY(0deg) scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes msc-card-reveal {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(.94);
+    filter: brightness(.75);
+  }
+  45% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.045);
+    filter: brightness(1.28);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes msc-big-pull-card {
+  0% {
+    transform: scale(.86) rotateY(0deg);
+    filter: brightness(.78);
+    box-shadow: 0 0 0 rgba(255,255,255,0);
+  }
+  30% {
+    transform: scale(.94) rotateY(0deg);
+    filter: brightness(1.1);
+    box-shadow: 0 0 36px var(--rarity-glow-strong);
+  }
+  58% {
+    transform: scale(1.07) rotateY(90deg);
+    filter: brightness(1.45);
+  }
+  100% {
+    transform: scale(1) rotateY(0deg);
+    filter: brightness(1);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.08) inset,
+      0 0 26px var(--rarity-glow-strong),
+      var(--msc-card-shadow);
+  }
+}
+
+@keyframes msc-jackpot-card {
+  0% {
+    transform: scale(.78);
+    filter: brightness(.65);
+  }
+  38% {
+    transform: scale(.95);
+    filter: brightness(1.25);
+  }
+  62% {
+    transform: scale(1.14);
+    filter: brightness(1.6);
+  }
+  100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+}
+
+@keyframes msc-epic-idle {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.04) inset,
+      0 0 14px var(--rarity-glow),
+      var(--msc-card-shadow);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.07) inset,
+      0 0 22px var(--rarity-glow-strong),
+      var(--msc-card-shadow);
+  }
+}
+
+@keyframes msc-legendary-idle {
+  0%, 100% {
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.05) inset,
+      0 0 18px var(--rarity-glow),
+      var(--msc-card-shadow);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,.09) inset,
+      0 0 30px var(--rarity-glow-strong),
+      var(--msc-card-shadow);
+  }
+}
+
+@keyframes msc-particle-out {
+  from {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(var(--particle-x), var(--particle-y)) scale(.25);
+  }
+}
+
+/* ---------- Performance / accessibility ---------- */
+
+@media (max-width: 680px) {
+  .msc-card {
+    width: 150px;
+  }
+
+  .msc-card:hover,
+  .msc-card.is-selected {
+    transform: translateY(-2px) scale(1.015);
+  }
+
+  .msc-reveal-layer {
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .msc-card,
+  .msc-card::after,
+  .msc-card[data-rarity="epic"],
+  .msc-card[data-rarity="legendary"],
+  .msc-card.is-flipping,
+  .msc-card.is-revealing,
+  .msc-card.is-big-pull,
+  .msc-card.is-jackpot,
+  .msc-particle {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .msc-card::after {
+    opacity: 0 !important;
+  }
+}
