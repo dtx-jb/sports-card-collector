@@ -1333,3 +1333,42 @@ Pack reveal bubble fix:
 - Moved the Rare/Epic/Legendary result bubble outside the cropped card face.
 - Preserved full card art size inside reveal cards.
 - Fresh save key: majorSportsCardCollector_economy_stability_test_v11
+
+## Scaling + Cup Patch v1
+
+Quick Match Scaling Patch:
+- Hidden CPU-only opponent scaling added.
+- CPU cards now use internal cpuLevel / cpuFoil / cpuPowerBonus objects.
+- CPU effective stats are separated from player-owned upgrades.
+- Opponent lineups scale based on the player's active lineup score.
+- CPU can internally use upgraded/foiled lower-rarity cards.
+- CPU can internally use levels 11-12 at endgame.
+- No new Quick Match UI, no CPU level labels, no overcap labels, and no reward changes.
+
+Collector Cup Reward Rebalance:
+- Higher-tier cups now have stronger coin/TP/card payouts.
+- Rookie Cup coin efficiency reduced relative to higher tiers.
+- All-Star and Hall of Fame champion rewards are more meaningfully higher.
+- Hall of Fame champion reward has an internal Legendary prize chance.
+- Fresh save key: majorSportsCardCollector_scaling_cup_patch_v1
+
+## Scaling + Cup Patch v2
+
+Collector Cup regression fix:
+- Fixed Cup submit flow so active Cup UI appears immediately after submitting a lineup.
+- Fixed simulate button flow.
+- Restored opponent preview / win chance rendering defensively.
+- Made Cup prize award function backward-compatible.
+- Kept hidden Quick Match CPU scaling from v1.
+- Fresh save key: majorSportsCardCollector_scaling_cup_patch_v2
+
+## Collector Cup Design Balance Patch v1
+
+Focused Collector Cup-only design patch:
+- Reduced Cup opponent scaling, especially Rookie Cup.
+- Rookie Cup opponents no longer track strong player Cup Power as closely.
+- Rebalanced Cup reward tiers around total expected value, including duplicate quick-sell value from prize cards.
+- Made higher-tier QF-loss rewards beat the lower-tier championship reward after card sell EV.
+- Reduced low-tier card prize value by adding Cup-specific Common/Uncommon prize handling.
+- Kept stamina-only Cup entry; no real-time timers added.
+- Save key unchanged: majorSportsCardCollector_scaling_cup_patch_v2
