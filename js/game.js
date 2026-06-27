@@ -1,6 +1,6 @@
 // js/game.js
 
-const SAVE_KEY = "majorSportsCardCollector_economy_stability_test_v4";
+const SAVE_KEY = "majorSportsCardCollector_scaling_cup_patch_v2";
 
 let state = loadGame();
 let currentView = "home";
@@ -368,6 +368,9 @@ function overall(c){ return Math.round((c.off + c.def + c.ath + c.iq) / 4); }
 function sportStyle(c){ return `--sport:${SPORTS[c.sport].color}`; }
 
 
+
+const CARD_BACK_IMAGE = "assets/ui/card_back_base_v1.png";
+
 function imageFallback(img, fallback){
   if(img.dataset.fellback === "true") return;
   img.dataset.fellback = "true";
@@ -496,7 +499,7 @@ function renderInspect(){
                onpointerleave="${isStatsView || isTouchDevice() ? "" : "resetInspectTilt(event)"}">
 
             ${!isStatsView ? `
-              <div class="inspect-single-card inspect-front ${c.rarity}">
+              <div class="inspect-single-card inspect-front ${c.rarity} ${foilClassForCard(c.id)}">
                 <img src="${c.realisticArt}"
                      alt="${c.name} realistic card art slot"
                      onerror="imageFallback(this, '${c.cardArt}')"/>
@@ -654,6 +657,18 @@ function foilCardsAtRank(minRank = 1){
   return ownedCards().filter(c => foilRank(foilTier(c.id)) >= minRank).length;
 }
 
+function upgradedCardsAtLevelByMinRank(minLevel = 2, minRank = 1){
+  return ownedCards().filter(c => rarityRank(c.rarity) >= minRank && cardLevel(c.id) >= minLevel).length;
+}
+
+function foilCardsAtRankByMinRank(minFoilRank = 1, minCardRank = 1){
+  return ownedCards().filter(c => rarityRank(c.rarity) >= minCardRank && foilRank(foilTier(c.id)) >= minFoilRank).length;
+}
+
+function foilClassForCard(id){
+  return `foil-${String(foilTier(id) || "Base").toLowerCase()}`;
+}
+
 function packLadderName(packKey){
   if(packKey === "rookie") return "Rookie";
   if(packKey === "pro") return "Pro";
@@ -683,8 +698,9 @@ function packUnlockRequirements(packKey){
       {label:"55 unique cards owned", met:ownedCards().length >= 55},
       {label:"8 Rare+ cards owned", met:totalRarePlusOwned() >= 8},
       {label:"25 Quick Match wins", met:(state.stats.matchesWon || 0) >= 25},
-      {label:"3 upgraded cards", met:upgradedCardsAtLevel(2) >= 3},
-      {label:"1 card at Level 3+", met:upgradedCardsAtLevel(3) >= 1}
+      {label:"6 upgraded cards", met:upgradedCardsAtLevel(2) >= 6},
+      {label:"2 Rare+ cards at Level 3+", met:upgradedCardsAtLevelByMinRank(3, 3) >= 2},
+      {label:"1 Rare+ Bronze+ foil", met:foilCardsAtRankByMinRank(1, 3) >= 1}
     ]};
   }
 
@@ -696,9 +712,10 @@ function packUnlockRequirements(packKey){
       {label:"15 Rare+ cards owned", met:totalRarePlusOwned() >= 15},
       {label:"5 Epic+ cards owned", met:totalEpicPlusOwned() >= 5},
       {label:"60 Quick Match wins", met:(state.stats.matchesWon || 0) >= 60},
-      {label:"5 cards at Level 3+", met:upgradedCardsAtLevel(3) >= 5},
-      {label:"2 Bronze+ foil cards", met:foilCardsAtRank(1) >= 2},
-      {label:"Lineup score 430+", met:lineupScore() >= 430}
+      {label:"5 Rare+ cards at Level 3+", met:upgradedCardsAtLevelByMinRank(3, 3) >= 5},
+      {label:"2 Epic+ cards at Level 3+", met:upgradedCardsAtLevelByMinRank(3, 4) >= 2},
+      {label:"3 Rare+ Bronze+ foil cards", met:foilCardsAtRankByMinRank(1, 3) >= 3},
+      {label:"Lineup score 460+", met:lineupScore() >= 460}
     ]};
   }
 
@@ -1375,22 +1392,32 @@ function checkQuests(){
 
 
 function overtimePhase(){
-  return {key:"overall", stats:["overall"], label:"Overtime Clutch", short:"OT", icon:"⏱️", type:"clutch"};
+  const pool = phasePool();
+  const picked = pool[Math.floor(Math.random() * pool.length)];
+  return {
+    ...picked,
+    key:`ot_${picked.key}_${Date.now()}_${Math.floor(Math.random() * 9999)}`,
+    label:`Overtime ${picked.label}`,
+    icon:"⏱️",
+    overtime:true
+  };
 }
 
 function enterOvertime(){
   matchState.overtime = true;
   matchState.round = (matchState.phases ? matchState.phases.length : 5) + 1;
   matchState.used = [];
+  matchState.oppUsed = [];
   matchState.phases = [...(matchState.phases || []), overtimePhase()];
-  matchState.history.push("Regulation ended tied. Sudden-death overtime begins. All lineup cards refresh.");
+  matchState.history.push("Regulation ended tied. Sudden-death overtime begins. Both original lineups refresh.");
 }
 
 function addAnotherOvertimePhase(){
   matchState.used = [];
+  matchState.oppUsed = [];
   matchState.phases.push(overtimePhase());
   matchState.round = matchState.phases.length;
-  matchState.history.push("Overtime tied. Another sudden-death overtime begins. All lineup cards refresh.");
+  matchState.history.push("Overtime tied. Another sudden-death overtime begins. Both original lineups refresh.");
 }
 
 function phasePool(){
@@ -1531,7 +1558,7 @@ function matchDockCardHtml(c){
   const owned = state.collection[c.id] || 0;
 
   return `
-    <button class="arena-dock-card ${c.rarity} ${disabled ? "used" : ""} ${isBest ? "best" : ""} ${wasPlayed ? "last-played" : ""}" ${click} ${disabled ? "disabled" : ""} style="${sportStyle(c)}">
+    <button class="arena-dock-card ${c.rarity} ${foilClassForCard(c.id)} ${disabled ? "used" : ""} ${isBest ? "best" : ""} ${wasPlayed ? "last-played" : ""}" ${click} ${disabled ? "disabled" : ""} style="${sportStyle(c)}">
       <div class="arena-dock-thumb">
         <img src="${c.realisticArt}"
              alt="${c.name} card"
@@ -1562,13 +1589,13 @@ function battleCardHtml(c, side, score, outcome, category){
   const scoreText = typeof score === "number" ? score : "—";
 
   return `
-    <div class="battle-card-display compact-battle-card ${side} ${outcomeClass}">
+    <div class="battle-card-display compact-battle-card ${side} ${outcomeClass} ${foilClassForCard(c.id)}">
       <div class="battle-side-label">${side === "player" ? "Your card" : "Opponent card"}</div>
       <div class="battle-card-image">
         <img src="${c.realisticArt}"
              alt="${c.name} battle card"
              onerror="imageFallback(this, '${c.cardArt}')"/>
-        <div class="battle-card-glow ${rarityClassValue(c.rarity)}"></div>
+        <div class="battle-card-glow ${rarityClassValue(c.rarity)} msc-rarity-${c.rarity.toLowerCase()}"></div>
       </div>
       <div class="battle-card-info">
         <strong>${c.name}</strong>
@@ -1724,7 +1751,7 @@ function rawEffectiveStat(c, key){
 }
 
 function effectiveStat(c, key){
-  // Economy Stability Test v4:
+  // Scaling + Cup Patch v21:
   // Base cards still live on a 25-99 scale, but upgrades/foils can push
   // effective stats beyond 99 so high-end cards do not waste upgrades.
   return Math.min(125, rawEffectiveStat(c, key));
@@ -1949,33 +1976,191 @@ function lineupScore(){
     .reduce((a,b) => a + b, 0);
 }
 
+
+function cpuFoilRank(foil){
+  return {Base:0, Bronze:1, Silver:2, Gold:3, Holo:4}[foil || "Base"] || 0;
+}
+
+function cpuUpgradeGainForRarity(rarity){
+  return {Common:3.4, Uncommon:3.1, Rare:2.8, Epic:2.45, Legendary:2.05}[rarity] || 2.5;
+}
+
+function cpuEffectiveStat(cpuCard, stat){
+  const c = card(cpuCard.id);
+  if(!c) return 0;
+  const level = Math.max(1, Number(cpuCard.cpuLevel || 1));
+  const base = c[stat] || 0;
+  const levelGain = Math.max(0, level - 1) * cpuUpgradeGainForRarity(c.rarity);
+  const foilGain = cpuFoilRank(cpuCard.cpuFoil || "Base") * 2.5;
+  const overcap = Math.max(0, level - 10) * 2;
+  const bonus = Number(cpuCard.cpuPowerBonus || 0);
+  return Math.round(base + levelGain + foilGain + overcap + bonus);
+}
+
+function cpuEffectiveOverall(cpuCard){
+  return Math.round((cpuEffectiveStat(cpuCard,"off") + cpuEffectiveStat(cpuCard,"def") + cpuEffectiveStat(cpuCard,"ath") + cpuEffectiveStat(cpuCard,"iq")) / 4);
+}
+
+function cpuPhaseValue(cpuCard, phase){
+  if(!phase) return cpuEffectiveOverall(cpuCard);
+  if(phase.type === "combo") return phase.stats.reduce((sum, stat) => sum + cpuEffectiveStat(cpuCard, stat), 0);
+  if(phase.type === "clutch") return cpuEffectiveOverall(cpuCard);
+  return cpuEffectiveStat(cpuCard, phase.stats[0]);
+}
+
+function playerQuickMatchPower(){
+  return lineupScore();
+}
+
+function randomInt(min, max){
+  return Math.floor(min + Math.random() * (max - min + 1));
+}
+
+function weightedKey(weights){
+  const total = Object.values(weights).reduce((a,b) => a + b, 0);
+  let roll = Math.random() * total;
+  for(const [key, value] of Object.entries(weights)){
+    roll -= value;
+    if(roll <= 0) return key;
+  }
+  return Object.keys(weights)[0];
+}
+
+function quickMatchScalingBand(playerScore){
+  if(playerScore < 320) return {min:270,max:320,level:[1,1],foil:"starter",tol:20,stage:"early",rarity:{Common:70,Uncommon:28,Rare:2,Epic:0,Legendary:0}};
+  if(playerScore < 360) return {min:300,max:345,level:[1,2],foil:"early",tol:18,stage:"early",rarity:{Common:55,Uncommon:40,Rare:5,Epic:0,Legendary:0}};
+  if(playerScore < 400) return {min:335,max:385,level:[1,3],foil:"early",tol:16,stage:"mid",rarity:{Common:35,Uncommon:45,Rare:18,Epic:2,Legendary:0}};
+  if(playerScore < 440) return {min:375,max:425,level:[2,5],foil:"mid",tol:15,stage:"mid",rarity:{Common:15,Uncommon:35,Rare:40,Epic:9,Legendary:1}};
+  if(playerScore < 480) return {min:415,max:465,level:[3,7],foil:"high",tol:13,stage:"late",rarity:{Common:8,Uncommon:22,Rare:45,Epic:20,Legendary:5}};
+  if(playerScore < 520) return {min:455,max:505,level:[5,9],foil:"high",tol:12,stage:"late",rarity:{Common:5,Uncommon:15,Rare:40,Epic:30,Legendary:10}};
+  if(playerScore < 560) return {min:495,max:545,level:[7,10],foil:"endgame",tol:11,stage:"endgame",rarity:{Common:3,Uncommon:10,Rare:30,Epic:38,Legendary:19}};
+  return {min:530,max:590,level:[8,12],foil:"overcap",tol:10,stage:"endgame",rarity:{Common:2,Uncommon:8,Rare:25,Epic:40,Legendary:25}};
+}
+
+function quickMatchDifficultyTarget(playerScore, band){
+  const roll = Math.random() * 100;
+  const endgame = band.stage === "endgame";
+  if(endgame){
+    if(roll < 10) return randomInt(playerScore - 45, playerScore - 25);
+    if(roll < 60) return randomInt(playerScore - 30, playerScore - 5);
+    if(roll < 90) return randomInt(playerScore - 5, playerScore + 15);
+    return randomInt(playerScore + 15, playerScore + 35);
+  }
+  if(roll < 20) return randomInt(playerScore - 45, playerScore - 25);
+  if(roll < 75) return randomInt(playerScore - 30, playerScore - 5);
+  if(roll < 95) return randomInt(playerScore - 5, playerScore + 15);
+  return randomInt(playerScore + 15, playerScore + 35);
+}
+
+function chooseCpuFoil(foilBand){
+  const weights = {
+    starter:{Base:100},
+    early:{Base:90,Bronze:10},
+    mid:{Base:45,Bronze:40,Silver:15},
+    high:{Bronze:30,Silver:45,Gold:20,Holo:5},
+    endgame:{Silver:20,Gold:45,Holo:35},
+    overcap:{Gold:25,Holo:75}
+  }[foilBand] || {Base:100};
+  return weightedKey(weights);
+}
+
+function chooseCpuBaseCard(band){
+  const rarity = weightedKey(band.rarity);
+  let pool = CARDS.filter(c => c.rarity === rarity);
+  if(!pool.length) pool = CARDS.slice();
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function chooseCpuBuildForBand(baseCard, band){
+  return {id:baseCard.id, cpuLevel:randomInt(band.level[0], band.level[1]), cpuFoil:chooseCpuFoil(band.foil), cpuPowerBonus:0};
+}
+
+function cpuLineupScore(cpuLineup){
+  return cpuLineup.reduce((sum, c) => sum + cpuEffectiveOverall(c), 0);
+}
+
+function increaseCpuBuild(cpuCard){
+  if(cpuCard.cpuLevel < 12){ cpuCard.cpuLevel++; return; }
+  const order = ["Base","Bronze","Silver","Gold","Holo"];
+  const idx = order.indexOf(cpuCard.cpuFoil || "Base");
+  if(idx >= 0 && idx < order.length - 1){ cpuCard.cpuFoil = order[idx + 1]; return; }
+  cpuCard.cpuPowerBonus = Math.min(6, (cpuCard.cpuPowerBonus || 0) + 1);
+}
+
+function decreaseCpuBuild(cpuCard){
+  if((cpuCard.cpuPowerBonus || 0) > 0){ cpuCard.cpuPowerBonus--; return; }
+  const order = ["Base","Bronze","Silver","Gold","Holo"];
+  const idx = order.indexOf(cpuCard.cpuFoil || "Base");
+  if(idx > 0){ cpuCard.cpuFoil = order[idx - 1]; return; }
+  if(cpuCard.cpuLevel > 1) cpuCard.cpuLevel--;
+}
+
+function tuneCpuLineupToTarget(lineup, targetScore, tolerance){
+  let score = cpuLineupScore(lineup);
+  let guard = 0;
+  while(score < targetScore - tolerance && guard < 45){
+    increaseCpuBuild(lineup.reduce((a,b) => cpuEffectiveOverall(a) <= cpuEffectiveOverall(b) ? a : b));
+    score = cpuLineupScore(lineup);
+    guard++;
+  }
+  while(score > targetScore + tolerance && guard < 90){
+    decreaseCpuBuild(lineup.reduce((a,b) => cpuEffectiveOverall(a) >= cpuEffectiveOverall(b) ? a : b));
+    score = cpuLineupScore(lineup);
+    guard++;
+  }
+  return lineup;
+}
+
+function generateScaledOpponentLineup(playerScore, opponentProfile){
+  const band = quickMatchScalingBand(playerScore);
+  const target = Math.max(band.min, Math.min(band.max, quickMatchDifficultyTarget(playerScore, band)));
+  let best = null;
+  let bestDistance = Infinity;
+  for(let attempt = 0; attempt < 160; attempt++){
+    const lineup = [];
+    for(let i = 0; i < 5; i++){
+      lineup.push(chooseCpuBuildForBand(chooseCpuBaseCard(band), band));
+    }
+    tuneCpuLineupToTarget(lineup, target, band.tol);
+    const distance = Math.abs(cpuLineupScore(lineup) - target);
+    if(distance < bestDistance){
+      best = lineup.map(c => ({...c}));
+      bestDistance = distance;
+    }
+    if(distance <= Math.max(4, Math.floor(band.tol / 2))) break;
+  }
+  return best || [];
+}
+
+function cpuDisplayCard(cpuCard){
+  return card(cpuCard.id);
+}
+
+
 function startMatch(cup = false){
   if(state.lineup.length < 3){
-    toast("You need at least 3 cards in your lineup.");
-    currentView = "lineup";
-    render();
+    toast("Add at least 3 cards to your lineup.");
     return;
   }
 
-  // Economy Stability Test v4:
-  // Free Quick Match should not let players bank clears indefinitely.
-  // If clears are waiting, send the player to the Draft Board first.
-  if(!cup && state.draft && (state.draft.clears || 0) > 0){
+  if(!cup && (state.draft?.clears || 0) > 0){
+    toast("Use your Draft clears before starting another Quick Match.");
     currentView = "draft";
     render();
-    toast("Use your Draft clears before starting another Quick Match.");
     return;
   }
 
-  // Quick Match is free. Stamina is reserved for economy-risk modes and Cup entries.
   if(cup && state.stamina < 1){
-    toast("Not enough stamina.");
+    toast("Need stamina for Collector Cup.");
     return;
   }
 
   if(cup) state.stamina -= 1;
 
   const opp = OPPONENTS[Math.floor(Math.random() * OPPONENTS.length)];
+  const playerScore = playerQuickMatchPower();
+  const opponentLineup = generateScaledOpponentLineup(playerScore, opp);
+
   matchState = {
     cup,
     opp,
@@ -1983,104 +2168,116 @@ function startMatch(cup = false){
     you:0,
     them:0,
     used:[],
+    oppUsed:[],
+    opponentLineup,
+    phases:generateMatchPhases(),
     history:[],
     finished:false,
-    lastBattle:null,
     result:null,
-    roundResults:[],
-    phases:generateMatchPhases(),
-    overtime:false
+    lastBattle:null,
+    rewards:null
   };
 
-  if(cup) state.stats.cupGames++;
-
-  checkQuests();
+  currentView = "match";
+  addLog(`${cup ? "Collector Cup" : "Quick Match"} started against ${opp.name}.`);
   saveGame();
   render();
 }
 
-function opponentCard(){
-  const lvl = matchState.opp.level;
+
+function opponentPoolForMatch(opp){
+  const lvl = opp.level;
   let pool = CARDS.filter(c => rarityRank(c.rarity) <= Math.min(5, 1 + Math.ceil(lvl / 2)));
 
   if(lvl >= 4){
     pool = CARDS.filter(c => rarityRank(c.rarity) >= 2);
   }
 
-  return pool[Math.floor(Math.random() * pool.length)];
+  return pool.length ? pool : CARDS.slice();
+}
+
+function generateOpponentLineup(opp){
+  const pool = opponentPoolForMatch(opp).slice();
+  const lineup = [];
+
+  while(lineup.length < 5 && pool.length){
+    const index = Math.floor(Math.random() * pool.length);
+    lineup.push(pool.splice(index, 1)[0]);
+  }
+
+  while(lineup.length < 5){
+    lineup.push(CARDS[Math.floor(Math.random() * CARDS.length)]);
+  }
+
+  return lineup;
+}
+
+function opponentCard(){
+  if(!matchState || !matchState.opponentLineup || !matchState.opponentLineup.length){
+    return {id:CARDS[0].id, cpuLevel:1, cpuFoil:"Base", cpuPowerBonus:0};
+  }
+
+  const available = matchState.opponentLineup.filter(c => !matchState.oppUsed.includes(c.id));
+  const pool = available.length ? available : matchState.opponentLineup;
+  const pick = pool[Math.floor(Math.random() * pool.length)];
+
+  if(!matchState.oppUsed.includes(pick.id)){
+    matchState.oppUsed.push(pick.id);
+  }
+
+  return pick;
 }
 
 function playRound(id){
   if(!matchState || matchState.finished) return;
 
   if(matchState.used.includes(id)){
-    toast("That card was already used.");
+    toast("Card already used this match.");
     return;
   }
 
-  const pc = card(id);
-  const oc = opponentCard();
-  const cat = currentMatchPhase();
-  const sportBonus = pc.sport === oc.sport ? 2 : 0;
-  const pScore = phaseValue(pc, cat) + sportBonus + Math.floor(Math.random() * 10);
-  const oScore = phaseValue(oc, cat) + matchState.opp.bonus + Math.floor(Math.random() * 10);
+  const playerCard = card(id);
+  const oppCpuCard = opponentCard();
+  const oppCard = cpuDisplayCard(oppCpuCard);
+  const phase = currentMatchPhase();
+
+  const playerScore = phaseValue(playerCard, phase);
+  const opponentScore = cpuPhaseValue(oppCpuCard, phase);
+  const tied = playerScore === opponentScore;
+  const playerWon = playerScore > opponentScore;
 
   matchState.used.push(id);
 
-  let line = `${matchState.overtime ? "Overtime" : "Round " + matchState.round}: ${pc.name} (${pc.sport}) vs ${oc.name} (${oc.sport}) on ${cat.label}. ${pScore}-${oScore}. `;
-  let playerWon = false;
-  let tied = false;
-
-  if(pScore > oScore){
-    playerWon = true;
-    matchState.you++;
-    line += matchState.overtime ? "You win overtime." : "You win the round.";
-  }else if(pScore < oScore){
-    playerWon = false;
-    matchState.them++;
-    line += matchState.overtime ? "Opponent wins overtime." : "Opponent wins the round.";
-  }else{
-    tied = true;
-    line += matchState.overtime ? "Overtime draw." : "Draw. No phase point awarded.";
+  if(!tied){
+    if(playerWon) matchState.you++;
+    else matchState.them++;
   }
 
+  const category = phase.label || phase.short || "Phase";
   matchState.lastBattle = {
-    playerCardId: pc.id,
-    opponentCardId: oc.id,
-    category: cat.label,
-    breakdown:phaseBreakdownText(pc, cat),
-    playerScore: pScore,
-    opponentScore: oScore,
+    playerCardId:id,
+    opponentCardId:oppCard.id,
+    opponentCpuCard:oppCpuCard,
+    category,
+    playerScore,
+    opponentScore,
     playerWon,
-    tied
+    tied,
+    breakdown:phaseScoreBreakdown(playerCard, phase)
   };
 
-  matchState.roundResults = matchState.roundResults || [];
-  matchState.roundResults[matchState.round - 1] = tied ? "tie" : playerWon ? "win" : "loss";
-
-  matchState.history.push(line);
-
-  if(matchState.overtime){
-    if(tied){
-      addAnotherOvertimePhase();
-    }else{
-      finishMatch();
-    }
-    saveGame();
-    render();
-    return;
-  }
+  matchState.history.push(`${category}: ${playerCard.name} ${playerScore} vs ${oppCard.name} ${opponentScore}. ${tied ? "Draw." : playerWon ? "You win the round." : "Opponent wins the round."}`);
 
   if(matchState.you >= 3 || matchState.them >= 3){
     finishMatch();
-  }else if(matchState.round >= 5){
-    if(matchState.you === matchState.them){
-      enterOvertime();
-    }else{
-      finishMatch();
-    }
   }else{
     matchState.round++;
+    if(matchState.round > matchState.phases.length){
+      const extra = phasePool().filter(p => p.type !== "clutch");
+      matchState.phases.push(extra[Math.floor(Math.random() * extra.length)] || phasePool()[0]);
+      matchState.used = [];
+      matchState.oppUsed = [];
+    }
   }
 
   saveGame();
@@ -2103,7 +2300,7 @@ function finishMatch(){
     state.coins += reward;
     state.trainingPoints += tpReward;
   }else{
-    // Economy Stability Test v4:
+    // Scaling + Cup Patch v21:
     // Quick Match is always playable. The real reward is controlled by Draft clears.
     draftClears = won ? 3 : 1;
     state.draft = state.draft || {clears:0, board:null, history:[]};
@@ -2291,7 +2488,7 @@ function cardHtml(c, options = {}){
   const showCardBadges = !["lineup","lineup-add","collection"].includes(mode);
 
   return `
-    <div data-card-id="${c.id}" class="card ${state.collectionFocusId === c.id ? "" : ""} real-card ${c.rarity} ${selected} ${disabledClass}" style="${sportStyle(c)}">
+    <div data-card-id="${c.id}" class="card ${state.collectionFocusId === c.id ? "" : ""} real-card ${c.rarity} ${foilClassForCard(c.id)} ${selected} ${disabledClass}" style="${sportStyle(c)}">
       <button class="inspect-hitbox card-primary-hitbox ${mode}" ${clickAttr} aria-label="${cardLabel}">
         <div class="full-card-art">
           <img src="${c.realisticArt}"
@@ -2318,7 +2515,7 @@ function lockedCardHtml(c){
 
 function packCardHtml(c){
   return `
-    <div data-card-id="${c.id}" class="card ${state.collectionFocusId === c.id ? "" : ""} real-card ${c.rarity}" style="${sportStyle(c)}">
+    <div data-card-id="${c.id}" class="card ${state.collectionFocusId === c.id ? "" : ""} real-card ${c.rarity} ${foilClassForCard(c.id)}" style="${sportStyle(c)}">
       <div class="full-card-art">
         <img src="${c.realisticArt}"
              alt="${c.name} card art"
@@ -2375,6 +2572,7 @@ function packRevealHubHtml(currentKey){
           const icon = ({rookie:"🌱",pro:"💼",star:"⭐",hof:"🏛️"}[key] || "🎁");
           return `
             <div class="mini-pack-option-force ${key === currentKey ? "current" : ""}">
+              <div class="mini-pack-thumb-force"><img src="${packAssetPath(key)}" alt="${p.name} pack" /></div>
               <div class="mini-pack-name-force">${icon} ${p.name}</div>
               <div class="mini-pack-meta-force">${p.count} cards · ${p.cost} coins</div>
               <div class="mini-pack-pity-force">${nextPityText(key, "rare") ? "Rare+ dry " + nextPityText(key, "rare").dry + "/" + nextPityText(key, "rare").threshold : ""}</div>
@@ -2424,13 +2622,7 @@ function packOpeningHtml(){
         <div class="foil-pack-wrap">
           <div class="foil-pack v2-pack heat-pack pack-portrait ${packOpening.key} ${rarityClassValue(bestRarity)} ${hasHeat ? "has-heat" : ""}">
             <div class="pack-glint"></div>
-            <div class="pack-art-frame">
-              <div class="pack-art-kicker">Major Sports</div>
-              <div class="pack-art-icons">🏈 🏀 ⚽ ⚾</div>
-              <div class="pack-art-title">${pack.name.replace(" Pack","")}</div>
-              <div class="pack-art-subtitle">Card Pack</div>
-              <div class="pack-art-count">${pack.count} Cards</div>
-            </div>
+            <img class="pack-wrapper-image" src="${packAssetPath(packOpening.key)}" alt="${pack.name} pack art" />
             ${hasHeat ? `<div class="pack-fire ${rarityClassValue(bestRarity)}"></div>` : ""}
           </div>
           <button onclick="ripPack()" class="dark rip-button">Hold / click to rip pack</button>
@@ -2488,10 +2680,10 @@ function packOpeningHtml(){
                 <div class="reveal-face reveal-front">
                   ${packCardHtml(c)}
                   ${flipped && status === "NEW" ? `<div class="pull-status ${statusClass}">${status}</div>` : ""}
-                  ${flipped && rarePlus ? `<div class="pull-banner ${rarityClassValue(c.rarity)}">${c.rarity}${status === "NEW" ? " NEW CARD" : " PULL"}</div>` : ""}
-                  ${flipped && isHeatCard ? `<div class="big-pull-burst ${rarityClassValue(c.rarity)}"></div>` : ""}
+                  ${flipped && isHeatCard ? `<div class="big-pull-burst ${rarityClassValue(c.rarity)} msc-rarity-${c.rarity.toLowerCase()}"></div>` : ""}
                 </div>
               </div>
+              ${flipped && rarePlus ? `<div class="pull-banner pull-banner-outside ${rarityClassValue(c.rarity)} msc-rarity-${c.rarity.toLowerCase()}">${c.rarity}${status === "NEW" ? " NEW CARD" : " PULL"}</div>` : ""}
             </button>
           `;
         }).join("")}
@@ -2608,7 +2800,26 @@ function applyViewBodyClass(){
 
 
 
+
+function fixPackRevealFaces(){
+  const back = typeof CARD_BACK_IMAGE !== "undefined" ? CARD_BACK_IMAGE : "assets/ui/card_back_base_v1.png";
+  document.querySelectorAll(".pack-reveal-card, .reveal-card, .flip-card, .pack-card-flip").forEach(cardEl => {
+    const front = cardEl.querySelector(".card-face-front img, .reveal-card-front img, .pack-card-front img");
+    const backFace = cardEl.querySelector(".card-face-back img, .reveal-card-back img, .pack-card-back img");
+
+    if(backFace && !backFace.getAttribute("src")){
+      backFace.setAttribute("src", back);
+    }
+
+    if(front && front.getAttribute("src") === back){
+      const art = cardEl.dataset.cardArt || cardEl.dataset.realisticArt || front.dataset.frontArt;
+      if(art) front.setAttribute("src", art);
+    }
+  });
+}
+
 function render(){
+  setTimeout(fixPackRevealFaces, 0);
   applyViewBodyClass();
   checkQuests();
 
@@ -3541,7 +3752,7 @@ function viewHome(){
   return `
     <div class="section-title">
       <div>
-        <h2>Clubhouse</h2><div class="build-label">Economy Stability Test v4</div>
+        <h2>Clubhouse</h2><div class="build-label">Scaling + Cup Patch v21</div>
         <p>Earn coins, open sport packs, complete goals, and build a 5-card lineup.</p>
       </div>
 
@@ -3655,7 +3866,7 @@ function viewCollection(){
 
           if(!owned){
             return `
-              <div class="binder-pocket locked-pocket ${rarityClassValue(c.rarity)}">
+              <div class="binder-pocket locked-pocket ${rarityClassValue(c.rarity)} msc-rarity-${c.rarity.toLowerCase()}">
                 <div class="binder-locked" style="${sportStyle(c)}">
                   <div class="locked-question">?</div>
                   <div class="locked-meta">${SPORTS[c.sport].emoji} ${c.sport}</div>
@@ -3666,7 +3877,7 @@ function viewCollection(){
           }
 
           return `
-            <div class="binder-pocket owned-pocket ${rarityClassValue(c.rarity)}">
+            <div class="binder-pocket owned-pocket ${rarityClassValue(c.rarity)} msc-rarity-${c.rarity.toLowerCase()}">
               <div class="binder-card-wrap">
                 ${cardHtml(c, {mode:"collection", selected:inLineup})}
               </div>
@@ -3689,6 +3900,16 @@ function viewCollection(){
 
 
 
+
+function packAssetPath(key){
+  return {
+    rookie:"assets/ui/pack_rookie_v1.jpg",
+    pro:"assets/ui/pack_pro_v1.jpg",
+    star:"assets/ui/pack_allstar_v1.jpg",
+    hof:"assets/ui/pack_hof_v1.jpg"
+  }[key] || "assets/ui/pack_rookie_v1.jpg";
+}
+
 function viewPacks(){
   const packBusy = !!packOpening || !!(packQueue && packQueue.length) || !!state.activePackOpening || !!((state.activePackQueue || []).length);
 
@@ -3703,6 +3924,10 @@ function viewPacks(){
         <div class="pack-title-row">
           <h3>${icon} ${p.name}</h3>
           <span>${stats.opened} opened</span>
+        </div>
+
+        <div class="pack-product-art ${key}">
+          <img src="${packAssetPath(key)}" alt="${p.name} pack art" />
         </div>
 
         <p>${p.desc}</p>
@@ -3738,7 +3963,7 @@ function viewPacks(){
   return `
     <div class="section-title">
       <div>
-        <h2>Packs</h2><div class="build-label">Economy Stability Test v4</div>
+        <h2>Packs</h2><div class="build-label">Scaling + Cup Patch v21</div>
       </div>
     </div>
 
@@ -4769,87 +4994,46 @@ function viewMatch(){
 }
 
 
-function cupTierConfig(tierKey){
+function cupTierConfig(key){
   const configs = {
     rookie:{
-      key:"rookie",
-      name:"Rookie Cup",
-      icon:"🌱",
-      packKey:"rookie",
-      stamina:2,
-      prizeMinRank:2,
-      difficulty:{
-        floors:[290,320,345],
-        caps:[390,415,440],
-        offsets:[[-22,5],[-6,20],[12,38]]
-      },
+      key:"rookie", name:"Rookie Cup", icon:"🌱", stamina:8, requiredScore:260, opponentBase:250, opponentStep:16,
       rewards:{
-        quarter:{coins:45,tp:120,xp:65,cards:0},
-        semi:{coins:95,tp:240,xp:115,cards:1},
-        runner:{coins:150,tp:360,xp:185,cards:1},
-        champion:{coins:260,tp:600,xp:325,cards:2}
+        enter:{coins:40,tp:18},
+        semifinal:{coins:90,tp:38},
+        finalist:{coins:150,tp:65,cards:1,minRank:1},
+        champion:{coins:220,tp:95,cards:1,minRank:2}
       }
     },
     pro:{
-      key:"pro",
-      name:"Pro Cup",
-      icon:"💼",
-      packKey:"pro",
-      stamina:3,
-      prizeMinRank:3,
-      difficulty:{
-        floors:[370,410,455],
-        caps:[535,570,610],
-        offsets:[[-18,8],[-4,25],[16,48]]
-      },
+      key:"pro", name:"Pro Cup", icon:"💼", stamina:14, requiredScore:350, opponentBase:350, opponentStep:26,
       rewards:{
-        quarter:{coins:130,tp:300,xp:150,cards:0},
-        semi:{coins:260,tp:650,xp:260,cards:1},
-        runner:{coins:390,tp:950,xp:400,cards:2},
-        champion:{coins:600,tp:1400,xp:650,cards:3}
+        enter:{coins:300,tp:130},
+        semifinal:{coins:430,tp:185,cards:1,minRank:2},
+        finalist:{coins:560,tp:240,cards:1,minRank:3},
+        champion:{coins:680,tp:295,cards:2,minRank:3}
       }
     },
     star:{
-      key:"star",
-      name:"All-Star Cup",
-      icon:"⭐",
-      packKey:"star",
-      stamina:4,
-      prizeMinRank:3,
-      difficulty:{
-        floors:[430,480,535],
-        caps:[650,700,750],
-        offsets:[[-16,12],[0,32],[24,60]]
-      },
+      key:"star", name:"All-Star Cup", icon:"⭐", stamina:22, requiredScore:460, opponentBase:465, opponentStep:34,
       rewards:{
-        quarter:{coins:225,tp:550,xp:275,cards:0},
-        semi:{coins:425,tp:1050,xp:500,cards:1},
-        runner:{coins:650,tp:1600,xp:750,cards:2},
-        champion:{coins:1000,tp:2300,xp:1100,cards:4}
+        enter:{coins:850,tp:360},
+        semifinal:{coins:1100,tp:455,cards:1,minRank:3},
+        finalist:{coins:1350,tp:555,cards:2,minRank:3},
+        champion:{coins:1650,tp:675,cards:2,minRank:4}
       }
     },
     hof:{
-      key:"hof",
-      name:"Hall of Fame Cup",
-      icon:"🏛️",
-      packKey:"hof",
-      stamina:5,
-      prizeMinRank:4,
-      difficulty:{
-        floors:[500,570,640],
-        caps:[760,830,900],
-        offsets:[[-12,18],[8,42],[34,75]]
-      },
+      key:"hof", name:"Hall of Fame Cup", icon:"🏛️", stamina:32, requiredScore:560, opponentBase:600, opponentStep:48,
       rewards:{
-        quarter:{coins:375,tp:900,xp:450,cards:0},
-        semi:{coins:700,tp:1700,xp:850,cards:1},
-        runner:{coins:1050,tp:2600,xp:1250,cards:2},
-        champion:{coins:1650,tp:3800,xp:1800,cards:5}
+        enter:{coins:1900,tp:760,cards:1,minRank:3},
+        semifinal:{coins:2350,tp:925,cards:1,minRank:4},
+        finalist:{coins:2900,tp:1125,cards:2,minRank:4},
+        champion:{coins:3800,tp:1450,cards:4,minRank:4,legendaryChance:0.22}
       }
     }
   };
-
-  return configs[tierKey] || configs.rookie;
+  return configs[key] || configs.rookie;
 }
 
 function cupTierRequirements(tierKey){
@@ -4942,33 +5126,54 @@ function randomBetween(min, max){
 }
 
 function buildCupOpponentPowers(tierKey, snapshot){
-  const cfg = cupTierConfig(tierKey);
-  const userPower = cupLineupPower(snapshot);
-  const diff = cfg.difficulty;
-  return diff.offsets.map((range, i) => {
-    const raw = userPower + randomBetween(range[0], range[1]);
-    return clampNumber(raw, diff.floors[i], diff.caps[i]);
+  const cfg = typeof tierKey === "object" ? tierKey : cupTierConfig(tierKey);
+  const userPower = cupLineupPower(snapshot || []);
+  const tier = cfg.key || tierKey || "rookie";
+
+  // Fair-scaling model: opponents have tier/round baselines, then scale only partially
+  // with submitted Cup Power. Because every scale is below 1.0, stronger lineups
+  // always gain net advantage instead of being matched one-for-one.
+  const curves = {
+    rookie:{anchor:405, scale:0.28, belowScale:0.20, bases:[370, 390, 410], jitter:[[-4, 8], [-4, 10], [-2, 12]]},
+    pro:{anchor:415, scale:0.42, belowScale:0.28, bases:[385, 410, 430], jitter:[[-6, 8], [-4, 12], [-2, 14]]},
+    star:{anchor:600, scale:0.48, belowScale:0.35, bases:[535, 580, 635], jitter:[[-8, 10], [-6, 14], [-4, 18]]},
+    hof:{anchor:760, scale:0.62, belowScale:0.45, bases:[725, 805, 890], jitter:[[-10, 12], [-8, 18], [-5, 24]]}
+  };
+  const curve = curves[tier] || curves.rookie;
+  const delta = userPower - curve.anchor;
+  const scaledDelta = delta >= 0 ? delta * curve.scale : delta * curve.belowScale;
+
+  return curve.bases.map((base, i) => {
+    const jitter = curve.jitter[i] || [0, 0];
+    return Math.round(base + scaledDelta + randomBetween(jitter[0], jitter[1]));
   });
 }
 
 function estimatedCupRoundChance(yourPower, oppPower){
   const diff = yourPower - oppPower;
-  return clampNumber(Math.round(50 + diff * 1.35), 18, 82);
+  return clampNumber(Math.round(50 + diff * 1.2), 5, 95);
 }
 
-function cupOpponentPreviewHtml(cup){
-  if(!cup || !cup.opponentPowers) return "";
-  const yourPower = cupLineupPower(cup.snapshot);
+function cupOpponentPreviewHtml(active){
+  if(!active) return "";
+
+  const tierKey = active.tier || active.key || active.tierKey || "rookie";
+  const snapshot = active.snapshot || cupLineupSnapshot();
+  const powers = active.opponentPowers && active.opponentPowers.length
+    ? active.opponentPowers
+    : buildCupOpponentPowers(tierKey, snapshot);
+  const yourPower = cupLineupPower(snapshot);
+  const labels = ["Quarterfinal", "Semifinal", "Final"];
 
   return `
     <div class="cup-opponent-preview">
-      <h4>Projected opponents</h4>
+      <h3>Opponent preview</h3>
       <div class="cup-opponent-grid">
-        ${cup.opponentPowers.map((p,i) => `
-          <div>
-            <span>${cupRoundLabel(i)}</span>
-            <strong>${cupOpponentName(cup.tierKey, i)}</strong>
-            <small>Opp power ${p} · Est. win ${estimatedCupRoundChance(yourPower, p)}%</small>
+        ${powers.slice(0,3).map((power, i) => `
+          <div class="cup-opponent-card">
+            <span>${labels[i]}</span>
+            <strong>${power}</strong>
+            <small>${estimatedCupRoundChance(yourPower, power)}% win chance</small>
           </div>
         `).join("")}
       </div>
@@ -4981,7 +5186,7 @@ function cupTierRepeatTitles(tierKey){
 }
 
 function cupAdjustedReward(cfg, finishKey){
-  const base = cfg.rewards[finishKey];
+  const base = cfg.rewards[finishKey] || cfg.rewards.enter;
   const reward = {...base};
   const priorTitles = cupTierRepeatTitles(cfg.key);
 
@@ -4989,7 +5194,6 @@ function cupAdjustedReward(cfg, finishKey){
     const scale = cfg.key === "rookie" ? 0.45 : cfg.key === "pro" ? 0.65 : cfg.key === "star" ? 0.75 : 0.85;
     reward.coins = Math.max(25, Math.round(base.coins * scale));
     reward.tp = Math.max(75, Math.round(base.tp * scale));
-    reward.xp = Math.max(50, Math.round(base.xp * scale));
     reward.cards = cfg.key === "rookie" ? 1 : Math.max(1, base.cards - 1);
     reward.repeatAdjusted = true;
     reward.originalCoins = base.coins;
@@ -5048,154 +5252,217 @@ function simulateCupRound(cup, roundIndex){
 
 function cupFinishKey(wins){
   if(wins >= 3) return "champion";
-  if(wins === 2) return "runner";
-  if(wins === 1) return "semi";
-  return "quarter";
+  if(wins === 2) return "finalist";
+  if(wins === 1) return "semifinal";
+  return "enter";
 }
 
 function cupFinishLabel(key){
-  return {champion:"Champion", runner:"Runner-up", semi:"Semifinalist", quarter:"Quarterfinalist"}[key] || "Finished";
+  return {champion:"Champion", finalist:"Finalist", semifinal:"Semifinalist", enter:"Eliminated"}[key] || "Finished";
 }
 
-function awardCupPrizeCards(cfg, reward, finishKey){
+function cupPrizeRank(minRank, legendaryChance = 0){
+  if(legendaryChance && Math.random() < legendaryChance) return 5;
+
+  const roll = Math.random();
+
+  if(minRank <= 1) return roll < 0.80 ? 1 : 2;
+  if(minRank === 2) return roll < 0.85 ? 2 : 3;
+  if(minRank === 3){
+    if(roll < 0.02) return 5;
+    if(roll < 0.15) return 4;
+    return 3;
+  }
+  if(minRank === 4) return roll < 0.10 ? 5 : 4;
+  return 5;
+}
+
+function randomCupPrizeCardByRank(rank, tierKey = "pro"){
+  const targetRarity = {
+    1:"Common",
+    2:"Uncommon",
+    3:"Rare",
+    4:"Epic",
+    5:"Legendary"
+  }[rank] || "Rare";
+
+  let pool = CARDS.filter(c => c.rarity === targetRarity);
+  const pack = PACKS[tierKey];
+
+  if(pack && pack.sport){
+    const sportPool = pool.filter(c => c.sport === pack.sport);
+    if(sportPool.length) pool = sportPool;
+  }
+
+  if(!pool.length) pool = CARDS.filter(c => c.rarity === targetRarity);
+  if(!pool.length) pool = CARDS;
+
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function awardCupPrizeCards(reward, tierKey = "pro"){
   const ids = [];
-  const count = reward.cards || 0;
-  if(count <= 0) return ids;
 
-  for(let i = 0; i < count; i++){
-    ids.push(randomCard(cfg.packKey).id);
-  }
+  for(let i = 0; i < (reward.cards || 0); i++){
+    const rank = cupPrizeRank(reward.minRank || 1, reward.legendaryChance || 0);
+    const prize = randomCupPrizeCardByRank(rank, tierKey || "pro");
 
-  if(finishKey === "champion" && ids.length){
-    const bestRank = Math.max(...ids.map(id => rarityRank(card(id).rarity)));
-    if(bestRank < cfg.prizeMinRank){
-      const replacement = randomCardByMinRank(cfg.packKey, cfg.prizeMinRank);
-      const replaceIndex = ids.map((id,i) => ({i,rank:rarityRank(card(id).rarity)})).sort((a,b) => a.rank - b.rank)[0].i;
-      ids[replaceIndex] = replacement.id;
-    }
-  }
-
-  ids.forEach(id => {
-    state.collection[id] = (state.collection[id] || 0) + 1;
+    state.collection[prize.id] = (state.collection[prize.id] || 0) + 1;
     state.stats.totalCards++;
-  });
+    ids.push(prize.id);
+  }
 
-  state.stats.cupPrizeCards += ids.length;
   return ids;
 }
 
-function startCollectorCup(tierKey){
+function startCollectorCup(key){
+  const cfg = cupTierConfig(key);
+
   if(state.cupSeason && !state.cupSeason.completed){
-    toast("Finish the active Cup run first.");
-    return;
-  }
-
-  const cfg = cupTierConfig(tierKey);
-
-  if(!isCupTierUnlocked(tierKey)){
-    toast(`${cfg.name} requirements not met.`);
+    toast("Finish your current Cup first.");
+    currentView = "season";
+    render();
     return;
   }
 
   if(state.lineup.length < 5){
-    toast("Collector Cup requires a full 5-card lineup.");
+    toast("Submit a full 5-card lineup.");
     return;
   }
 
-  state.stamina -= cfg.stamina;
+  if(!isCupTierUnlocked(key)){
+    toast(`${cfg.name} is locked.`);
+    return;
+  }
 
+  if(state.stamina < cfg.stamina){
+    toast(`Need ${cfg.stamina} stamina.`);
+    return;
+  }
+
+  const snapshot = cupLineupSnapshot();
+  const opponentPowers = buildCupOpponentPowers(key, snapshot);
+
+  state.stamina -= cfg.stamina;
   state.cupSeason = {
-    tierKey,
+    tier:key,
+    key:key,
+    tierKey:key,
     tierName:cfg.name,
     icon:cfg.icon,
     day:state.day,
-    snapshot:cupLineupSnapshot(),
+    snapshot,
+    opponentPowers,
     rounds:[],
-    opponentPowers:null,
+    bracket:[],
     completed:false,
-    finishKey:null,
     finishLabel:null,
     rewards:null,
-    prizeIds:[]
+    prizeIds:[],
+    repeatAdjusted:false
   };
 
-  state.cupSeason.opponentPowers = buildCupOpponentPowers(tierKey, state.cupSeason.snapshot);
-
-  state.stats.cupTournaments++;
-  state.stats.cupGames++;
-  addCollectorXP(80, `${cfg.name} entry`);
-  addLog(`Entered ${cfg.name}. Lineup snapshot locked at ${cupSnapshotScore(state.cupSeason.snapshot)} lineup score.`);
-  checkQuests();
+  currentView = "season";
+  addLog(`Entered ${cfg.name}.`);
   saveGame();
   render();
   toast(`${cfg.name} lineup submitted.`);
 }
 
 function simulateCollectorCup(){
-  const cup = state.cupSeason;
-  if(!cup || cup.completed) return;
+  const active = state.cupSeason;
 
-  const cfg = cupTierConfig(cup.tierKey);
-  cup.rounds = [];
-  let wins = 0;
-  let losses = 0;
+  if(!active || active.completed){
+    toast("No active Cup to simulate.");
+    currentView = "season";
+    render();
+    return;
+  }
+
+  const tierKey = active.tier || active.key || active.tierKey || "rookie";
+  const cfg = cupTierConfig(tierKey);
+  const snapshot = active.snapshot || cupLineupSnapshot();
+
+  active.tier = tierKey;
+  active.key = tierKey;
+  active.tierKey = tierKey;
+  active.tierName = active.tierName || cfg.name;
+  active.icon = active.icon || cfg.icon;
+  active.snapshot = snapshot;
+  active.opponentPowers = active.opponentPowers && active.opponentPowers.length
+    ? active.opponentPowers
+    : buildCupOpponentPowers(tierKey, snapshot);
+  active.rounds = [];
+  active.bracket = active.rounds;
+
+  let roundWins = 0;
 
   for(let i = 0; i < 3; i++){
-    const result = simulateCupRound(cup, i);
-    cup.rounds.push(result);
+    const result = simulateCupRound(active, i);
+    active.rounds.push(result);
+
     if(result.won){
-      wins++;
+      roundWins++;
     }else{
-      losses++;
       break;
     }
   }
 
-  const finishKey = cupFinishKey(wins);
-  const reward = cupAdjustedReward(cfg, finishKey);
-  const prizeIds = awardCupPrizeCards(cfg, reward, finishKey);
+  const losses = active.rounds.length - roundWins;
+  const rewardKey = cupFinishKey(roundWins);
+  const finish = cupFinishLabel(rewardKey);
+  const rewards = cupAdjustedReward(cfg, rewardKey);
 
-  state.coins += reward.coins;
-  state.trainingPoints += reward.tp;
-  addCollectorXP(reward.xp, `${cfg.name} ${cupFinishLabel(finishKey)}`);
+  state.coins += rewards.coins || 0;
+  state.trainingPoints += rewards.tp || 0;
+  const prizeIds = awardCupPrizeCards(rewards, tierKey);
+  addCollectorXP(80 + roundWins * 45, `${cfg.name} ${finish}`);
 
-  state.stats.cupWins += wins;
-  state.stats.cupLosses += losses;
-  if(finishKey === "champion"){
-    state.stats.cupChampionships++;
+  active.completed = true;
+  active.finishLabel = finish;
+  active.rewards = rewards;
+  active.prizeIds = prizeIds;
+  active.repeatAdjusted = !!rewards.repeatAdjusted;
+
+  state.stats.cupTournaments = (state.stats.cupTournaments || 0) + 1;
+  state.stats.cupWins = (state.stats.cupWins || 0) + roundWins;
+  state.stats.cupLosses = (state.stats.cupLosses || 0) + losses;
+  state.stats.cupPrizeCards = (state.stats.cupPrizeCards || 0) + prizeIds.length;
+
+  if(roundWins === 3){
+    state.stats.cupChampionships = (state.stats.cupChampionships || 0) + 1;
     state.cupTierTitles = state.cupTierTitles || {};
-    state.cupTierTitles[cup.tierKey] = (state.cupTierTitles[cup.tierKey] || 0) + 1;
+    state.cupTierTitles[tierKey] = (state.cupTierTitles[tierKey] || 0) + 1;
+  }else if(roundWins === 2){
+    state.stats.cupRunnerUps = (state.stats.cupRunnerUps || 0) + 1;
   }
-  if(finishKey === "runner") state.stats.cupRunnerUps++;
-
-  cup.completed = true;
-  cup.finishKey = finishKey;
-  cup.finishLabel = cupFinishLabel(finishKey);
-  cup.rewards = reward;
-  cup.prizeIds = prizeIds;
 
   state.cupHistory = state.cupHistory || [];
   state.cupHistory.unshift({
     day:state.day,
-    tierName:cup.tierName,
-    finishLabel:cup.finishLabel,
-    score:cupSnapshotScore(cup.snapshot),
-    power:cupLineupPower(cup.snapshot),
-    wins,
+    tier:tierKey,
+    name:cfg.name,
+    tierName:cfg.name,
+    finish,
+    finishLabel:finish,
+    wins:roundWins,
     losses,
-    coins:reward.coins,
-    tp:reward.tp,
-    prizeIds:prizeIds,
-    rounds:cup.rounds.slice(),
-    repeatAdjusted:!!reward.repeatAdjusted
+    score:cupSnapshotScore(snapshot),
+    power:cupLineupPower(snapshot),
+    coins:rewards.coins || 0,
+    tp:rewards.tp || 0,
+    cards:prizeIds.length,
+    prizeIds,
+    repeatAdjusted:!!rewards.repeatAdjusted,
+    rounds:active.rounds
   });
-  state.cupHistory = state.cupHistory.slice(0, 8);
+  state.cupHistory = state.cupHistory.slice(0, 20);
 
-  addLog(`${cup.tierName}: ${cup.finishLabel}. +${reward.coins} coins, +${reward.tp} TP${prizeIds.length ? ", +" + prizeIds.length + " prize cards" : ""}.`);
   checkQuests();
+  addLog(`${cfg.name}: ${finish}. Reward +${rewards.coins || 0} coins, +${rewards.tp || 0} TP, +${prizeIds.length} cards.`);
   saveGame();
   render();
-  toast(`${cup.finishLabel}: +${reward.coins} coins, +${reward.tp} TP`);
+  toast(`${finish}: +${rewards.coins || 0} coins`);
 }
 
 function clearCollectorCup(){
@@ -5256,18 +5523,29 @@ function cupSnapshotHtml(snapshot){
 }
 
 function cupBracketHtml(cup){
-  if(!cup || !cup.rounds || !cup.rounds.length){
+  const rounds = (cup && cup.rounds && cup.rounds.length) ? cup.rounds : (cup && cup.bracket ? cup.bracket : []);
+  if(!cup || !rounds.length){
     return `<div class="message">No games simulated yet. Submit your lineup, then run the Cup sim.</div>`;
   }
 
-  return `<div class="cup-bracket">${cup.rounds.map(r => `
-    <div class="cup-round ${r.won ? "won" : "lost"}">
-      <span>${r.round}</span>
-      <strong>${r.won ? "Win" : "Loss"} ${r.yourScore}-${r.oppScore}</strong>
-      <small>vs ${r.opponent}</small>
-      <em>Your power ${r.yourPower} · Opp power ${r.oppPower} · Margin ${r.margin >= 0 ? "+" : ""}${r.margin} · Est. ${r.estimatedWin}%</em>
-    </div>
-  `).join("")}</div>`;
+  return `<div class="cup-bracket">${rounds.map(r => {
+    const won = typeof r.won === "boolean" ? r.won : !!r.win;
+    const yourScore = typeof r.yourScore === "number" ? r.yourScore : (won ? "W" : "L");
+    const oppScore = typeof r.oppScore === "number" ? r.oppScore : "";
+    const opponent = r.opponent || "Cup Opponent";
+    const oppPower = typeof r.oppPower === "number" ? r.oppPower : r.opponentPower;
+    const margin = typeof r.margin === "number" ? r.margin : null;
+    const estimatedWin = typeof r.estimatedWin === "number" ? r.estimatedWin : r.chance;
+
+    return `
+      <div class="cup-round ${won ? "won" : "lost"}">
+        <span>${r.round}</span>
+        <strong>${won ? "Win" : "Loss"} ${yourScore}${oppScore !== "" ? "-" + oppScore : ""}</strong>
+        <small>vs ${opponent}</small>
+        <em>${typeof r.yourPower === "number" ? "Your power " + r.yourPower + " · " : ""}${typeof oppPower === "number" ? "Opp power " + oppPower : ""}${margin !== null ? " · Margin " + (margin >= 0 ? "+" : "") + margin : ""}${typeof estimatedWin === "number" ? " · Est. " + estimatedWin + "%" : ""}</em>
+      </div>
+    `;
+  }).join("")}</div>`;
 }
 
 function cupPrizeCardsHtml(ids){
@@ -5283,12 +5561,21 @@ function cupHistoryHtml(){
   if(!history.length) return `<div class="message">No completed Cup runs yet.</div>`;
 
   return `<div class="cup-history-list">${history.map(h => {
-    const finalRound = h.rounds && h.rounds.length ? h.rounds[h.rounds.length - 1] : null;
+    const rounds = h.rounds || [];
+    const finalRound = rounds.length ? rounds[rounds.length - 1] : null;
+    const tierName = h.tierName || h.name || cupTierConfig(h.tier || "rookie").name;
+    const finishLabel = h.finishLabel || h.finish || "Finished";
+    const wins = typeof h.wins === "number" ? h.wins : "?";
+    const losses = typeof h.losses === "number" ? h.losses : "?";
+    const prizeIds = h.prizeIds || [];
+    const score = typeof h.score === "number" ? h.score : "—";
+    const power = typeof h.power === "number" ? h.power : "—";
+
     return `
       <div class="cup-history-item">
-        <span>${h.tierName} · Day ${h.day}${h.repeatAdjusted ? " · repeat reward" : ""}</span>
-        <strong>${h.finishLabel} · ${h.wins}-${h.losses}</strong>
-        <small>Lineup score ${h.score} · Power ${h.power} · +${h.coins} coins · +${h.tp} TP · ${h.prizeIds.length} prize cards</small>
+        <span>${tierName} · Day ${h.day || "—"}${h.repeatAdjusted ? " · repeat reward" : ""}</span>
+        <strong>${finishLabel} · ${wins}-${losses}</strong>
+        <small>Lineup score ${score} · Power ${power} · +${h.coins || 0} coins · +${h.tp || 0} TP · ${prizeIds.length || h.cards || 0} prize cards</small>
         ${finalRound ? `<small>Last round: ${finalRound.yourScore}-${finalRound.oppScore} vs ${finalRound.opponent} · Opp power ${finalRound.oppPower} · Margin ${finalRound.margin >= 0 ? "+" : ""}${finalRound.margin}</small>` : ""}
       </div>
     `;
@@ -5323,7 +5610,7 @@ function viewCup(){
   return `
     <div class="section-title">
       <div>
-        <h2>Collector Cup</h2><div class="build-label">Economy Stability Test v4</div>
+        <h2>Collector Cup</h2><div class="build-label">Scaling + Cup Patch v21</div>
       </div>
       <span class="pill">🏆 ${state.stats.cupChampionships || 0} <small>titles</small></span>
     </div>

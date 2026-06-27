@@ -1271,3 +1271,125 @@ Mobile Quick Match compact layout patch:
 - Removed match log from active match screen to save vertical space.
 - Shortened the battle field and lineup dock on mobile.
 - Fresh save key: majorSportsCardCollector_economy_stability_test_v4
+
+
+## Economy Stability Test v5
+
+Playtest feedback patch:
+- All-Star and Hall of Fame pack unlock gates are stricter.
+- All-Star now requires Rare+ upgrade/foil progress instead of only generic Common upgrades.
+- Hall of Fame now requires Rare+/Epic+ upgrade progress, more Rare+ foils, and lineup score 460+.
+- Quick Match opponent now uses a fixed original 5-card lineup for the match. Overtime refreshes those original 5 cards instead of generating brand-new opponent cards.
+- Overtime phase is randomized from the normal phase pool instead of always being Overall.
+
+Tier 1 hybrid visual update:
+- Added new pack art to Pack screen and pack rip screen.
+- Added new universal card back art for face-down/reveal cards.
+- Added new hidden Draft Board tile art, optimized to 512x512.
+- Added lightweight rarity glow and foil sheen effects for existing card markup.
+- Copied visual effects system reference files into assets/effects for future deeper integration.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v5
+
+## Economy Stability Test v6
+
+Pack reveal visual fix:
+- Fixed card-face CSS so pack reveal backs/fronts do not show mirrored card backs after flip.
+- Added runtime safety helper for pack reveal face images.
+- Clarified rarity/foil effects:
+  - rarity glow is visible on Rare/Epic/Legendary cards without foil upgrades
+  - foil sheen is most noticeable on Bronze/Silver/Gold/Holo upgraded cards
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v6
+
+## Economy Stability Test v7
+
+Pack reveal fix:
+- Replaced 3D flip dependency with deterministic face swap for pack reveal cards.
+- Unflipped cards show only the card back.
+- Flipped cards hide the back face and show the player card art face flat.
+- This should stop the mirrored card-back issue.
+- Rarity glow made more explicit on reveal, collection, lineup, and inspect card views.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v7
+
+## Economy Stability Test v8
+
+Rarity glow visibility patch:
+- Increased Rare/Epic/Legendary glow strength for testing.
+- Added explicit rarity wrapper hooks where possible.
+- Added broad CSS selectors across Collection, Lineup, Pack Reveal, Inspect, and Quick Match card wrappers.
+- Added animated aura pulse for Rare/Epic/Legendary cards.
+- Foil sheen remains tied to foil upgrades.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v8
+
+Notes:
+- This build intentionally makes rarity glow more obvious than subtle.
+- If this is too strong after testing, tune down opacity/shadow values later.
+- Rarity glow should be most obvious on Epic/Legendary cards in Collection, Pack Reveal after flip, My Lineup, and Inspect.
+
+## Economy Stability Test v11
+
+Pack reveal bubble fix:
+- Reverted the bad v9/v10 spacing strategy by using v8 as the base.
+- Kept the stronger v8 rarity glow.
+- Moved the Rare/Epic/Legendary result bubble outside the cropped card face.
+- Preserved full card art size inside reveal cards.
+- Fresh save key: majorSportsCardCollector_economy_stability_test_v11
+
+## Scaling + Cup Patch v1
+
+Quick Match Scaling Patch:
+- Hidden CPU-only opponent scaling added.
+- CPU cards now use internal cpuLevel / cpuFoil / cpuPowerBonus objects.
+- CPU effective stats are separated from player-owned upgrades.
+- Opponent lineups scale based on the player's active lineup score.
+- CPU can internally use upgraded/foiled lower-rarity cards.
+- CPU can internally use levels 11-12 at endgame.
+- No new Quick Match UI, no CPU level labels, no overcap labels, and no reward changes.
+
+Collector Cup Reward Rebalance:
+- Higher-tier cups now have stronger coin/TP/card payouts.
+- Rookie Cup coin efficiency reduced relative to higher tiers.
+- All-Star and Hall of Fame champion rewards are more meaningfully higher.
+- Hall of Fame champion reward has an internal Legendary prize chance.
+- Fresh save key: majorSportsCardCollector_scaling_cup_patch_v1
+
+## Scaling + Cup Patch v2
+
+Collector Cup regression fix:
+- Fixed Cup submit flow so active Cup UI appears immediately after submitting a lineup.
+- Fixed simulate button flow.
+- Restored opponent preview / win chance rendering defensively.
+- Made Cup prize award function backward-compatible.
+- Kept hidden Quick Match CPU scaling from v1.
+- Fresh save key: majorSportsCardCollector_scaling_cup_patch_v2
+
+## Collector Cup Design Balance Patch v1
+
+Focused Collector Cup-only design patch:
+- Reduced Cup opponent scaling, especially Rookie Cup.
+- Rookie Cup opponents no longer track strong player Cup Power as closely.
+- Rebalanced Cup reward tiers around total expected value, including duplicate quick-sell value from prize cards.
+- Made higher-tier QF-loss rewards beat the lower-tier championship reward after card sell EV.
+- Reduced low-tier card prize value by adding Cup-specific Common/Uncommon prize handling.
+- Kept stamina-only Cup entry; no real-time timers added.
+- Save key unchanged: majorSportsCardCollector_scaling_cup_patch_v2
+
+## Collector Cup Scaling Fairness Patch v1
+
+Focused Collector Cup difficulty correction.
+
+Changes:
+- Replaced one-for-one opponent power offsets with tier/round baselines plus partial scaling.
+- All Cup scaling factors are below 1.0 so stronger submitted lineups gain net advantage.
+- Rookie baseline was raised so a first basic lineup is no longer a near-guaranteed title.
+- Pro, All-Star, and Hall of Fame maintain round progression without punishing upgraded lineups.
+- Cup preview win chance now allows 5–95% instead of being capped at 82%, making overpowering lower tiers clearer.
+
+Unchanged:
+- Save key
+- Entry costs
+- Reward tables
+- Cup flow
+- Card reward generation
+- Quick Match
+- Draft Board
+- Trade Market
